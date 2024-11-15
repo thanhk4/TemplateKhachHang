@@ -1,6 +1,10 @@
-app.controller("SanPhamChiTietCtrl", function ($scope, $document) {
+app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope) {
     let link = angular.element('<link rel="stylesheet" href="css/SanPhamChiTiet.css">');
     $document.find('head').append(link);
+
+    $rootScope.$on('$destroy', function() {
+      link.remove();
+    });
 
     const quantityInput = document.getElementById('quantity');
     const incrementButton = document.getElementById('button-addon2');

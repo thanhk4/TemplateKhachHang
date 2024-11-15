@@ -1,0 +1,47 @@
+.input-group-custom {
+    width: 120px; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+.input-group-custom .form-control {
+    padding: 5px;
+    width: 40px;
+    border: none;
+    text-align: center;
+    font-weight: bold;
+}
+
+.input-group-custom .quantity-btn {
+    background-color: #f0f0f0;
+    color: black;
+    border: none;
+    width: 40px;
+}
+
+.custom-select-small {
+    width: 65px;
+    padding: 2px 8px; 
+    font-size: 0.875rem; 
+}
+
+.container {
+    padding: 10px;
+}
+
+.form-control {
+    width: 200px;
+}
+
+.btn-outline-secondary {
+    color: #ff4500;
+    border-color: #ff4500;
+}
+
+
+
+
+
