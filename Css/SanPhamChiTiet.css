@@ -1,0 +1,96 @@
+.thumbnail { 
+    width: 100%; 
+    height: auto; 
+    border-radius: 5px; 
+    cursor: pointer; 
+    margin-bottom: 10px;
+}
+
+.main-image {
+    width: 100%;
+    border-radius: 5px;
+}
+
+.color-check {
+    display: none;
+}
+
+.color-label {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    margin: 5px;
+}
+
+.color-check:checked + .color-label {
+    border: 2px solid black; 
+}
+
+
+.input-group-custom {
+    width: 150px; 
+    margin-bottom: 0rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+.input-group-custom .form-control {
+    padding: 5px;
+    width: 40px;
+    border: none;
+    text-align: center;
+    font-weight: bold;
+}
+
+.input-group-custom .quantity-btn {
+    background-color: #f0f0f0;
+    color: black;
+    border: none;
+    width: 40px;
+}
+
+.quantity-btn:focus,
+.chat-btn:focus,
+.add-cart-btn:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Style for the "Chat ngay" button */
+.chat-btn {
+    background-color: #5c5c5c;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+/* Style for the "Thêm vào giỏ hàng" button */
+.add-cart-btn {
+    background-color: #000;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 5px;
+    margin-left: 10px;
+}
+
+.no-underline {
+    text-decoration: none; /* Loại bỏ đường kẻ dưới */
+}
+
+.text-black {
+    color: black; /* Đặt màu chữ là đen */
+}
+
+
+/* Khi hover, chỉ thay đổi border và các thuộc tính của select */
+.select-hover:hover {
+    cursor: pointer; /* Con trỏ chuột sẽ thành hình bàn tay khi hover */
+}

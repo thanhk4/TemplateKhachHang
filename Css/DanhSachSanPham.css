@@ -1,0 +1,53 @@
+.accordion-item,
+    .accordion-button {
+        border: none; 
+        box-shadow: none; 
+    }
+
+    .accordion-button:not(.collapsed) {
+        box-shadow: none; 
+    }
+
+    .accordion-body {
+        border-top: none; 
+    }
+
+    .color-check {
+        display: none;
+    }
+    
+    .color-label {
+        display: inline-block;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        cursor: pointer;
+        margin: 5px;
+        border: 2px solid black;
+    }
+    
+    .color-check:checked + .color-label {
+        border: 3px solid blue; 
+    }
+
+    .col-3 .navbar-nav .nav-item {
+        position: relative;
+        padding-left: 5px;
+        padding-right: 5px; 
+    }
+    
+    /* Áp dụng hiệu ứng hover chỉ cho .col-3.nav-item */
+    .col-3 .navbar-nav .nav-item:hover {
+        border: 2px solid black;
+        border-radius: 5px; 
+    }
+    
+/* Khi hover, chỉ thay đổi border và các thuộc tính của select */
+.select-hover:hover {
+    cursor: pointer; /* Con trỏ chuột sẽ thành hình bàn tay khi hover */
+}
+
+
+
+      
+    

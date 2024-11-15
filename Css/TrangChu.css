@@ -1,0 +1,30 @@
+/* Hiệu ứng hover cho thẻ card */
+.card.product-card {
+    transition: all 0.3s ease;
+    /* Mượt mà */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Bóng đổ nhẹ */
+}
+
+.card.product-card:hover {
+    transform: scale(1.05);
+    /* Phóng to nhẹ khi hover */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    /* Bóng đổ đậm hơn khi hover */
+}
+
+.col-lg-3,
+.col-md-4,
+.col-sm-6 {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+/* Khi hover, giữ margin và padding ổn định */
+.card-body {
+    padding: 15px;
+}
+
+.carousel-item {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
