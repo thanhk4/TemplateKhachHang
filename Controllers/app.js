@@ -14,6 +14,14 @@ app.config(($routeProvider) => {
       templateUrl: "./Views/SanPhamChiTiet.html",
       controller: "SanPhamChiTietCtrl"
     })
+    .when("/login", {
+      templateUrl: "./Views/login.html",
+      controller: "logincontroller"
+    })
+    .when("/dangky", {
+      templateUrl: "./Views/dangky.html",
+      controller: "Dangkycontroller"
+    })
     .otherwise({
       redirectTo: "/"
     });
