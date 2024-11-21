@@ -1,4 +1,12 @@
-app.controller("MuaSanPhamCtrl", function ($scope, $document, $rootScope) {
+app.controller("MuaSanPhamCtrl", function ($scope, $document, $rootScope ) {
+    const quantityInput = document.querySelector(".quantity-input"); 
+    const priceElement = document.querySelector(".total-price");
+    window.onload = function() {
+        if (quantityInput && priceElement) {
+            updateTotalPrice();
+        }
+    };
+
     let link = angular.element('<link rel="stylesheet" href="css/MuaSanPham.css">');
     $document.find('head').append(link);
     $rootScope.$on('$destroy', function () {
@@ -37,10 +45,9 @@ app.controller("MuaSanPhamCtrl", function ($scope, $document, $rootScope) {
 
             productItem.innerHTML = `
                 <!-- Sản phẩm -->
-                <div>
                     <!-- Thông tin sản phẩm -->
                     <div class="d-flex align-items-center" style="width: 50%;">
-                        <img src="${sanPham.urlHinhanh}" alt="Product Image" style="width: 80px; height: auto;">
+                        <img src="../image/${sanPham.urlHinhanh}.png" alt="Product Image" style="width: 80px; height: auto;">
                         <div class="ms-3" style="flex: 1;">
                             <p class="mb-1 fw-bold">${sanPham.tensp}</p>
                             <span class="text-muted">Phân Loại Hàng:</span>
@@ -59,36 +66,30 @@ app.controller("MuaSanPhamCtrl", function ($scope, $document, $rootScope) {
     
                     <!-- Chi tiết giá và hành động -->
                     <div class="d-flex justify-content-between align-items-center" style="width: 50%;">
-                        <!-- Giá -->
-                        <div class="text-center" style="width: 25%; display: ruby;">
-                            <span class="text-muted text-decoration-line-through">${sanPham.giaban}₫</span><br>
-                            <span class="text-danger fw-bold" id="product-price-sale">${sanPham.giasale}₫</span>
-                        </div>
-    
-                        <!-- Thay đổi số lượng -->
-                        <div class="d-flex justify-content-center align-items-center" style="width: 25%;">
-                            <div class="input-group input-group-custom">
-                                <button class="btn btn-outline-secondary quantity-btn" type="button"
-                                    id="button-addon1">-</button>
-                                <input type="text" class="form-control text-center quantity-input" value="${sanPham.soluong}"
-                                    min="1">
-                                <button class="btn btn-outline-secondary quantity-btn" type="button"
-                                    id="button-addon2">+</button>
-                            </div>
-                        </div>
-    
-                        <!-- Tổng giá -->
-                        <div class="text-center text-danger fw-bold total-price" style="width: 25%;"></div>
-    
-                        <!-- Xóa -->
-                        <div class="text-center" style="width: 25%;">
-                            <button class="btn btn-outline-danger" data-bs-toggle="modal"
-                                data-bs-target="#Delete">Xóa</button>
+                <!-- Giá -->
+                    <div class="text-center" style="width: 25%; display: ruby;">
+                        <span class="text-danger fw-bold">${Number(sanPham.giaban).toLocaleString('vi-VN')}₫</span>
+                    </div>
+
+
+                    <!-- Thay đổi số lượng -->
+                    <div class="d-flex justify-content-center align-items-center" style="width: 25%;">
+                        <div class="input-group input-group-custom">
+                            <button class="btn btn-outline-secondary quantity-btn" type="button" id="button-addon1">-</button>
+                            <input type="text" class="form-control text-center quantity-input" value="1" min="1">
+                            <button class="btn btn-outline-secondary quantity-btn" type="button" id="button-addon2">+</button>
                         </div>
                     </div>
-                </div>
-            `;
 
+                    <!-- Tổng giá -->
+                    <div class="text-center text-danger fw-bold total-price" style="width: 25%;"></div>
+
+                    <!-- Xóa -->
+                    <div class="text-center" style="width: 25%;">
+                        <button class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#Delete">Xóa</button>
+                    </div>
+                </div>
+                `;
             productList.appendChild(productItem);
         });
 
@@ -101,11 +102,23 @@ app.controller("MuaSanPhamCtrl", function ($scope, $document, $rootScope) {
         quantityButtons.forEach((button) => {
             button.addEventListener("click", (event) => {
                 const input = event.target.closest(".input-group").querySelector(".quantity-input");
+                const productItem = event.target.closest(".product-item");
+                const priceElement = productItem.querySelector(".total-price");
+
+                // Lấy giá bán hoặc giá sale
+                const priceSaleElement = productItem.querySelector(".text-danger");
+                const price = parseInt(priceSaleElement.textContent.replace("₫", "").replace('.', ""));
+
+                // Cập nhật số lượng
                 if (event.target.id === "button-addon1") {
                     input.value = Math.max(1, parseInt(input.value) - 1);
                 } else if (event.target.id === "button-addon2") {
                     input.value = parseInt(input.value) + 1;
                 }
+
+                // Tính tổng giá
+                const totalPrice = price * parseInt(input.value);
+                priceElement.textContent = `${totalPrice.toLocaleString()}₫`;
             });
         });
 
@@ -117,6 +130,11 @@ app.controller("MuaSanPhamCtrl", function ($scope, $document, $rootScope) {
             });
         });
     }
+
+    quantityInput.addEventListener('input', function () {
+        this.value = this.value.replace(/[^0-9]/g, ''); // Chỉ cho phép nhập số
+        updateTotalPrice(); // Cập nhật lại tổng số tiền khi thay đổi số lượng
+    });
 
     renderSanPham();
 });
