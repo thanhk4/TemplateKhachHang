@@ -1,5 +1,7 @@
-const app = angular.module("myApp", ["ngRoute"]);
 
+var app = angular.module('myApp', ['ngRoute']);
+
+// Config để cấu hình các route
 app.config(($routeProvider) => {
   $routeProvider
     .when("/", {
@@ -22,19 +24,38 @@ app.config(($routeProvider) => {
       templateUrl: "./Views/dangky.html",
       controller: "dangkyController"
     })
-    .when('/dashboard', {
-      templateUrl: './Views/dashboard.html',
-      controller: 'DashboardController'
-  })
-    .when("/muasanpham", {
-      templateUrl: "./Views/MuaSanPham.html",
-      controller: "MuaSanPhamCtrl"
-    })
-    .when("/dangky", {
-      templateUrl: "./Views/dangky.html",
-      controller: "Dangkycontroller"
-    })
+  
     .otherwise({
       redirectTo: "/"
     });
+});
+
+// Run block để khởi tạo ứng dụng
+app.run(function ($rootScope, $location) {
+  console.log('Ứng dụng AngularJS đã khởi tạo thành công');
+
+  // Kiểm tra trạng thái đăng nhập từ localStorage
+  const userInfo = localStorage.getItem('userInfo');
+  if (userInfo) {
+      $rootScope.isLoggedIn = true;
+      $rootScope.userInfo = JSON.parse(userInfo);
+  } else {
+      $rootScope.isLoggedIn = false;
+      $rootScope.userInfo = null;
+  }
+
+  // Hàm đăng xuất
+  $rootScope.dangxuat = function () {
+      $rootScope.isLoggedIn = false;
+      $rootScope.userInfo = null;
+      localStorage.removeItem('userInfo');
+      console.log("Đăng xuất thành công");
+      $location.path('#!login');
+  };
+});
+app.run(function($rootScope) {
+  // Gắn một listener để theo dõi tất cả các lỗi toàn cục
+  $rootScope.$on('$error', function(event, error) {
+      console.error('Lỗi toàn cục:', error);
+  });
 });
