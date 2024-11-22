@@ -36,21 +36,5 @@ app.controller('LoginController', function ($scope, $http, $rootScope, $location
         });
     };
 
-    // Hàm đăng xuất
-    $scope.dangxuat = function () {
-        // Xóa thông tin người dùng
-        $rootScope.isLoggedIn = false;
-        $rootScope.userInfo = null;
-        localStorage.removeItem('userInfo');
-        
-        // Log ra console để kiểm tra
-        console.log("Đăng xuất thành công");
-    
-        // Kiểm tra xem isLoggedIn đã được cập nhật chưa
-        console.log($rootScope.isLoggedIn);
-    
-        // Điều hướng đến trang login
-        $location.path('/login');
-    };
     
 });
