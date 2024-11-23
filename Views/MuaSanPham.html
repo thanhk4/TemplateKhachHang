@@ -2,20 +2,21 @@
     <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="#">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Sản Phẩm Chi Tiết</li>
+            <li class="breadcrumb-item"><a href="#">Sản Phẩm Chi Tiết</a></li>
             <li class="breadcrumb-item active" aria-current="page">Mua ngay</li>
         </ol>
     </nav>
 </div>
 
-<div class="container mt-5">
+<div class="container">
     <!-- Địa chỉ nhận hàng -->
     <div class="border rounded p-3" style="background-color: rgb(233, 232, 232);">
         <h5 class="fw-bold mb-2 text-danger" style="margin-left: 15px;">Địa Chỉ Nhận Hàng</h5>
         <div class="d-flex justify-content-between align-items-center">
             <div style="margin-left: 15px;">
-                <span class="fw-bold">Nguyễn Nhật Hưng - 0981961533</span><br>
-                <span>163 Đường Trương Định, Phường Tân Mai, Thành Phố Biên Hòa, Đồng Nai</span>
+                <span id="hovaten" class="fw-bold">Nguyễn Nhật Hưng</span> - 
+                <span id="sdt">0981961533</span><br>
+                <span id="diachi">163 Đường Trương Định, Phường Tân Mai, Thành Phố Biên Hòa, Đồng Nai</span>
                 <span class="badge bg-primary-subtle text-success border border-success me-2">Mặc định</span>
             </div>
             <div>
@@ -31,23 +32,32 @@
 
     <!-- Tính toán và tổng tiền -->
     <div class="container mt-3 border pt-3 rounded">
+        <!-- Voucher and Shopee Coin -->
         <div class="d-flex justify-content-between align-items-center mb-3">
             <div class="d-flex align-items-center ms-auto">
                 <span class="fw-bold">Voucher</span>
-                <input type="text" class="form-control mx-3" placeholder="Nhập mã giảm giá">
-                <button class="btn btn-outline-danger">Nhập mã</button>
+                <input type="text" id="voucherCodeInput" class="form-control mx-3" placeholder="Nhập mã giảm giá">
+                <button id="addVoucherButton" class="btn btn-primary">Thêm</button>
+
             </div>
         </div>
+        <div id="errorVoucher" class="text-danger mt-2" style="display: none;">Mã giảm giá không hợp lệ</div>
 
+        <!-- Total Invoice Section -->
         <div class="d-flex justify-content-between align-items-right mb-3">
             <div class="fw-bold">Tổng sản phẩm</div>
             <div id="tongSanPham">₫0</div>
+        </div>
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="fw-bold">Số tiền giảm giá</div>
+            <div id="soTienGiamGia">₫0</div>
         </div>
         <div class="d-flex justify-content-between align-items-center border-top pt-3 mb-3">
             <div class="fw-bold fs-5">Tổng hóa đơn</div>
             <div class="text-danger fw-bold fs-5" id="tongHoaDon">₫0</div>
         </div>
 
+        <!-- Checkout Button -->
         <div class="text-end">
             <button class="btn btn-danger btn-lg" id="muaHangBtn">Mua Hàng</button>
         </div>
