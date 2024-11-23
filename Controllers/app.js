@@ -32,6 +32,10 @@ app.config(($routeProvider) => {
       templateUrl: "./Views/XacNhanHoaDon.html",
       controller: "XacNhanHoaDonCtrl"
     })
+    .when('/thongtintaikhoan', {
+      templateUrl: './Views/thongtintaikhoan.html',
+      controller: 'ThongTinTaiKhoanController'
+  })
     .otherwise({
       redirectTo: "/"
     });
@@ -40,7 +44,7 @@ app.config(($routeProvider) => {
 // Run block để khởi tạo ứng dụng
 app.run(function ($rootScope, $location) {
   console.log('Ứng dụng AngularJS đã khởi tạo thành công');
-
+  $rootScope.showAccountInfo = false;
   // Kiểm tra trạng thái đăng nhập từ localStorage
   const userInfo = localStorage.getItem('userInfo');
   if (userInfo) {
@@ -57,12 +61,12 @@ app.run(function ($rootScope, $location) {
       $rootScope.userInfo = null;
       localStorage.removeItem('userInfo');
       console.log("Đăng xuất thành công");
-      $location.path('#!login');
+      $location.path('/login');
   };
-});
-app.run(function($rootScope) {
+
   // Gắn một listener để theo dõi tất cả các lỗi toàn cục
-  $rootScope.$on('$error', function(event, error) {
+  $rootScope.$on('$error', function (event, error) {
       console.error('Lỗi toàn cục:', error);
+      
   });
 });
