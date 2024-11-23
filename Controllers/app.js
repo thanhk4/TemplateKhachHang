@@ -16,6 +16,10 @@ app.config(($routeProvider) => {
       templateUrl: "./Views/SanPhamChiTiet.html",
       controller: "SanPhamChiTietCtrl"
     })
+    .when("/muasanpham", {
+      templateUrl: "./Views/MuaSanPham.html",
+      controller: "MuaSanPhamCtrl"
+    })
     .when("/login", {
       templateUrl: "./Views/login.html",
       controller: "LoginController"
@@ -23,6 +27,10 @@ app.config(($routeProvider) => {
     .when("/dangky", {
       templateUrl: "./Views/dangky.html",
       controller: "dangkyController"
+    })
+    .when("/thanhtoan", {
+      templateUrl: "./Views/XacNhanHoaDon.html",
+      controller: "XacNhanHoaDonCtrl"
     })
     .when('/thongtintaikhoan', {
       templateUrl: './Views/thongtintaikhoan.html',

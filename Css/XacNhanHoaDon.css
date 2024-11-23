@@ -1,0 +1,15 @@
+.btn-group .btn {
+    margin-right: 5px;
+    border-radius: 8px; /* Bo tròn nút */
+}
+
+.btn-check:checked + .btn {
+    background-color: #0d6efd; /* Màu nền khi được chọn */
+    color: white; /* Màu chữ khi được chọn */
+    border-color: #0d6efd;
+}
+
+.btn:hover {
+    background-color: #f8f9fa; /* Màu nền khi hover */
+    color: #0d6efd; /* Màu chữ khi hover */
+}
