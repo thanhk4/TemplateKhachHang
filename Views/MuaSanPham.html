@@ -9,27 +9,47 @@
 </div>
 
 <div class="container">
-    <!-- Địa chỉ nhận hàng -->
+   <!-- Địa chỉ nhận hàng -->
     <div class="border rounded p-3" style="background-color: rgb(233, 232, 232);">
-        <h5 class="fw-bold mb-2 text-danger" style="margin-left: 15px;">Địa Chỉ Nhận Hàng</h5>
-        <div class="d-flex justify-content-between align-items-center">
-            <div style="margin-left: 15px;">
-                <span id="hovaten" class="fw-bold">Nguyễn Nhật Hưng</span> - 
-                <span id="sdt">0981961533</span><br>
-                <span id="diachi">163 Đường Trương Định, Phường Tân Mai, Thành Phố Biên Hòa, Đồng Nai</span>
-                <span class="badge bg-primary-subtle text-success border border-success me-2">Mặc định</span>
-            </div>
-            <div>
-                <a href="#">Thay Đổi</a>
-            </div>
+      <h5 class="fw-bold mb-2 text-danger" style="margin-left: 15px;">Địa Chỉ Nhận Hàng</h5>
+      <div class="d-flex justify-content-between align-items-center">
+        <div style="margin-left: 15px;">
+          <span id="hovaten" class="fw-bold">...</span> -
+          <span id="sdt">...</span><br>
+          <span id="diachi">...</span>
+          <span class="badge bg-primary-subtle text-success border border-success me-2">Mặc định</span>
         </div>
+        <div>
+          <a data-bs-toggle="modal" data-bs-target="#exampleModal">Thay Đổi</a>
+        </div>
+      </div>
     </div>
-
+  
     <!-- Sản phẩm -->
     <div class="border rounded p-3 my-3" style="background-color: rgb(233, 232, 232);">
+        <div class="d-flex justify-content-between align-items-center">
+          <div style="width: 50%;">
+              <span class="fw-bold" style="margin-left: 15px;">Sản Phẩm</span>
+          </div>
+          <div class="d-flex justify-content-between text-center" style="width: 50%;">
+              <span class="fw-bold" style="width: 35%;">Đơn Giá</span>
+              <span class="fw-bold" style="width: 30%;">Số Lượng</span>
+              <span class="fw-bold" style="width: 35%;">Số Tiền</span>
+          </div>
+        </div>
+        
         <div class="product-list"></div>
     </div>
+    <div class="border rounded p-3 mb-4">
+      <h5 class="fw-bold">Phương Thức Thanh Toán</h5>
+      <div class="btn-group d-flex justify-content-center" role="group">
+          <input type="radio" class="btn-check" name="paymentMethod" id="cashOnDelivery" autocomplete="off" checked>
+          <label class="btn btn-outline-primary" for="cashOnDelivery">Thanh toán khi nhận hàng</label>
 
+          <input type="radio" class="btn-check" name="paymentMethod" id="bankTransfer" autocomplete="off">
+          <label class="btn btn-outline-primary" for="bankTransfer">Chuyển khoản ngân hàng</label>
+      </div>
+    </div>
     <!-- Tính toán và tổng tiền -->
     <div class="container mt-3 border pt-3 rounded">
         <!-- Voucher and Shopee Coin -->
@@ -63,3 +83,58 @@
         </div>
     </div>
 </div>
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Thay đổi địa chỉ</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Tạo một hàng cho các phần tử select -->
+        <div class="mb-3">
+          <label for="province" class="form-label">Chọn Tỉnh/Thành</label>
+          <select class="form-select" id="province">
+            <option disabled value="">Chọn Tỉnh</option>
+            <!-- Các tùy chọn sẽ được thêm thông qua JavaScript -->
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="district" class="form-label">Chọn Quận/Huyện</label>
+          <select class="form-select" id="district">
+            <option disabled value="">Chọn quận</option>
+            <!-- Các tùy chọn sẽ được thêm thông qua JavaScript -->
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="ward" class="form-label">Chọn Phường/Xã</label>
+          <select class="form-select" id="ward">
+            <option disabled value="">Chọn phường</option>
+            <!-- Các tùy chọn sẽ được thêm thông qua JavaScript -->
+          </select>
+        </div>
+
+        <!-- Input chi tiết -->
+        <div class="mb-3">
+          <label for="detailInput" class="form-label">Nhập chi tiết</label>
+          <input type="text" class="form-control" id="detailInput" placeholder="Nhập chi tiết">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" id="btnRestoreAddress" style="display: none;">Khôi phục</button>
+        <button type="button" class="btn btn-primary" id="btnSaveAddress">Lưu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
