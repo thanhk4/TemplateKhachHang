@@ -12,10 +12,14 @@ app.config(($routeProvider) => {
       templateUrl: "./Views/DanhSachSanPham.html",
       controller: "DanhSachSanPhamCtrl"
     })
+    .when("/danhsachsanphamSale", {
+      templateUrl: "./Views/SanPhamSale.html",
+      controller: "SanPhamSaleController"
+    })
     .when("/sanphamchitiet/:id", {
       templateUrl: "./Views/SanPhamChiTiet.html",
       controller: "SanPhamChiTietCtrl"
-  })
+    })
     .when("/login", {
       templateUrl: "./Views/login.html",
       controller: "LoginController"
@@ -27,28 +31,28 @@ app.config(($routeProvider) => {
     .when('/thongtintaikhoan', {
       templateUrl: './Views/thongtintaikhoan.html',
       controller: 'ThongTinTaiKhoanController'
-  })
-  .when('/quenmatkhau', {
-    templateUrl: './Views/quenmatkhau.html',
-    controller: 'quenmatkhauController'
-})
-  .when('/resetpassword', {
-    templateUrl: './Views/resetpassword.html',
-    controller: 'PasswordResetController'
-})
-.when('/trangthai', {
-  templateUrl: './Views/Donmua.html',
-  controller: 'MuahangController'
-})
-.when('/diachi', {
-  templateUrl: './Views/diachi.html',
-  controller: ''
-})
+    })
+    .when('/quenmatkhau', {
+      templateUrl: './Views/quenmatkhau.html',
+      controller: 'quenmatkhauController'
+    })
+    .when('/resetpassword', {
+      templateUrl: './Views/resetpassword.html',
+      controller: 'PasswordResetController'
+    })
+    .when('/doimatkhau2', {
+      templateUrl: './Views/doimatkhau2.html',
+      controller: 'doimatkhau2Controller'
+    })
+    .when("/sanphamthuonghieu/:id", {
+      templateUrl: "./Views/SanPhamThuongHieu.html",
+      controller: "SanPhamThuongHieuController"
+    })
     .otherwise({
       redirectTo: "/"
     });
 });
-
+// redirect to
 // Run block để khởi tạo ứng dụng
 app.run(function ($rootScope, $location) {
   console.log('Ứng dụng AngularJS đã khởi tạo thành công');
@@ -56,50 +60,53 @@ app.run(function ($rootScope, $location) {
   // Kiểm tra trạng thái đăng nhập từ localStorage
   const userInfo = localStorage.getItem('userInfo');
   if (userInfo) {
-      $rootScope.isLoggedIn = true;
-      $rootScope.userInfo = JSON.parse(userInfo);
+    $rootScope.isLoggedIn = true;
+    $rootScope.userInfo = JSON.parse(userInfo);
   } else {
-      $rootScope.isLoggedIn = false;
-      $rootScope.userInfo = null;
+    $rootScope.isLoggedIn = false;
+    $rootScope.userInfo = null;
   }
-  
-
   // Hàm đăng xuất
   $rootScope.dangxuat = function () {
-      $rootScope.isLoggedIn = false;
-      $rootScope.userInfo = null;
-      localStorage.removeItem('userInfo');
-      console.log("Đăng xuất thành công");
-      $location.path('/login');
+    $rootScope.isLoggedIn = false;
+    $rootScope.userInfo = null;
+    localStorage.removeItem('userInfo');
+    console.log("Đăng xuất thành công");
+    $location.path('/login');
   };
 
   // Gắn một listener để theo dõi tất cả các lỗi toàn cục
   $rootScope.$on('$error', function (event, error) {
-      console.error('Lỗi toàn cục:', error);
-      
+    console.error('Lỗi toàn cục:', error);
   });
 });
-app.service('apiService', function($http) {
-  var apiUrl = 'https://localhost:7292/api'; // Thay đổi URL này theo cấu hình của bạn
+app.service('ThuongHieuService', function($http) {
+  const apiUrl = 'https://localhost:7297/api/Thuonghieu'; // Thay URL API của bạn
 
-  this.getOrders = function() {
-      return $http.get(apiUrl + '/orders');
+  // Hàm lấy danh sách thương hiệu
+  this.getAllThuongHieu = function() {
+      return $http.get(apiUrl);
+  };
+});
+
+app.controller('ThuongHieuController', function($scope, ThuongHieuService) {
+  $scope.thuongHieus = []; // Danh sách thương hiệu
+  $scope.errorMessage = null;
+
+  // Hàm tải dữ liệu thương hiệu
+  $scope.loadThuongHieu = function() {
+      ThuongHieuService.getAllThuongHieu()
+          .then(function(response) {
+              $scope.thuongHieus = response.data; // Gán dữ liệu từ API
+              console.log("Danh sách thương hiệu:", $scope.thuongHieus);
+          })
+          .catch(function(error) {
+              $scope.errorMessage = "Không thể tải danh sách thương hiệu.";
+              console.error("Lỗi khi gọi API thương hiệu:", error);
+          });
   };
 
-  this.getDiaChiByIdkh = function(idkh) {
-      return $http.get(apiUrl + '/Diachis/' + idkh);
-  };
-
-  this.addDiaChi = function(diachi) {
-      return $http.post(apiUrl + '/Diachis', diachi);
-  };
-
-  this.updateDiaChi = function(diachi) {
-      return $http.put(apiUrl + '/Diachis/' + diachi.Idkh, diachi);
-  };
-
-  this.deleteDiaChi = function(idkh) {
-      return $http.delete(apiUrl + '/Diachis/' + idkh);
-  };
+  // Gọi hàm khi Controller khởi tạo
+  $scope.loadThuongHieu();
 });
 
