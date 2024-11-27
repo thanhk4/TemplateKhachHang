@@ -15,7 +15,7 @@
                    style="background-color: #0d6efd !important; border-color: #0d6efd;">
                     <i class="bi bi-person me-2"></i> Thông tin tài khoản
                 </a>
-                <a href="#!donhang" class="list-group-item list-group-item-action">
+                <a href="#!trangthai" class="list-group-item list-group-item-action">
                     <i class="bi bi-box me-2"></i> Đơn hàng của bạn
                 </a>
                 <a href="#!diachi" class="list-group-item list-group-item-action">
@@ -43,7 +43,19 @@
                         <div class="col-md-3 text-muted">Email:</div>
                         <div class="col-md-9">{{userInfo.email}}</div>
                     </div>
-                    
+                    <div class="card-body">
+                        <div class="row mb-3 py-2 border-bottom">
+                            <div class="col-md-3 text-muted">SDT:</div>
+                            <div class="col-md-9">{{Dangky.sdt}}</div>
+                        </div>
+                        <div class="row mb-3 py-2 border-bottom">
+                            <div class="col-md-3 text-muted">Ngày sinh:</div>
+                            <div class="col-md-9">{{Dangky.ngaysinh}}</div>
+                        </div>
+                        <div class="row mb-3 py-2 border-bottom">
+                            <div class="col-md-3 text-muted">Địa chỉ:</div>
+                            <div class="col-md-9">{{Dangky.diachi | date:'dd/MM/yyyy'}}</div>
+                        </div>
                   
                 </div>
             </div>

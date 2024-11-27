@@ -5,7 +5,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Document</title>
-       
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
         <link
             href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
             rel="stylesheet"
@@ -23,6 +23,9 @@
             src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
           
             <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+           
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
         </head>
            
 
@@ -111,7 +114,8 @@
                                     <i class="bi bi-person-circle"></i> {{userInfo.ten}}
                                 </a>
                                 <ul class="dropdown-menu dropdown-menu-end">
-                                    <li><a class="dropdown-item" href="#!thongtintaikhoan">Thông tin tài khoản</a></li>
+                                   
+                                    <li><a class="dropdown-item" href="#!thongtintaikhoan"><i class="bi bi-person-badge">Thông tin tài khoản</i></a></li>
                                     <li><hr class="dropdown-divider"></li>
                                     <li><button class="dropdown-item text-danger" ng-click="dangxuat()">Đăng xuất</button></li>
                                 </ul>
@@ -120,13 +124,13 @@
                         
                         
                         
-                        </div>
+                       
                     </div>
+                </nav>
+                    <div ng-view style="max-width: 1500px;" class="container-fluid"></div>
                 </div>
-            </nav>
-            <div ng-view style="max-width: 1500px;" class="container-fluid">
-
-            </div>
+           
+       
         </div>
 
     </footer>
@@ -143,9 +147,11 @@
         <script src="Controllers/quenmatkhauController.js"></script>
         <script src="Controllers/PasswordResetController.js"></script>
         <script src="Controllers/doimatkhau2.js"></script>
+        <script src="Controllers/MuahangController.js"></script>
+        <script src="Controllers/diachiController.js"></script>
     
 
-        <footer class="footer mt-3 border-top text-dark">
+        <footer class="footer mt-3 border-top text-dark" style="padding: 50px;">
             <div class="row align-items-center">
                 <div class="col-3 text-center">
                     <p class="mb-0">Lazada 2024. All rights reserved.</p>
@@ -167,7 +173,7 @@
 
        
       
-      
+      <script src="/Controllers/Toastr.js"></script>
         <script>
         function selectLanguage(language, element) {
             document.getElementById('dropdownMenuButton').innerText = language;
