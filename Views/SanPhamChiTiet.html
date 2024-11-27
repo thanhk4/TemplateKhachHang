@@ -75,8 +75,34 @@
                 </p>
                 <div class="collapse" id="DanhGiaExample">
                     <div class="card card-body">
-                        Some placeholder content for the collapse component. This panel is hidden by default but
-                        revealed when the user activates the relevant trigger.
+                        <div ng-if="danhGias.length === null">
+                            <p>Không có đánh giá nào cho sản phẩm này.</p>
+                        </div>
+                    
+                        <!-- Hiển thị danh sách đánh giá -->
+                        <div ng-if="danhGias.length > 0">
+                            <div class="danh-gia-item" ng-repeat="danhGia in danhGias">
+                                <div class="header">
+                                    <strong>Khách hàng:</strong> {{ danhGia.idkh || "Ẩn danh" }}
+                                    <span class="date">{{ danhGia.ngaydanhgia | date:'dd/MM/yyyy' }}</span>
+                                </div>
+                                <div class="content">
+                                    <p><strong>Nội dung:</strong> {{ danhGia.noidungdanhgia }}</p>
+                                </div>
+                                <div class="footer">
+                                    <strong>Trạng thái:</strong> 
+                                    <span ng-class="{'approved': danhGia.trangthai === 1, 'pending': danhGia.trangthai === 0}">
+                                        {{ danhGia.trangthai === 1 ? 'Đã duyệt' : 'Chờ duyệt' }}
+                                    </span>
+                                </div>
+                                <hr />
+                            </div>
+                        </div>
+                    
+                        <!-- Hiển thị lỗi -->
+                        <div ng-if="errorMessage" class="error">
+                            <p>{{ errorMessage }}</p>
+                        </div>
                     </div>
                 </div>
             </div>

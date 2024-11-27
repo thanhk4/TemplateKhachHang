@@ -10,7 +10,14 @@ this.getAllSanPham = function () {
             throw error;
         });
 };
-
+this.getSanPhamGiamGia = function () {
+    return $http.get(baseUrl + "Sanpham/GetALLSanPhamGiamGia")
+        .then(response => response.data)
+        .catch(error => {
+            console.error("Lỗi khi gọi API:", error);
+            throw error;
+        });
+}
 this.getSanPhamById = function (id) {
     return $http.get(baseUrl + "Sanpham/GetALLSanPham/" + id)
         .then(response => response.data)
