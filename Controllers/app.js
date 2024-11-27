@@ -55,7 +55,6 @@ app.config(($routeProvider) => {
 
 // Run block để khởi tạo ứng dụng
 app.run(function ($rootScope, $location) {
-  console.log('Ứng dụng AngularJS đã khởi tạo thành công');
   $rootScope.showAccountInfo = false;
   // Kiểm tra trạng thái đăng nhập từ localStorage
   const userInfo = localStorage.getItem('userInfo');
