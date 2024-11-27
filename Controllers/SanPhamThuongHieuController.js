@@ -1,19 +1,23 @@
-app.controller("TrangChuCtrl", function ($scope, $document, $rootScope, SanPhamService, $location ) {
-    let link = angular.element('<link rel="stylesheet" href="css/TrangChu.css">');
+app.controller("SanPhamThuongHieuController", function ($scope, $document, SanPhamService, $location, $routeParams) {
+    // Gắn file CSS cho controller
+    let link = angular.element('<link rel="stylesheet" href="css/DanhSachSanPham.css">');
     $document.find('head').append(link);
 
-    $rootScope.$on('$destroy', function() {
-      link.remove();
+    // Xóa CSS khi view bị hủy
+    $scope.$on('$destroy', function () {
+        link.remove();
     });
-
+    const idThuongHieu = $routeParams.id;
+    // Khởi tạo danh sách sản phẩm
     $scope.sanPhams = [];
     $scope.errorMessage = null;
-    $scope.SanPhamGiamGia = [];
     // Hàm load dữ liệu từ API
     function loadSanPham() {
-        SanPhamService.getAllSanPham()
+        SanPhamService.getSanPhamByThuongHieu(idThuongHieu)
+           
             .then(function (data) {
                 $scope.sanPhams = data; // Gán dữ liệu vào scope
+                console.log("idThuongHieu:", idThuongHieu);
                 console.log("Danh sách sản phẩm:", $scope.sanPhams);
             })
             .catch(function (error) {
@@ -25,25 +29,15 @@ app.controller("TrangChuCtrl", function ($scope, $document, $rootScope, SanPhamS
 
     // Gọi hàm load dữ liệu khi controller khởi chạy
     loadSanPham();
-    function LoadSanPhamGiamGia() {
-      SanPhamService.getSanPhamGiamGia()
-      .then(function(data){
-        $scope.SanPhamGiamGia = data;
-        console.log("San pham giam gia:", $scope.SanPhamGiamGia);
-      })
-      .catch(function(error){
-        $scope.errorMessage = "Không thể tải danh sách sản phẩm. Vui lòng thử lại sau.";
-        console.error("Lỗi khi tải sản phẩm:", error);
-      });
-    }
-    LoadSanPhamGiamGia();
+
     $scope.xemChiTiet = function (id) {
         console.log("Xem chi tiết sản phẩm:", id);
         
         $location.path(`/sanphamchitiet/${id}`);
     };
 
+});
 
 
-  });
-  
+
+

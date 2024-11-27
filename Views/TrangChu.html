@@ -30,106 +30,32 @@
 <div class="mt-5">
     <div class="container rounded overflow-hidden" style="height: 886px; margin: auto;">
         <div class="d-flex justify-content-between align-items-center">
-            <h1 class="fw-bold">Sản Phẩm Nổi Bật</h1>
-            <a href="#" class="text-reset" style="font-size: 16px; text-decoration: underline;">Xem thêm <i class="bi bi-chevron-right"></i></a>
+            <h1 class="fw-bold">Sale</h1>
+            <a href="#!danhsachsanphamSale" class="text-reset" style="font-size: 16px; text-decoration: underline;">Xem thêm <i class="bi bi-chevron-right"></i></a>
         </div>
         <hr style="border: 0; border-top: 2px solid; margin-top: 5px; margin-bottom: 20px;">
         <div class="row mt-3 g-3">
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#!sanphamchitiet" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPham.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <p class="card-text">3,239,000₫</p>
+            <div class="row mt-3 g-3">
+                <div class="col-lg-3 col-md-4 col-sm-6" ng-repeat="sanPham in SanPhamGiamGia">
+                    <a href="" class="text-decoration-none text-reset" ng-click="xemChiTiet(sanPham.id)">
+                        <div class="card product-card h-100">
+                            <img ng-if="sanPham.uRlHinhAnh" ng-src="{{sanPham.uRlHinhAnh}}" alt="{{sanPham.tensp}}" class="card-img-top" 
+                                style="height: 286px; width: 100%;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{sanPham.tensp}}</h5>
+                                <div class="d-flex align-items-center">
+                                    <p class="card-text me-2"
+                                        style="color: gray; text-decoration: line-through; margin-bottom: 0;">{{sanPham.giaban}}đ
+                                    </p>
+                                    <p class="card-text fw-bold" style="margin-bottom: 0;">{{sanPham.giasale}}đ</p>
+                                    <span class="ms-auto">
+                                        Chi tiết <i class="bi bi-chevron-right"></i>
+                                    </span>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPham.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <p class="card-text">3,239,000₫</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPham.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <p class="card-text">3,239,000₫</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPham.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <p class="card-text">3,239,000₫</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPham.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <p class="card-text">3,239,000₫</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPham.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <p class="card-text">3,239,000₫</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPham.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <p class="card-text">3,239,000₫</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPham.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <p class="card-text">3,239,000₫</p>
-                        </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
@@ -138,131 +64,35 @@
 <div class="mt-5">
     <div class="container rounded overflow-hidden" style="height: 886px; margin: auto;">
         <div class="d-flex justify-content-between align-items-center">
-            <h1 class="fw-bold">Sale</h1>
-            <a href="#" class="text-reset" style="font-size: 16px; text-decoration: underline;">Xem thêm <i class="bi bi-chevron-right"></i></a>
+            <h1 class="fw-bold">Sản Phẩm Nổi Bật</h1>
+            <a href="#!danhsachsanpham" class="text-reset" style="font-size: 16px; text-decoration: underline;">Xem thêm <i class="bi bi-chevron-right"></i></a>
         </div>
         <hr style="border: 0; border-top: 2px solid; margin-top: 5px; margin-bottom: 20px;">
         <div class="row mt-3 g-3">
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPhamSale.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <div class="d-flex align-items-center">
-                                <p class="card-text me-2" style="color: gray; text-decoration: line-through; margin-bottom: 0;">5,000,000₫</p> 
-                                <p class="card-text fw-bold" style="margin-bottom: 0;">3,239,000₫</p>
+            <div class="row mt-3 g-3">
+                <div class="col-lg-3 col-md-4 col-sm-6" ng-repeat="sanPham in sanPhams">
+                    <a href="" class="text-decoration-none text-reset" ng-click="xemChiTiet(sanPham.id)">
+                        <div class="card product-card h-100">
+                            <img ng-if="sanPham.uRlHinhAnh" ng-src="{{sanPham.uRlHinhAnh}}" alt="{{sanPham.tensp}}" class="card-img-top" 
+                                style="height: 286px; width: 100%;">
+                            <div class="card-body">
+                                <h5 class="card-title">{{sanPham.tensp}}</h5>
+                                <div class="d-flex align-items-center">
+                                    <p class="card-text me-2"
+                                        style="color: gray; text-decoration: line-through; margin-bottom: 0;">{{sanPham.giaban}}đ
+                                    </p>
+                                    <p class="card-text fw-bold" style="margin-bottom: 0;">{{sanPham.giasale}}đ</p>
+                                    <span class="ms-auto">
+                                        Chi tiết <i class="bi bi-chevron-right"></i>
+                                    </span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPhamSale.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <div class="d-flex align-items-center">
-                                <p class="card-text me-2" style="color: gray; text-decoration: line-through; margin-bottom: 0;">5,000,000₫</p> 
-                                <p class="card-text fw-bold" style="margin-bottom: 0;">3,239,000₫</p>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPhamSale.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <div class="d-flex align-items-center">
-                                <p class="card-text me-2" style="color: gray; text-decoration: line-through; margin-bottom: 0;">5,000,000₫</p> 
-                                <p class="card-text fw-bold" style="margin-bottom: 0;">3,239,000₫</p>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPhamSale.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <div class="d-flex align-items-center">
-                                <p class="card-text me-2" style="color: gray; text-decoration: line-through; margin-bottom: 0;">5,000,000₫</p> 
-                                <p class="card-text fw-bold" style="margin-bottom: 0;">3,239,000₫</p>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPhamSale.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <div class="d-flex align-items-center">
-                                <p class="card-text me-2" style="color: gray; text-decoration: line-through; margin-bottom: 0;">5,000,000₫</p> 
-                                <p class="card-text fw-bold" style="margin-bottom: 0;">3,239,000₫</p>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPhamSale.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <div class="d-flex align-items-center">
-                                <p class="card-text me-2" style="color: gray; text-decoration: line-through; margin-bottom: 0;">5,000,000₫</p> 
-                                <p class="card-text fw-bold" style="margin-bottom: 0;">3,239,000₫</p>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPhamSale.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <div class="d-flex align-items-center">
-                                <p class="card-text me-2" style="color: gray; text-decoration: line-through; margin-bottom: 0;">5,000,000₫</p> 
-                                <p class="card-text fw-bold" style="margin-bottom: 0;">3,239,000₫</p>
-                            </div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPhamSale.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <div class="d-flex align-items-center">
-                                <p class="card-text me-2" style="color: gray; text-decoration: line-through; margin-bottom: 0;">5,000,000₫</p> 
-                                <p class="card-text fw-bold" style="margin-bottom: 0;">3,239,000₫</p>
-                            </div>
-                        </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </div>
+
+
