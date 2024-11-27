@@ -31,28 +31,42 @@ app.config(($routeProvider) => {
     .when('/thongtintaikhoan', {
       templateUrl: './Views/thongtintaikhoan.html',
       controller: 'ThongTinTaiKhoanController'
-    })
-    .when('/quenmatkhau', {
-      templateUrl: './Views/quenmatkhau.html',
-      controller: 'quenmatkhauController'
-    })
-    .when('/resetpassword', {
-      templateUrl: './Views/resetpassword.html',
-      controller: 'PasswordResetController'
-    })
-    .when('/doimatkhau2', {
-      templateUrl: './Views/doimatkhau2.html',
-      controller: 'doimatkhau2Controller'
-    })
-    .when("/sanphamthuonghieu/:id", {
-      templateUrl: "./Views/SanPhamThuongHieu.html",
-      controller: "SanPhamThuongHieuController"
-    })
-    .otherwise({
-      redirectTo: "/"
-    });
+
+  })
+  .when('/quenmatkhau', {
+    templateUrl: './Views/quenmatkhau.html',
+    controller: 'quenmatkhauController'
+})
+  .when('/resetpassword', {
+    templateUrl: './Views/resetpassword.html',
+    controller: 'PasswordResetController'
+})
+.when('/trangthai', {
+  templateUrl: './Views/Donmua.html',
+  controller: 'MuahangController'
+})
+.when('/diachi', {
+  templateUrl: './Views/diachi.html',
+  controller: 'diachiController'
+})
+
+.when('/doimatkhau2', {
+  templateUrl: './Views/doimatkhau2.html',
+  controller: 'doimatkhau2Controller'
+})
+.when("/sanphamthuonghieu/:id", {
+  templateUrl: "./Views/SanPhamThuongHieu.html",
+  controller: "SanPhamThuongHieuController"
+})
+.otherwise({
+  redirectTo: "/"
 });
-// redirect to
+
+    });
+    
+
+
+
 // Run block để khởi tạo ứng dụng
 app.run(function ($rootScope, $location) {
   console.log('Ứng dụng AngularJS đã khởi tạo thành công');
