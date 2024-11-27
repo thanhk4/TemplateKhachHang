@@ -1,62 +1,19 @@
-<style>
-    .list-group-item {
-        border: none;
-        padding: 0.75rem 1rem;
-        color: #6c757d;
-        transition: all 0.2s ease;
-    }
-
-    .list-group-item:hover {
-        background-color: #f8f9fa;
-        color: #0d6efd;
-    }
-
-    .list-group-item.active {
-        color: white;
-        font-weight: 500;
-    }
-
-    .card {
-        border: none;
-        border-radius: 8px;
-    }
-
-    .card-header {
-        border-radius: 8px 8px 0 0 !important;
-    }
-
-    .text-muted {
-        font-weight: 500;
-    }
-
-    .border-bottom {
-        border-color: #f1f1f1 !important;
-    }
-
-    /* Scrollable content for col-md-9 */
-    .scrollable-content {
-        max-height: 100vh;
-        overflow-y: auto;
-        padding: 1rem;
-    }
-</style>
-
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <div class="col-md-3 bg-light p-4" style="min-height: 100vh; background-color: #f8f9fa !important;">
+        <div class="col-md-3 bg-light p-4 rounded shadow-sm">
             <div class="text-center mb-4">
                 <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center mx-auto" 
                      style="width: 100px; height: 100px; font-size: 2.5rem; background-color: #dc3545 !important;">
                     {{userInfo.ten.charAt(0)}}
                 </div>
-                <h5 class="mt-3">Xin chào, {{userInfo.ten}}</h5>
+                <h5 class="mt-3 text-dark">Xin chào, <span class="text-primary">{{userInfo.ten}}</span></h5>
             </div>
             <div class="list-group">
                 <a href="#!thongtintaikhoan" class="list-group-item list-group-item-action">
                     <i class="bi bi-person me-2"></i> Thông tin tài khoản
                 </a>
-                <a href="#!donhangcuaban" class="list-group-item list-group-item-action active" style="background-color: #0d6efd !important; border-color: #0d6efd;">
+                <a href="#!donhangcuaban" class="list-group-item list-group-item-action active">
                     <i class="bi bi-box me-2"></i> Đơn hàng của bạn
                 </a>
                 <a href="#!diachi" class="list-group-item list-group-item-action">
@@ -71,7 +28,7 @@
         <!-- Main Content -->
         <div class="col-md-9 p-4">
             <!-- Filter Buttons -->
-            <div class="mb-4 d-flex justify-content-between">
+            <div class="mb-4 d-flex flex-wrap gap-2">
                 <button ng-click="filterOrders(-1)" class="btn btn-outline-primary" ng-class="{active: filterStatus === -1}">Tất cả</button>
                 <button ng-click="filterOrders(0)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 0}">Chờ xác nhận</button>
                 <button ng-click="filterOrders(1)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 1}">Đã xác nhận</button>
@@ -83,29 +40,74 @@
 
             <!-- Order Cards -->
             <div class="row">
-                <div class="col-md-6 mb-4" ng-repeat="order in paginatedOrders[currentPage]">
-                    <div class="order-card p-3">
-                        <p class="order-status text-end text-danger">
-                            {{ orderStatuses[order.trangthai] }}
-                        </p>
+                <div class="col-md-6 mb-4" ng-repeat="x in paginatedOrders[currentPage]">
+                    <div class="order-card p-4 shadow-sm rounded">
+                        <p class="order-status text-end text-primary">{{ orderStatuses[x.trangthai] }}</p>
                         <hr>
-                        <div class="d-flex">
-                            <img ng-src="{{order.urlHinhanh}}" alt="{{order.tensp}}" class="product-image me-3">
-                            <div>
-                                <p class="fw-bold">{{ order.tensp }}</p>
-                                <p>Số lượng: {{ order.soluong }}</p>
-                                <p class="text-danger">{{ order.giasp | number }} VNĐ</p>
+                        <div>
+                            <div class="info-item">
+                                <span><i class="bi bi-cart"></i> Mã đơn hàng:</span>
+                                <span class="fw-bold">{{ x.id }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span><i class="bi bi-clock"></i> Thời gian đặt:</span>
+                                <span>{{ x.thoigiandathang | date:'dd-MM-yyyy' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span><i class="bi bi-wallet"></i> Tổng tiền:</span>
+                                <span class="fw-bold text-success">{{ x.tongtiencantra | number }} VNĐ</span>
+                            </div>
+                            <div class="info-item">
+                                <span><i class="bi bi-geo-alt"></i> Địa chỉ:</span>
+                                <span>{{ x.diachiship }}</span>
                             </div>
                         </div>
                         <hr>
                         <div class="text-end">
-                            <button class="btn btn-danger me-2">Mua lại</button>
-                            <button class="btn btn-outline-dark">Chi tiết hóa đơn</button>
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" ng-click="chitiethd(x.id)">Chi tiết hóa đơn</button>
                         </div>
                     </div>
                 </div>
             </div>
-
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <!-- Lặp qua từng sản phẩm trong hóa đơn -->
+                                <div class="col-12 mb-3 card p-3" ng-repeat="item in DataChitiet">
+                                    <div class="row">
+                                        <!-- Hình ảnh sản phẩm -->
+                                        <div class="col-md-3 text-center">
+                                            <img ng-src="{{item.urlHinhanh}}" alt="{{item.tensp}}" class="img-fluid rounded shadow-sm">
+                                        </div>
+                                        <!-- Thông tin sản phẩm -->
+                                        <div class="col-md-6">
+                                            <h6 class="fw-bold">{{item.tensp}}</h6>
+                                            <p class="text-muted">Số lượng: <span class="fw-bold">{{item.soluong}}</span></p>
+                                            <p class="text-muted">Giá sản phẩm: <span class="fw-bold">{{item.giasp | number}} VNĐ</span></p>
+                                            <p ng-if="item.giamgia > 0" class="text-success">Giảm giá: -{{item.giamgia | number}} VNĐ</p>
+                                        </div>
+                                        <!-- Tổng tiền sản phẩm -->
+                                        <div class="col-md-3 text-end align-self-center">
+                                            <h6 class="text-danger">Thành tiền:</h6>
+                                            <p class="fw-bold text-danger">{{(item.giasp * item.soluong - item.giamgia) | number}} VNĐ</p>
+                                        </div>
+                                        <hr>
+                                        <div class="text-end">
+                                            <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#exampleModal">Mua lại</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <!-- Pagination -->
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
@@ -123,4 +125,78 @@
         </div>
     </div>
 </div>
+<style>
+    body {
+    background-color: #f8f9fa;
+}
 
+.order-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.order-status {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0d6efd;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.info-item span:last-child {
+    font-weight: bold;
+}
+
+.pagination .page-link {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #0d6efd;
+    transition: all 0.3s ease;
+}
+
+.pagination .page-link:hover {
+    background-color: #0d6efd;
+    color: white;
+}
+
+.pagination .active .page-link {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+}
+
+.list-group-item {
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.list-group-item:hover {
+    background-color: #e9ecef;
+    color: #0d6efd;
+}
+
+.list-group-item.active {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+
+
+</style>

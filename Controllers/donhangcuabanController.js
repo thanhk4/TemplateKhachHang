@@ -24,6 +24,7 @@ app.controller('donhangcuabanController', function ($scope, $http) {
     $http.get('https://localhost:7297/api/Hoadon/hoa-don-theo-ma-kh-' + $scope.userInfo.id)
         .then(function (response) {
             $scope.DataHoaDonMua = response.data;
+            console.log($scope.DataHoaDonMua)
             $scope.filterOrders(-1); // Hiển thị tất cả đơn hàng mặc định
         })
         .catch(function (error) {
@@ -56,4 +57,14 @@ app.controller('donhangcuabanController', function ($scope, $http) {
             $scope.currentPage = page;
         }
     };
+    $scope.chitiethd = function(id)
+    { $http.get('https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
+        .then(function (response) {
+            $scope.DataChitiet = response.data;
+            console.log($scope.DataChitiet)
+        })
+        .catch(function (error) {
+            console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
+        });
+    }
 });
