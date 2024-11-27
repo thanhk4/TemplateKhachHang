@@ -1,0 +1,67 @@
+<div class="container mt-5">
+    <!-- Breadcrumb -->
+    <nav style="--bs-breadcrumb-divider: '>';" aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="#">Home</a></li>
+            <li class="breadcrumb-item"><a href="#">Sản Phẩm Chi Tiết</a></li>
+            <li class="breadcrumb-item"><a href="#">Mua Ngay</a></li>
+            <li class="breadcrumb-item active text-primary" aria-current="page">Xác Nhận Hoá Đơn</li>
+        </ol>
+    </nav>
+
+    <!-- Địa chỉ nhận hàng -->
+    <div class="border rounded p-3 mb-4" style="background-color: #f8f9fa;">
+        <h5 class="fw-bold text-danger">Địa Chỉ Nhận Hàng</h5>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <p class="mb-1">
+                    <span id="hovaten" class="fw-bold">Nguyễn Nhật Hưng</span> -
+                    <span id="sdt">0981961533</span>
+                </p>
+                <p class="mb-1">
+                    <span id="diachi">163 Đường Trương Định, Phường Tân Mai, Thành Phố Biên Hòa, Đồng Nai</span>
+                </p>
+                <span class="badge bg-primary-subtle text-success border border-success">Mặc định</span>
+            </div>
+            <a href="#" class="text-decoration-underline">Thay Đổi</a>
+        </div>
+    </div>
+
+    <!-- Phương thức thanh toán -->
+    <div class="border rounded p-3 mb-4">
+        <h5 class="fw-bold">Phương Thức Thanh Toán</h5>
+        <div class="btn-group d-flex justify-content-center" role="group">
+            <input type="radio" class="btn-check" name="paymentMethod" id="cashOnDelivery" autocomplete="off" checked>
+            <label class="btn btn-outline-primary" for="cashOnDelivery">Thanh toán khi nhận hàng</label>
+
+            <input type="radio" class="btn-check" name="paymentMethod" id="bankTransfer" autocomplete="off">
+            <label class="btn btn-outline-primary" for="bankTransfer">Chuyển khoản ngân hàng</label>
+        </div>
+    </div>
+
+    <!-- Sản phẩm và tổng tiền -->
+    <h5 class="fw-bold">Thanh Toán</h5>
+    <div class="border rounded p-3 my-3" style="background-color: rgb(233, 232, 232);">
+        <div class="product-list"></div>
+    </div>
+
+    <!-- Tổng hóa đơn -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="fw-bold">Tổng sản phẩm</div>
+        <div id="tongSanPham">₫0</div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <div class="fw-bold">Số tiền giảm giá</div>
+        <div id="soTienGiamGia">₫0</div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center border-top pt-3 mb-3">
+        <div class="fw-bold fs-5">Tổng hóa đơn</div>
+        <div class="text-danger fw-bold fs-5" id="tongHoaDon">₫0</div>
+    </div>
+
+    <!-- Nút thanh toán -->
+    <div class="d-flex border-top pt-3">
+        <button class="btn btn-danger btn-lg px-4 ms-auto" id="thanhToanBtn">Thanh Toán</button>
+    </div>
+
+</div>

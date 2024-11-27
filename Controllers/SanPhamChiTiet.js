@@ -1,27 +1,58 @@
-app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope) {
+app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $routeParams, SanPhamService) {
     let link = angular.element('<link rel="stylesheet" href="css/SanPhamChiTiet.css">');
     $document.find('head').append(link);
 
     $rootScope.$on('$destroy', function() {
       link.remove();
     });
+    
+    $scope.sanPham = null;
+    $scope.errorMessage = null;
 
-    const quantityInput = document.getElementById('quantity');
-    const incrementButton = document.getElementById('button-addon2');
-    const decrementButton = document.getElementById('button-addon1');
+    function groupThuocTinhs(thuocTinhs) {
+        const grouped = {};
+        thuocTinhs.forEach(thuocTinh => {
+            if (!grouped[thuocTinh.tenthuoctinh]) {
+                grouped[thuocTinh.tenthuoctinh] = [];
+            }
+            if (!grouped[thuocTinh.tenthuoctinh].includes(thuocTinh.tenthuoctinhchitiet)) {
+                grouped[thuocTinh.tenthuoctinh].push(thuocTinh.tenthuoctinhchitiet);
+            }
+        });
+        return grouped;
+    }
+    
+    
+    // Lấy ID sản phẩm từ URL
+    const sanPhamId = $routeParams.id;
 
-    incrementButton.addEventListener('click', () => {
-        quantityInput.value = parseInt(quantityInput.value) + 1;
-    });
-
-    decrementButton.addEventListener('click', () => {
-        if (parseInt(quantityInput.value) > 1) {
-            quantityInput.value = parseInt(quantityInput.value) - 1;
-        }
-    });
-
-    quantityInput.addEventListener('input', function () {
-        this.value = this.value.replace(/[^0-9]/g, '');
-    });
+    // Gọi API để lấy thông tin chi tiết sản phẩm
+    function loadSanPhamChiTiet() {
+        SanPhamService.getSanPhamById(sanPhamId)
+            .then(function (data) {
+                $scope.sanPham = data;
+                $scope.groupedThuocTinhs = groupThuocTinhs(data.sanphamchitiets.flatMap(sp => sp.thuocTinhs));
+                console.log("Chi tiết sản phẩm:", $scope.sanPham);
+            })
+            .catch(function (error) {
+                $scope.errorMessage = "Không thể tải thông tin sản phẩm. Vui lòng thử lại sau.";
+                console.error("Lỗi khi tải chi tiết sản phẩm:", error);
+            });
+    }
+    function loadDanhGia() {
+        SanPhamService.getDanhGiaByIdSPCT(sanPhamId)
+            .then(function (data) {
+                $scope.danhGias = data;
+                console.log("Danh gia:", $scope.danhGias);
+            })
+            .catch(function (error) {
+                $scope.errorMessage = "Không thể tải thông tin sản phẩm. Vui lòng thử lại sau.";
+                console.error("Lỗi khi tải chi tiết sản phẩm:", error);
+            });
+    }
+    
+     loadDanhGia();
+    // Tải thông tin chi tiết sản phẩm khi controller khởi chạy
+    loadSanPhamChiTiet();
 })
     ;

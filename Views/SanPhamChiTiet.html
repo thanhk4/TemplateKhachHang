@@ -9,125 +9,33 @@
 
     <!-- Product Layout -->
     <div class="row mt-4">
-        <!-- Thumbnail Images -->
-        <div class="col-md-2" style="width: 14.6%;">
-            <img src="../image/SanPham.png" class="thumbnail" alt="Thumbnail 1">
-            <img src="../image/SanPham.png" class="thumbnail" alt="Thumbnail 2">
-            <img src="../image/SanPham.png" class="thumbnail" alt="Thumbnail 3">
-        </div>
-
         <!-- Main Product Image -->
         <div class="col-md-5">
-            <img src="../image/SanPham.png" class="main-image" alt="Main Product Image">
+            <img src="{{sanPham.uRlHinhAnh}}" class="main-image" alt="Main Product Image">
         </div>
 
         <!-- Product Details -->
         <div class="col-md-5">
-            <h3>Nike Wmns Dunk Low ‘Black Paisley’</h3>
-            <h4 class="text-danger">400k <small class="text-decoration-line-through text-muted">540K</small></h4>
-            <p>Giày Dunk Low Retro Panda DA1391-100 AUTH chất liệu thoáng dành cho nam nữ.</p>
-
-            <hr class="mt-3" style="border: 0; border-top: 2px solid;">
-
-            <!-- Color Options -->
-            <div class="mt-2">
-                <h5>Colors</h5>
-                <div class="row">
-                    <!-- Green Color -->
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="color-check" id="color-green">
-                        <label class="color-label" for="color-green" style="background-color: green;"></label>
-                    </div>
-                    <!-- Red Color -->
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="color-check" id="color-red">
-                        <label class="color-label" for="color-red" style="background-color: red;"></label>
-                    </div>
-                    <!-- Yellow Color -->
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="color-check" id="color-yellow">
-                        <label class="color-label" for="color-yellow" style="background-color: yellow;"></label>
-                    </div>
-                    <!-- Orange Color -->
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="color-check" id="color-orange">
-                        <label class="color-label" for="color-orange" style="background-color: orange;"></label>
-                    </div>
-                    <!-- Light Blue Color -->
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="color-check" id="color-lightblue">
-                        <label class="color-label" for="color-lightblue" style="background-color: cyan;"></label>
-                    </div>
-                    <!-- Blue Color -->
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="color-check" id="color-blue">
-                        <label class="color-label" for="color-blue" style="background-color: blue;"></label>
-                    </div>
-                    <!-- Purple Color -->
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="color-check" id="color-purple">
-                        <label class="color-label" for="color-purple" style="background-color: purple;"></label>
-                    </div>
-                    <!-- Pink Color -->
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="color-check" id="color-pink">
-                        <label class="color-label" for="color-pink" style="background-color: pink;"></label>
-                    </div>
-                    <!-- White Color -->
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="color-check" id="color-white">
-                        <label class="color-label" for="color-white"
-                            style="background-color: white; border: 1px solid rgb(189, 185, 185);"></label>
-                    </div>
-                    <!-- Black Color -->
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="color-check" id="color-black">
-                        <label class="color-label" for="color-black" style="background-color: black;"></label>
+            <h3>{{sanPham.tensp}}</h3>
+            <h4 class="text-danger">{{sanPham.giasale}}đ <small
+                    class="text-decoration-line-through text-muted">{{sanPham.giaban}}đ</small></h4>
+            <p>{{sanPham.mota}}</p>
+            <div ng-repeat="(key, values) in groupedThuocTinhs">
+                <hr class="mt-3" style="border: 0; border-top: 2px solid;">
+            
+                <!-- Tên thuộc tính (vd: Màu, Size) -->
+                <div class="mt-2">
+                    <h5>{{key}}</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <!-- Lặp qua từng giá trị của thuộc tính -->
+                        <div ng-repeat="value in values" class="mb-1">
+                            <input type="checkbox" class="btn-check" id="btn-check-{{key}}-{{$index}}" autocomplete="off">
+                            <label class="btn btn-outline-secondary"
+                                for="btn-check-{{key}}-{{$index}}">{{value}}</label>
+                        </div>
                     </div>
                 </div>
             </div>
-
-            <hr class="mt-2" style="border: 0; border-top: 2px solid;">
-
-            <!-- Size Options -->
-            <div class="mt-2">
-                <h5>Sizes</h5>
-                <div class="row">
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="btn-check" id="btn-check-10" autocomplete="off">
-                        <label class="btn btn-outline-secondary" for="btn-check-10">10</label>
-                    </div>
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="btn-check" id="btn-check-15" autocomplete="off">
-                        <label class="btn btn-outline-secondary" for="btn-check-15">15</label>
-                    </div>
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="btn-check" id="btn-check-20" autocomplete="off">
-                        <label class="btn btn-outline-secondary" for="btn-check-20">20</label>
-                    </div>
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="btn-check" id="btn-check-25" autocomplete="off">
-                        <label class="btn btn-outline-secondary" for="btn-check-25">25</label>
-                    </div>
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="btn-check" id="btn-check-30" autocomplete="off">
-                        <label class="btn btn-outline-secondary" for="btn-check-30">30</label>
-                    </div>
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="btn-check" id="btn-check-31" autocomplete="off">
-                        <label class="btn btn-outline-secondary" for="btn-check-31">31</label>
-                    </div>
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="btn-check" id="btn-check-32" autocomplete="off">
-                        <label class="btn btn-outline-secondary" for="btn-check-32">32</label>
-                    </div>
-                    <div class="col-1 mb-1">
-                        <input type="checkbox" class="btn-check" id="btn-check-33" autocomplete="off">
-                        <label class="btn btn-outline-secondary" for="btn-check-33">33</label>
-                    </div>
-                </div>
-            </div>
-
             <hr class="mt-3" style="border: 0; border-top: 2px solid;">
 
             <!-- Quantity and Buttons -->
@@ -167,8 +75,34 @@
                 </p>
                 <div class="collapse" id="DanhGiaExample">
                     <div class="card card-body">
-                        Some placeholder content for the collapse component. This panel is hidden by default but
-                        revealed when the user activates the relevant trigger.
+                        <div ng-if="danhGias.length === null">
+                            <p>Không có đánh giá nào cho sản phẩm này.</p>
+                        </div>
+                    
+                        <!-- Hiển thị danh sách đánh giá -->
+                        <div ng-if="danhGias.length > 0">
+                            <div class="danh-gia-item" ng-repeat="danhGia in danhGias">
+                                <div class="header">
+                                    <strong>Khách hàng:</strong> {{ danhGia.idkh || "Ẩn danh" }}
+                                    <span class="date">{{ danhGia.ngaydanhgia | date:'dd/MM/yyyy' }}</span>
+                                </div>
+                                <div class="content">
+                                    <p><strong>Nội dung:</strong> {{ danhGia.noidungdanhgia }}</p>
+                                </div>
+                                <div class="footer">
+                                    <strong>Trạng thái:</strong> 
+                                    <span ng-class="{'approved': danhGia.trangthai === 1, 'pending': danhGia.trangthai === 0}">
+                                        {{ danhGia.trangthai === 1 ? 'Đã duyệt' : 'Chờ duyệt' }}
+                                    </span>
+                                </div>
+                                <hr />
+                            </div>
+                        </div>
+                    
+                        <!-- Hiển thị lỗi -->
+                        <div ng-if="errorMessage" class="error">
+                            <p>{{ errorMessage }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
