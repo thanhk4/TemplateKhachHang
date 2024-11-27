@@ -5,5 +5,8 @@ app.controller("TrangChuCtrl", function ($scope, $document, $rootScope) {
     $rootScope.$on('$destroy', function() {
       link.remove();
     });
+
+   
+
   });
   

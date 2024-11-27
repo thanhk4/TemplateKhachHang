@@ -12,10 +12,10 @@ app.config(($routeProvider) => {
       templateUrl: "./Views/DanhSachSanPham.html",
       controller: "DanhSachSanPhamCtrl"
     })
-    .when("/sanphamchitiet", {
+    .when("/sanphamchitiet/:id", {
       templateUrl: "./Views/SanPhamChiTiet.html",
       controller: "SanPhamChiTietCtrl"
-    })
+  })
     .when("/login", {
       templateUrl: "./Views/login.html",
       controller: "LoginController"
@@ -58,6 +58,7 @@ app.run(function ($rootScope, $location) {
       $rootScope.isLoggedIn = false;
       $rootScope.userInfo = null;
   }
+  
 
   // Hàm đăng xuất
   $rootScope.dangxuat = function () {

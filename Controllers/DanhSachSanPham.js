@@ -1,8 +1,69 @@
-app.controller("DanhSachSanPhamCtrl", function ($scope, $document, $rootScope) {
-  let link = angular.element('<link rel="stylesheet" href="css/DanhSachSanPham.css">');
-  $document.find('head').append(link);
+// Service để xử lý API sản phẩm
+app.service("SanPhamService", function ($http) {
+    const apiUrl = "https://localhost:7297/api/Sanpham/GetALLSanPham";
 
-  $rootScope.$on('$destroy', function() {
-    link.remove();
-  });
+    // Hàm lấy tất cả sản phẩm
+    this.getAllSanPham = function () {
+        return $http.get(apiUrl)
+            .then(function (response) {
+                return response.data; // Trả về dữ liệu từ API
+            })
+            .catch(function (error) {
+                console.error("Lỗi khi gọi API:", error);
+                throw error;
+            });
+    };
+
+    // Hàm lấy chi tiết sản phẩm
+    this.getSanPhamById = function (id) {
+        return $http.get("https:localhost:7297/api/Sanpham" + "/" + id)
+            .then(function (response) {
+                return response.data; // Trả về dữ liệu từ API
+            })
+            .catch(function (error) {
+                console.error("Lỗi khi gọi API:", error);
+                throw error;
+            });
+    };
+
+    
+});
+
+
+
+app.controller("DanhSachSanPhamCtrl", function ($scope, $document, SanPhamService, $location) {
+    // Gắn file CSS cho controller
+    let link = angular.element('<link rel="stylesheet" href="css/DanhSachSanPham.css">');
+    $document.find('head').append(link);
+
+    // Xóa CSS khi view bị hủy
+    $scope.$on('$destroy', function () {
+        link.remove();
+    });
+
+    // Khởi tạo danh sách sản phẩm
+    $scope.sanPhams = [];
+    $scope.errorMessage = null;
+    // Hàm load dữ liệu từ API
+    function loadSanPham() {
+        SanPhamService.getAllSanPham()
+            .then(function (data) {
+                $scope.sanPhams = data; // Gán dữ liệu vào scope
+                console.log("Danh sách sản phẩm:", $scope.sanPhams);
+            })
+            .catch(function (error) {
+                $scope.errorMessage = "Không thể tải danh sách sản phẩm. Vui lòng thử lại sau.";
+                console.error("Lỗi khi tải sản phẩm:", error);
+            });
+    }
+      // Hàm gọi API chi tiết sản phẩm khi click vào sản phẩ
+
+    // Gọi hàm load dữ liệu khi controller khởi chạy
+    loadSanPham();
+
+    $scope.xemChiTiet = function (id) {
+        console.log("Xem chi tiết sản phẩm:", id);
+        
+        $location.path(`/sanphamchitiet/${id}`);
+    };
 });
