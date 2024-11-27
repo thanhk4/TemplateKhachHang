@@ -11,7 +11,7 @@
     <div class="row mt-4">
         <!-- Main Product Image -->
         <div class="col-md-5">
-            <img src="{{sanPham.uRlHinhAnh}}" class="main-image" alt="Main Product Image">
+            <img src="../image/{{sanPham.uRlHinhAnh}}" class="main-image" alt="Main Product Image">
         </div>
 
         <!-- Product Details -->
@@ -29,9 +29,15 @@
                     <div class="d-flex flex-wrap gap-2">
                         <!-- Lặp qua từng giá trị của thuộc tính -->
                         <div ng-repeat="value in values" class="mb-1">
-                            <input type="checkbox" class="btn-check" id="btn-check-{{key}}-{{$index}}" autocomplete="off">
-                            <label class="btn btn-outline-secondary"
-                                for="btn-check-{{key}}-{{$index}}">{{value}}</label>
+                            <input type="checkbox" class="btn-check" 
+                                   id="btn-check-{{key}}-{{$index}}" 
+                                   autocomplete="off"
+                                   ng-model="selectedValues[value]"
+                                   ng-change="onThuocTinhChange()">
+                            <label class="btn btn-outline-secondary" 
+                                   for="btn-check-{{key}}-{{$index}}">
+                                   {{value}}
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -45,7 +51,7 @@
                     <input type="text" class="form-control text-center quantity-input" id="quantity" value="1" min="1">
                     <button class="btn btn-outline-secondary quantity-btn" type="button" id="button-addon2">+</button>
                 </div>
-                <a href="#!muasanpham" class="btn btn-outline-dark chat-btn me-2">Mua ngay</a>
+                <a href="" ng-click="MuaSanPham()" class="btn btn-outline-dark chat-btn me-2">Mua ngay</a>
                 <button class="btn btn-dark add-cart-btn">Thêm vào giỏ hàng</button>
             </div>
         </div>
