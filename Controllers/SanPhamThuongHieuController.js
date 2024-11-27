@@ -36,3 +36,4 @@ app.controller("SanPhamThuongHieuController", function ($scope, $document, SanPh
         $location.path(`/sanphamchitiet/${id}`);
     };
 });
+// dsiss

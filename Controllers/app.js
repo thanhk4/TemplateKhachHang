@@ -52,7 +52,7 @@ app.config(($routeProvider) => {
       redirectTo: "/"
     });
 });
-
+// redirect to
 // Run block để khởi tạo ứng dụng
 app.run(function ($rootScope, $location) {
   console.log('Ứng dụng AngularJS đã khởi tạo thành công');
