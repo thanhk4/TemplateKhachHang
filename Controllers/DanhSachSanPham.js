@@ -1,32 +1,34 @@
 // Service để xử lý API sản phẩm
 app.service("SanPhamService", function ($http) {
-    const apiUrl = "https://localhost:7297/api/Sanpham/GetALLSanPham";
+    const baseUrl = "https://localhost:7297/api/";
 
-    // Hàm lấy tất cả sản phẩm
-    this.getAllSanPham = function () {
-        return $http.get(apiUrl)
-            .then(function (response) {
-                return response.data; // Trả về dữ liệu từ API
-            })
-            .catch(function (error) {
-                console.error("Lỗi khi gọi API:", error);
-                throw error;
-            });
-    };
+this.getAllSanPham = function () {
+    return $http.get(baseUrl + "Sanpham/GetALLSanPham")
+        .then(response => response.data)
+        .catch(error => {
+            console.error("Lỗi khi gọi API:", error);
+            throw error;
+        });
+};
 
-    // Hàm lấy chi tiết sản phẩm
-    this.getSanPhamById = function (id) {
-        return $http.get("https:localhost:7297/api/Sanpham" + "/" + id)
-            .then(function (response) {
-                return response.data; // Trả về dữ liệu từ API
-            })
-            .catch(function (error) {
-                console.error("Lỗi khi gọi API:", error);
-                throw error;
-            });
-    };
+this.getSanPhamById = function (id) {
+    return $http.get(baseUrl + "Sanpham/GetALLSanPham/" + id)
+        .then(response => response.data)
+        .catch(error => {
+            console.error("Lỗi khi gọi API:", error);
+            throw error;
+        });
+};
 
-    
+this.getDanhGiaByIdSPCT = function (id) {
+    return $http.get(baseUrl + "Danhgias/GetByIdSPCT/" + id)
+        .then(response => response.data)
+        .catch(error => {
+            console.error("Lỗi khi gọi API:", error);
+            throw error;
+        });
+};
+
 });
 
 

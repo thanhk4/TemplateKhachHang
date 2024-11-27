@@ -39,8 +39,19 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                 console.error("Lỗi khi tải chi tiết sản phẩm:", error);
             });
     }
+    function loadDanhGia() {
+        SanPhamService.getDanhGiaByIdSPCT(sanPhamId)
+            .then(function (data) {
+                $scope.danhGias = data;
+                console.log("Danh gia:", $scope.danhGias);
+            })
+            .catch(function (error) {
+                $scope.errorMessage = "Không thể tải thông tin sản phẩm. Vui lòng thử lại sau.";
+                console.error("Lỗi khi tải chi tiết sản phẩm:", error);
+            });
+    }
     
-
+     loadDanhGia();
     // Tải thông tin chi tiết sản phẩm khi controller khởi chạy
     loadSanPhamChiTiet();
 })
