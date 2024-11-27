@@ -43,11 +43,12 @@
     <div class="border rounded p-3 mb-4">
       <h5 class="fw-bold">Phương Thức Thanh Toán</h5>
       <div class="btn-group d-flex justify-content-center" role="group">
-          <input type="radio" class="btn-check" name="paymentMethod" id="cashOnDelivery" autocomplete="off" checked>
+          <input type="radio" class="btn-check" name="paymentMethod" id="cashOnDelivery" autocomplete="off" value="1" checked>
           <label class="btn btn-outline-primary" for="cashOnDelivery">Thanh toán khi nhận hàng</label>
 
-          <input type="radio" class="btn-check" name="paymentMethod" id="bankTransfer" autocomplete="off">
+          <input type="radio" class="btn-check" name="paymentMethod" id="bankTransfer" autocomplete="off" value="2">
           <label class="btn btn-outline-primary" for="bankTransfer">Chuyển khoản ngân hàng</label>
+          <form id="hidden-form" method="post"></form>
       </div>
     </div>
     <!-- Tính toán và tổng tiền -->
