@@ -1,6 +1,7 @@
-app.controller("MuaSanPhamCtrl", function ($document, $rootScope) {
+app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) {
     const quantityInput = document.querySelector(".quantity-input");
     const priceElement = document.querySelector(".total-price");
+    const sanPhamCTId = $routeParams.id;
     window.onload = function () {
         if (quantityInput && priceElement) {
             updateTotalPrice();
@@ -21,18 +22,33 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope) {
     const apiKHUrl = "https://localhost:7297/api/Khachhang";
 
 
-    // Hàm gọi API để lấy danh sách sản phẩm chi tiết
+    // Hàm gọi API để lấy sản phẩm chi tiết theo idspct
     async function fetchSanPhamChitiet() {
         try {
-            const response = await fetch(apiSPCTUrl);
-            if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
+            // Kiểm tra nếu idspct có giá trị hợp lệ
+            if (!sanPhamCTId) {
+                console.error("idspct không hợp lệ");
+                return null;
+            }
+
+            // Gọi API với idspct
+            const response = await fetch(`${apiSPCTUrl}/${sanPhamCTId}`);
+
+            if (!response.ok) {
+                throw new Error(`Lỗi API: ${response.status}`);
+            }
+
+            // Chuyển đổi dữ liệu JSON từ response
             const data = await response.json();
-            return data; // Trả về danh sách sản phẩm chi tiết
+
+            // Trả về dữ liệu của sản phẩm chi tiết
+            return data;
         } catch (error) {
-            console.error("Lỗi khi lấy danh sách sản phẩm chi tiết:", error);
-            return [];
+            console.error("Lỗi khi lấy sản phẩm chi tiết:", error);
+            return null; // Trả về null nếu có lỗi
         }
     }
+
 
     // Hàm gọi API để lấy thông tin sản phẩm (tensp, urlhinhanh) theo idsp
     async function fetchSanPhamById(idsp) {
