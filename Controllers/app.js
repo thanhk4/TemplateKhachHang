@@ -49,14 +49,7 @@ app.config(($routeProvider) => {
   templateUrl: './Views/diachi.html',
   controller: 'diachiController'
 })
-.when('/quenmatkhau', {
-  templateUrl: './Views/quenmatkhau.html',
-  controller: 'quenmatkhauController'
-})
-.when('/resetpassword', {
-  templateUrl: './Views/resetpassword.html',
-  controller: 'PasswordResetController'
-})
+
 .when('/doimatkhau2', {
   templateUrl: './Views/doimatkhau2.html',
   controller: 'doimatkhau2Controller'
@@ -71,6 +64,7 @@ app.config(($routeProvider) => {
 
     });
     
+
 
 
 // Run block để khởi tạo ứng dụng
