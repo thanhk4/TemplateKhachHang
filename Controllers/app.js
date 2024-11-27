@@ -36,9 +36,13 @@ app.config(($routeProvider) => {
     templateUrl: './Views/resetpassword.html',
     controller: 'PasswordResetController'
 })
-.when('/doimatkhau2', {
-  templateUrl: './Views/doimatkhau2.html',
-  controller: 'doimatkhau2Controller'
+.when('/trangthai', {
+  templateUrl: './Views/Donmua.html',
+  controller: 'MuahangController'
+})
+.when('/diachi', {
+  templateUrl: './Views/diachi.html',
+  controller: ''
 })
     .otherwise({
       redirectTo: "/"
@@ -75,3 +79,27 @@ app.run(function ($rootScope, $location) {
       
   });
 });
+app.service('apiService', function($http) {
+  var apiUrl = 'https://localhost:7292/api'; // Thay đổi URL này theo cấu hình của bạn
+
+  this.getOrders = function() {
+      return $http.get(apiUrl + '/orders');
+  };
+
+  this.getDiaChiByIdkh = function(idkh) {
+      return $http.get(apiUrl + '/Diachis/' + idkh);
+  };
+
+  this.addDiaChi = function(diachi) {
+      return $http.post(apiUrl + '/Diachis', diachi);
+  };
+
+  this.updateDiaChi = function(diachi) {
+      return $http.put(apiUrl + '/Diachis/' + diachi.Idkh, diachi);
+  };
+
+  this.deleteDiaChi = function(idkh) {
+      return $http.delete(apiUrl + '/Diachis/' + idkh);
+  };
+});
+
