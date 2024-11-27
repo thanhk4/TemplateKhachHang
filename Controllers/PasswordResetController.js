@@ -1,10 +1,14 @@
 app.controller('PasswordResetController', function ($scope, $http) {
+   
+
+    // Hàm để thay đổi tab
+  
     // Lấy thông tin userInfo từ localStorage hoặc từ backend
     const userInfo = JSON.parse(localStorage.getItem('userInfo')); // Dữ liệu lưu trữ sau khi đăng nhập
     if (!userInfo) {
         console.error('Không tìm thấy thông tin người dùng.'); // Xử lý lỗi nếu cần
     }
-
+   
     $scope.passwordData = {
         oldPassword: '',
         newPassword: '',
@@ -55,8 +59,10 @@ app.controller('PasswordResetController', function ($scope, $http) {
         $http.post('https://localhost:7297/api/Khachhang/doimatkhau', changePasswordDto)
             .then(function (response) {
                 $scope.successMessage = 'Đổi mật khẩu thành công.';
+              
                 setTimeout(function () {
-                    $location.path = '#!login';
+                    $location.path('login.html');
+                    $scope.$apply(); 
                 }, 2000);
             })
             .catch(function (error) {
