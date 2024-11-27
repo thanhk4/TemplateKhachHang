@@ -455,72 +455,153 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope) {
         return userId;
     }
 
-    $('#muaHangBtn').on('click', function () {
-        const diachi = document.getElementById("diachi") ? document.getElementById("diachi").innerText.trim() : "";
-        const sdt = document.getElementById("sdt") ? document.getElementById("sdt").innerText.trim() : "";
-        const voucherCodeInput = document.getElementById("voucherCodeInput") ? document.getElementById("voucherCodeInput").value || 0 : 0;
-    
-        // Xử lý các giá trị tiền tệ, nếu không hợp lệ, gán về 0
-        const tongHoaDon = parseInt(document.getElementById("tongHoaDon") ? document.getElementById("tongHoaDon").innerText.replace(/[₫.]/g, "") : 0) || 0;
-        const tongSanPham = parseInt(document.getElementById("tongSanPham") ? document.getElementById("tongSanPham").innerText.replace(/[₫.]/g, "") : 0) || 0;
-        const soTienGiamGia = parseInt(document.getElementById("soTienGiamGia") ? document.getElementById("soTienGiamGia").innerText.replace(/[₫.]/g, "") : 0) || 0;
+    $('#muaHangBtn').on('click', async function () {
+        const tongHoaDon = parseInt(document.getElementById("tongHoaDon")?.innerText.replace(/[₫.]/g, "") || 0) || 0;
+        const diachi = document.getElementById("diachi")?.innerText.trim() || "";
+        const sdt = document.getElementById("sdt")?.innerText.trim() || "";
+        const voucherCodeInput = document.getElementById("voucherCodeInput")?.value || 0;
         const userId = GetByidKH();
-    
-        // Lấy ngày hiện tại cho trường "thoigiandathang"
         const currentDate = new Date().toISOString();
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
     
-        // Lấy giá trị của phương thức thanh toán được chọn
-        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
-    
-        // Tạo dữ liệu hóa đơn
         const hoadonData = {
-            idnv: 0,  // Ví dụ nếu không có thông tin nhân viên, set là 0
-            idkh: userId,  // Thông tin khách hàng (id khách hàng từ localStorage)
-            idgg: voucherCodeInput,  // Voucher code nhập vào
-            trangthaithanhtoan: 0,  // Trạng thái thanh toán (ví dụ: chưa thanh toán)
-            donvitrangthai: 0,  // Đơn vị trạng thái
-            thoigiandathang: currentDate,  // Thời gian đặt hàng (ngày hiện tại)
-            diachiship: diachi,  // Địa chỉ giao hàng
-            ngaygiaodukien: currentDate,  // Ngày giao dự kiến
-            ngaygiaothucte: currentDate,  // Ngày giao thực tế
-            tongtiencantra: tongHoaDon,  // Tổng tiền cần trả
-            tongtiensanpham: tongSanPham,  // Tổng tiền sản phẩm
-            sdt: sdt,  // Số điện thoại khách hàng
-            tonggiamgia: soTienGiamGia,  // Số tiền giảm giá
-            trangthai: 0  // Trạng thái của hóa đơn
+            idnv: 0,
+            idkh: userId,
+            idgg: voucherCodeInput,
+            trangthaithanhtoan: 0,
+            donvitrangthai: 0,
+            thoigiandathang: currentDate,
+            diachiship: diachi,
+            ngaygiaodukien: currentDate,
+            ngaygiaothucte: currentDate,
+            tongtiencantra: tongHoaDon,
+            tongtiensanpham: tongHoaDon, // Có thể thay bằng tổng tiền sản phẩm nếu khác
+            sdt: sdt,
+            tonggiamgia: 0,
+            trangthai: 0
         };
     
-        // URL API để gửi yêu cầu
-        const url = 'https://localhost:7297/api/Hoadon';
-        const method = 'POST';
+        try {
+            if (paymentMethod === "1" && tongHoaDon > 10000000) {
+                const confirm = await Swal.fire({
+                    title: 'Yêu cầu đặt cọc',
+                    text: 'Hóa đơn trên 10.000.000₫, vui lòng đặt cọc 30%.',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy'
+                });
     
-        // Gửi yêu cầu AJAX
-        $.ajax({
-            url: url,
-            method: method,
-            contentType: 'application/json',
-            data: JSON.stringify(hoadonData),
-            success: function (response) {
-                // Sau khi tạo hóa đơn thành công, gọi hàm thêm chi tiết hóa đơn
-                const idhd = response.id;  // Giả sử id hóa đơn trả về từ API
-                themHoaDonChiTiet(idhd);
-    
-                // Nếu paymentMethod = 2 (chuyển khoản), tạo link thanh toán
-                if (paymentMethod === "2") {
-                    taoLinkThanhToan(idhd); // Gọi hàm tạo link thanh toán
+                if (confirm.isConfirmed) {
+                    const soTienDatCoc = Math.ceil(tongHoaDon * 0.3);
+                    const idhd = await taoHoaDon(hoadonData);
+                    if (idhd) {
+                        await themHoaDonChiTiet(idhd);
+                        await taoLinkThanhToanCoc(hoadonData, soTienDatCoc);
+                        await addPaymentHistory(idhd)
+                    }
                 }
-    
-                // Gọi hàm thêm lịch sử thanh toán
-                addPaymentHistory(idhd, paymentMethod);
-            },
-            error: function (err) {
-                // Nếu có lỗi xảy ra, hiển thị thông báo lỗi
-                console.error('Lỗi khi lưu chương trình hoá đơn:', err);
-                $('#error-message').text('Có lỗi xảy ra khi lưu dữ liệu.').removeClass('d-none');
+            } else {
+                const idhd = await taoHoaDon(hoadonData);
+                if (idhd) {
+                    await themHoaDonChiTiet(idhd);
+                    if (paymentMethod === "2")
+                         await taoLinkThanhToan(idhd)
+                         await addPaymentHistory(idhd);
+                }
             }
-        });
-    });    
+        } catch (error) {
+            console.error("Lỗi trong quá trình xử lý:", error);
+            Swal.fire("Lỗi", "Có lỗi xảy ra trong quá trình đặt hàng.", "error");
+        }
+    });
     
+    // Hàm tạo hóa đơn
+    async function taoHoaDon(hoadonData) {
+        try {
+            const response = await fetch('https://localhost:7297/api/Hoadon', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(hoadonData)
+            });
+            if (response.ok) {
+                const result = await response.json();
+                return result.id; // Trả về ID hóa đơn
+            } else {
+                Swal.fire("Lỗi", "Tạo hóa đơn thất bại.", "error");
+            }
+        } catch (error) {
+            console.error("Lỗi khi tạo hóa đơn:", error);
+        }
+        return null;
+    }
+    
+    // Hàm thêm chi tiết hóa đơn
+    async function themHoaDonChiTiet(idhd) {
+        const ListdanhSachSanPham = danhSachSanPham; // Danh sách sản phẩm từ giỏ hàng
+        for (const sanPham of ListdanhSachSanPham) {
+            const data = {
+                idhd: idhd,
+                idspct: sanPham.id,
+                soluong: sanPham.soluong,
+                giasp: sanPham.giathoidiemhientai,
+                giamgia: sanPham.giamgia || 0
+            };
+    
+            try {
+                const response = await fetch('https://localhost:7297/api/HoaDonChiTiet', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                if (!response.ok) {
+                    console.error("Lỗi khi thêm chi tiết hóa đơn:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Lỗi kết nối API khi thêm chi tiết hóa đơn:", error);
+            }
+        }
+    }   
+    
+    async function taoLinkThanhToanCoc(hoadonData, soTienDatCoc) {
+        const payload = {
+            orderCode: hoadonData.idkh, // Mã hóa đơn
+            items: [
+                {
+                    name: sanPham.tensp,  // Tên sản phẩm
+                    quantity: sanPham.soluong,  // Số lượng
+                    price: sanPham.giathoidiemhientai  // Giá sản phẩm
+                }
+            ],
+            totalAmount: soTienDatCoc, // Tổng tiền đặt cọc
+            description: "Đặt cọc 30% tổng hóa đơn"
+        };
+    
+        try {
+            const response = await fetch('https://localhost:7297/api/checkout/create-payment-link', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            });
+    
+            if (response.ok) {
+                const data = await response.json();
+                if (data && data.checkoutUrl) {
+                    window.location.href = data.checkoutUrl;
+                } else {
+                    Swal.fire('Lỗi', 'Không nhận được đường dẫn thanh toán.', 'error');
+                }
+            } else {
+                Swal.fire('Lỗi', 'Tạo link thanh toán thất bại.', 'error');
+            }
+        } catch (error) {
+            console.error('Lỗi khi tạo link thanh toán:', error);
+            Swal.fire('Lỗi', 'Có lỗi xảy ra trong quá trình xử lý.', 'error');
+        }
+    }
+
     // Hàm thêm lịch sử thanh toán
     async function addPaymentHistory(idhd) {
 
@@ -579,7 +660,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope) {
                 price: sanPham.giathoidiemhientai  // Giá sản phẩm
             })),
             totalAmount: tongHoaDon,  // Tổng tiền
-            description: ""  // Mô tả thêm nếu cần
+            description: "Thanh Toán Hoá Đơn"  // Mô tả thêm nếu cần
         };
     
         console.log('Payload gửi sang BE:', payload);  // Kiểm tra payload
@@ -605,49 +686,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope) {
             Swal.fire('Lỗi', 'Không nhận được đường dẫn thanh toán.', 'error');
         }
     }
-    
-    // Hàm thêm chi tiết hóa đơn
-    async function themHoaDonChiTiet(idhd) {
-        // Sử dụng danh sách sản phẩm từ giỏ hàng (được lưu trong biến toàn cục danhSachSanPham)
-        const ListdanhSachSanPham = danhSachSanPham; // Đây là danh sách bạn đã lưu trong renderSanPham
-        // Lưu URL hiện tại vào sessionStorage trước khi chuyển hướng
-        sessionStorage.setItem('previousUrl', window.location.href);
-    
-        // Duyệt qua danh sách sản phẩm và gửi từng chi tiết hóa đơn
-        for (const sanPham of ListdanhSachSanPham) {
-            const idspct = sanPham.id;
-            const soluong = sanPham.soluong;
-            const giasp = sanPham.giathoidiemhientai;
-            const giamgia = sanPham.giamgia || 0;
-    
-            const data = {
-                idhd: idhd,
-                idspct: idspct,
-                soluong: parseInt(soluong),
-                giasp: parseFloat(giasp),
-                giamgia: parseFloat(giamgia) || 0
-            };
-    
-            try {
-                const response = await fetch('https://localhost:7297/api/HoaDonChiTiet', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-    
-                if (response.ok) {
-                    const result = await response.json();
-                    console.log('Dữ liệu chi tiết hóa đơn đã được thêm thành công:', result);
-                } else {
-                    console.error('Lỗi khi thêm chi tiết hóa đơn:', response.statusText);
-                    alert("Có lỗi xảy ra khi thêm chi tiết hóa đơn.");
-                }
-            } catch (error) {
-                console.error('Lỗi kết nối API:', error);
-                alert("Lỗi kết nối API.");
-            }
-        }
-    }    
+
 
     // Xử lý redirect khi thanh toán bị hủy (cancel) hoặc thành công (success)
     if (window.location.pathname === '/cancel') {
