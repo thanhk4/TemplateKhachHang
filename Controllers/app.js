@@ -42,7 +42,7 @@ app.config(($routeProvider) => {
 })
 .when('/diachi', {
   templateUrl: './Views/diachi.html',
-  controller: ''
+  controller: 'diachiController'
 })
     .otherwise({
       redirectTo: "/"
