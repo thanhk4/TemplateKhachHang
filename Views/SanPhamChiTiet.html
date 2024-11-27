@@ -9,45 +9,47 @@
 
     <!-- Product Layout -->
     <div class="row mt-4">
-        <!-- Thumbnail Images -->
-        <div class="col-md-2" style="width: 14.6%;">
-            <img ng-src="../image/{{product.images}}.png" class="thumbnail" alt="Thumbnail 1">
-            <img ng-src="../image/{{product.images}}.png" class="thumbnail mt-2" alt="Thumbnail 2">
-            <img ng-src="../image/{{product.images}}.png" class="thumbnail mt-2" alt="Thumbnail 3">
-        </div>
-    
-        <!-- Ảnh hiển thị sản phẩm -->
+        <!-- Main Product Image -->
         <div class="col-md-5">
-            <img ng-src="../image/{{product.images}}.png" class="main-image" alt="Main Product Image">
+            <img src="{{sanPham.uRlHinhAnh}}" class="main-image" alt="Main Product Image">
         </div>
-    
+
         <!-- Product Details -->
         <div class="col-md-5">
-            <h3>{{product.name}}</h3>
-            <h4 class="text-danger">{{product.price | currency}}</h4>
-            <p>{{product.description}}</p>
-    
-            <hr class="mt-3" style="border: 0; border-top: 2px solid;">
-
-            <!-- Size Options -->
-            <div class="mt-2" id="thuoc-tinh-container">
-                <!-- Các tùy chọn thuộc tính sẽ được thêm vào đây -->
+            <h3>{{sanPham.tensp}}</h3>
+            <h4 class="text-danger">{{sanPham.giasale}}đ <small
+                    class="text-decoration-line-through text-muted">{{sanPham.giaban}}đ</small></h4>
+            <p>{{sanPham.mota}}</p>
+            <div ng-repeat="(key, values) in groupedThuocTinhs">
+                <hr class="mt-3" style="border: 0; border-top: 2px solid;">
+            
+                <!-- Tên thuộc tính (vd: Màu, Size) -->
+                <div class="mt-2">
+                    <h5>{{key}}</h5>
+                    <div class="d-flex flex-wrap gap-2">
+                        <!-- Lặp qua từng giá trị của thuộc tính -->
+                        <div ng-repeat="value in values" class="mb-1">
+                            <input type="checkbox" class="btn-check" id="btn-check-{{key}}-{{$index}}" autocomplete="off">
+                            <label class="btn btn-outline-secondary"
+                                for="btn-check-{{key}}-{{$index}}">{{value}}</label>
+                        </div>
+                    </div>
+                </div>
             </div>
-
             <hr class="mt-3" style="border: 0; border-top: 2px solid;">
-    
+
             <!-- Quantity and Buttons -->
             <div class="mt-2 d-flex align-items-center">
                 <div class="input-group input-group-custom mb-3">
-                    <button class="btn btn-outline-secondary quantity-btn" type="button" id="button-addon1" ng-click="decreaseQuantity()">-</button>
-                    <input type="text" class="form-control text-center quantity-input" id="quantity" ng-model="quantity" min="1" max="{{product.maxQuantity}}">
-                    <button class="btn btn-outline-secondary quantity-btn" type="button" id="button-addon2" ng-click="increaseQuantity()">+</button>
+                    <button class="btn btn-outline-secondary quantity-btn" type="button" id="button-addon1">-</button>
+                    <input type="text" class="form-control text-center quantity-input" id="quantity" value="1" min="1">
+                    <button class="btn btn-outline-secondary quantity-btn" type="button" id="button-addon2">+</button>
                 </div>
                 <a href="#!muasanpham" class="btn btn-outline-dark chat-btn me-2">Mua ngay</a>
-                <button class="btn btn-dark add-cart-btn" ng-click="addToCart()">Thêm vào giỏ hàng</button>
+                <button class="btn btn-dark add-cart-btn">Thêm vào giỏ hàng</button>
             </div>
         </div>
-    </div>    
+    </div>
     <div class="mt-3">
         <div class="row">
             <div class="col-8">
@@ -73,8 +75,34 @@
                 </p>
                 <div class="collapse" id="DanhGiaExample">
                     <div class="card card-body">
-                        Some placeholder content for the collapse component. This panel is hidden by default but
-                        revealed when the user activates the relevant trigger.
+                        <div ng-if="danhGias.length === null">
+                            <p>Không có đánh giá nào cho sản phẩm này.</p>
+                        </div>
+                    
+                        <!-- Hiển thị danh sách đánh giá -->
+                        <div ng-if="danhGias.length > 0">
+                            <div class="danh-gia-item" ng-repeat="danhGia in danhGias">
+                                <div class="header">
+                                    <strong>Khách hàng:</strong> {{ danhGia.idkh || "Ẩn danh" }}
+                                    <span class="date">{{ danhGia.ngaydanhgia | date:'dd/MM/yyyy' }}</span>
+                                </div>
+                                <div class="content">
+                                    <p><strong>Nội dung:</strong> {{ danhGia.noidungdanhgia }}</p>
+                                </div>
+                                <div class="footer">
+                                    <strong>Trạng thái:</strong> 
+                                    <span ng-class="{'approved': danhGia.trangthai === 1, 'pending': danhGia.trangthai === 0}">
+                                        {{ danhGia.trangthai === 1 ? 'Đã duyệt' : 'Chờ duyệt' }}
+                                    </span>
+                                </div>
+                                <hr />
+                            </div>
+                        </div>
+                    
+                        <!-- Hiển thị lỗi -->
+                        <div ng-if="errorMessage" class="error">
+                            <p>{{ errorMessage }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
