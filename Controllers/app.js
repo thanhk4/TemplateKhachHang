@@ -32,6 +32,10 @@ app.config(($routeProvider) => {
       templateUrl: "./Views/donhangcuaban.html",
       controller:'donhangcuabanController'
     })
+    .when("/timkiem/:search", {
+      templateUrl: './Views/timkiem.html',
+      controller: 'timkiemController'
+    })
     .when('/thongtintaikhoan', {
       templateUrl: './Views/thongtintaikhoan.html',
       controller: 'ThongTinTaiKhoanController'
@@ -127,4 +131,3 @@ app.controller('ThuongHieuController', function($scope, ThuongHieuService) {
   // Gọi hàm khi Controller khởi tạo
   $scope.loadThuongHieu();
 });
-
