@@ -28,13 +28,17 @@ app.config(($routeProvider) => {
       templateUrl: "./Views/dangky.html",
       controller: "dangkyController"
     })
+    .when("/donhangcuaban", {
+      templateUrl: "./Views/donhangcuaban.html",
+      controller:'donhangcuabanController'
+    })
+    .when("/timkiem/:search", {
+      templateUrl: './Views/timkiem.html',
+      controller: 'timkiemController'
+    })
     .when('/thongtintaikhoan', {
       templateUrl: './Views/thongtintaikhoan.html',
       controller: 'ThongTinTaiKhoanController'
-<<<<<<< HEAD
-
-=======
->>>>>>> parent of 9dfec91 (SanPhamSale view)
   })
   .when('/quenmatkhau', {
     templateUrl: './Views/quenmatkhau.html',
@@ -44,37 +48,18 @@ app.config(($routeProvider) => {
     templateUrl: './Views/resetpassword.html',
     controller: 'PasswordResetController'
 })
-<<<<<<< HEAD
-.when('/trangthai', {
-  templateUrl: './Views/Donmua.html',
-  controller: 'MuahangController'
-})
-.when('/diachi', {
-  templateUrl: './Views/diachi.html',
-  controller: 'diachiController'
-})
-
-=======
->>>>>>> parent of 9dfec91 (SanPhamSale view)
 .when('/doimatkhau2', {
   templateUrl: './Views/doimatkhau2.html',
   controller: 'doimatkhau2Controller'
 })
-<<<<<<< HEAD
+
 .when("/sanphamthuonghieu/:id", {
   templateUrl: "./Views/SanPhamThuongHieu.html",
   controller: "SanPhamThuongHieuController"
 })
 .otherwise({
   redirectTo: "/"
-=======
-    .otherwise({
-      redirectTo: "/"
-    });
->>>>>>> parent of 9dfec91 (SanPhamSale view)
 });
-
-    });
     
 
 
@@ -107,4 +92,34 @@ app.run(function ($rootScope, $location) {
       console.error('Lỗi toàn cục:', error);
       
   });
+});
+
+app.service('ThuongHieuService', function($http) {
+  const apiUrl = 'https://localhost:7297/api/Thuonghieu'; // Thay URL API của bạn
+
+  // Hàm lấy danh sách thương hiệu
+  this.getAllThuongHieu = function() {
+      return $http.get(apiUrl);
+  };
+});
+
+app.controller('ThuongHieuController', function($scope, ThuongHieuService) {
+  $scope.thuongHieus = []; // Danh sách thương hiệu
+  $scope.errorMessage = null;
+
+  // Hàm tải dữ liệu thương hiệu
+  $scope.loadThuongHieu = function() {
+      ThuongHieuService.getAllThuongHieu()
+          .then(function(response) {
+              $scope.thuongHieus = response.data; // Gán dữ liệu từ API
+              console.log("Danh sách thương hiệu:", $scope.thuongHieus);
+          })
+          .catch(function(error) {
+              $scope.errorMessage = "Không thể tải danh sách thương hiệu.";
+              console.error("Lỗi khi gọi API thương hiệu:", error);
+          });
+  };
+
+  // Gọi hàm khi Controller khởi tạo
+  $scope.loadThuongHieu();
 });

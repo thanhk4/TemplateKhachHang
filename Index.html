@@ -73,7 +73,28 @@
                         </a>
                     </div>
 
+
+            </div>
+            <!-- Search bar -->
+            <form class="d-flex ms-auto align-items-center" ng-submit="btntimkiem()">
+                <div class="input-group">
+                  <input class="form-control" type="search" placeholder="Search" ng-model="search" required>
+                  <button class="btn btn-outline-light" type="submit">
+                    <i class="bi bi-search"></i>
+                  </button>
+                </div>
+              </form>
+              
+
+            <!-- Icons bên phải -->
+            <div class="d-flex align-items-center ms-3">
+                <!-- Icon giỏ hàng -->
+                <div class="nav-item ">
+                    <a href="#" class="nav-link text-white">
+                        <i class="bi bi-cart3" style="font-size: 1.5rem;"></i>
+
                     <!-- Icon người dùng với dropdown -->
+
 
                     <ul class="navbar-nav ms-auto">
                         <!-- Hiển thị "Đăng nhập" nếu chưa đăng nhập -->
@@ -123,15 +144,34 @@
     <script src="Controllers/TrangChu.js"></script>
     <script src="Controllers/SanPhamChiTiet.js"></script>
     <script src="Controllers/MuaSanPham.js"></script>
-    <script src="Controllers/LoginController.js"></script>
-    <script src="Controllers/dangkyController.js"></script>
-    <script src="Controllers/ThongTinTaiKhoanController.js"></script>
-    <script src="Controllers/quenmatkhauController.js"></script>
-    <script src="Controllers/PasswordResetController.js"></script>
-    <script src="Controllers/doimatkhau2.js"></script>
-    <script src="Controllers/MuahangController.js"></script>
-    <script src="Controllers/diachiController.js"></script>
-    <script src="/Controllers/Toastr.js"></script>
+
+
+         <script src="Controllers/LoginController.js"></script>
+        <script src="Controllers/dangkyController.js"></script>
+        <script src="Controllers/ThongTinTaiKhoanController.js"></script>
+        <script src="Controllers/quenmatkhauController.js"></script>
+        <script src="Controllers/PasswordResetController.js"></script>
+        <script src="Controllers/doimatkhau2.js"></script>
+        
+        <script src="./Controllers/donhangcuabanController.js"></script>
+        <script src="Controllers/MuahangController.js"></script>
+        <script src="Controllers/diachiController.js"></script>
+        <script src="./Controllers/SanPhamSaleController.js"></script>
+        <script src="./Controllers/timkiemController.js"></script>
+    
+
+  
+
+    
+
+
+
+
+
+       
+      
+      
+
 
     <footer class="footer mt-3 border-top text-dark">
         <div class="row align-items-center">
@@ -152,7 +192,7 @@
             </div>
         </div>
     </footer>
-
+<script src="/Controllers/Toastr.js"></script>
     <script>
         function selectLanguage(language, element) {
             document.getElementById('dropdownMenuButton').innerText = language;
