@@ -64,51 +64,63 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
     };
 
     const apIDSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/GetSanPhamChiTietByThuocTinh";
+const apiIDSPtoIDSPCT = "https://localhost:7297/api/Sanphamchitiet/sanpham/";
 
-    $scope.MuaSanPham = async function () {
-        // Lấy danh sách các thuộc tính đã chọn
-        const tenthuoctinhList = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
+$scope.MuaSanPham = async function () {
+    // Lấy danh sách các thuộc tính đã chọn
+    const tenthuoctinhList = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
 
-        // Kiểm tra xem có thuộc tính nào được chọn không
-        if (tenthuoctinhList.length > 0) {
-            try {
-                // Chuyển mảng tenthuoctinhList thành chuỗi query string
-                const queryString = tenthuoctinhList.map(item => `tenthuoctinh=${encodeURIComponent(item)}`).join('&');
+    // Kiểm tra xem có thuộc tính nào được chọn không
+    if (tenthuoctinhList.length > 0) {
+        try {
+            // Chuyển mảng tenthuoctinhList thành chuỗi query string
+            const queryString = tenthuoctinhList.map(item => `tenthuoctinh=${encodeURIComponent(item)}`).join('&');
 
-                // Gọi API bằng phương thức fetch
-                const response = await fetch(`${apIDSPCTUrl}?${queryString}`);
-
-                // Kiểm tra xem API có trả về thành công không
-                if (!response.ok) {
-                    throw new Error('Lỗi khi gọi API');
-                }
-
-                // Chuyển dữ liệu từ response thành JSON
-                const data = await response.json();
-
-                // Xử lý dữ liệu trả về
-                $scope.sanPhamChiTiets = data;
-                console.log("Danh sách SPCT:", $scope.sanPhamChiTiets);
-
-                // Kiểm tra dữ liệu trả về có thuộc tính idspct không null
-                if (data.idspct != null) {
-                    // Lấy ID của SPCT từ dữ liệu API
-                    const firstSPCTId = data.idspct;
-                    console.log(`Chuyển sang trang mua sản phẩm với id: ${firstSPCTId}`);
-
-                    // Chuyển hướng tới trang chi tiết sản phẩm với id lấy được
-                    $location.path(`/muasanpham/${firstSPCTId}`);
-                } else {
-                    console.log("Không có sản phẩm chi tiết nào phù hợp.");
-                    $scope.errorMessage = "Không có sản phẩm chi tiết nào phù hợp với thuộc tính đã chọn.";
-                }
-            } catch (error) {
-                $scope.errorMessage = "Không thể tải thông tin sản phẩm chi tiết. Vui lòng thử lại sau.";
-                console.error("Lỗi khi tải sản phẩm chi tiết:", error);
+            // Gọi API để lấy danh sách SPCT theo thuộc tính
+            const idspctTTResponse = await fetch(`${apIDSPCTUrl}?${queryString}`);
+            if (!idspctTTResponse.ok) {
+                throw new Error('Lỗi khi gọi API GetSanPhamChiTietByThuocTinh');
             }
-        } else {
-            console.log("Không có thuộc tính nào được chọn.");
-            $scope.errorMessage = "Vui lòng chọn ít nhất một thuộc tính.";
+            const dataspcttt = await idspctTTResponse.json();
+
+            // Kiểm tra kết quả của API thuộc tính
+            if (!dataspcttt || dataspcttt.length === 0) {
+                $scope.errorMessage = "Không có sản phẩm chi tiết nào phù hợp với thuộc tính đã chọn.";
+                console.log($scope.errorMessage);
+                return;
+            }
+
+            // Gọi API để lấy danh sách SPCT theo sản phẩm
+            const idspctSPResponse = await fetch(`${apiIDSPtoIDSPCT}${sanPhamId}`);
+            if (!idspctSPResponse.ok) {
+                throw new Error('Lỗi khi gọi API GetSanPhamChiTietBySanPham');
+            }
+            const dataspctsp = await idspctSPResponse.json();
+
+            // Lọc ra các sản phẩm chi tiết trùng khớp giữa hai API
+            const matchedSPCT = dataspcttt.filter(item => 
+                dataspctsp.some(sp => sp.id === item.idspct)
+            );
+
+            if (matchedSPCT.length > 0) {
+                // Xử lý sản phẩm chi tiết đầu tiên phù hợp
+                const firstSPCTId = matchedSPCT[0].idspct;
+                console.log(`Chuyển sang trang mua sản phẩm với id: ${firstSPCTId}`);
+                $scope.$apply(() => {
+                    $location.path(`/muasanpham/${firstSPCTId}`);
+                });                
+            } else {
+                $scope.errorMessage = "Không có sản phẩm chi tiết nào phù hợp giữa hai API.";
+                console.log($scope.errorMessage);
+            }
+        } catch (error) {
+            $scope.errorMessage = "Không thể tải thông tin sản phẩm chi tiết. Vui lòng thử lại sau.";
+            console.error("Lỗi khi tải sản phẩm chi tiết:", error);
         }
-    };
+    } else {
+        $scope.errorMessage = "Vui lòng chọn ít nhất một thuộc tính.";
+        console.log($scope.errorMessage);
+    }
+};
+
 });

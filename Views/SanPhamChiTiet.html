@@ -22,21 +22,17 @@
             <p>{{sanPham.mota}}</p>
             <div ng-repeat="(key, values) in groupedThuocTinhs">
                 <hr class="mt-3" style="border: 0; border-top: 2px solid;">
-            
+
                 <!-- Tên thuộc tính (vd: Màu, Size) -->
                 <div class="mt-2">
                     <h5>{{key}}</h5>
                     <div class="d-flex flex-wrap gap-2">
                         <!-- Lặp qua từng giá trị của thuộc tính -->
                         <div ng-repeat="value in values" class="mb-1">
-                            <input type="checkbox" class="btn-check" 
-                                   id="btn-check-{{key}}-{{$index}}" 
-                                   autocomplete="off"
-                                   ng-model="selectedValues[value]"
-                                   ng-change="onThuocTinhChange()">
-                            <label class="btn btn-outline-secondary" 
-                                   for="btn-check-{{key}}-{{$index}}">
-                                   {{value}}
+                            <input type="checkbox" class="btn-check" id="btn-check-{{key}}-{{$index}}"
+                                autocomplete="off" ng-model="selectedValues[value]" ng-change="onThuocTinhChange()">
+                            <label class="btn btn-outline-secondary" for="btn-check-{{key}}-{{$index}}">
+                                {{value}}
                             </label>
                         </div>
                     </div>
@@ -47,10 +43,12 @@
             <!-- Quantity and Buttons -->
             <div class="mt-2 d-flex align-items-center">
                 <div class="input-group input-group-custom mb-3">
-                    <button class="btn btn-outline-secondary quantity-btn" type="button" ng-click="changeQuantity(-1)">-</button>
+                    <button class="btn btn-outline-secondary quantity-btn" type="button"
+                        ng-click="changeQuantity(-1)">-</button>
                     <span id="quantity-display" class="form-control text-center quantity-display">{{quantity}}</span>
-                    <button class="btn btn-outline-secondary quantity-btn" type="button" ng-click="changeQuantity(1)">+</button>
-                </div>                            
+                    <button class="btn btn-outline-secondary quantity-btn" type="button"
+                        ng-click="changeQuantity(1)">+</button>
+                </div>
                 <a href="" ng-click="MuaSanPham()" class="btn btn-outline-dark chat-btn me-2">Mua ngay</a>
                 <button class="btn btn-dark add-cart-btn">Thêm vào giỏ hàng</button>
             </div>
@@ -84,7 +82,7 @@
                         <div ng-if="danhGias.length === null">
                             <p>Không có đánh giá nào cho sản phẩm này.</p>
                         </div>
-                    
+
                         <!-- Hiển thị danh sách đánh giá -->
                         <div ng-if="danhGias.length > 0">
                             <div class="danh-gia-item" ng-repeat="danhGia in danhGias">
@@ -96,15 +94,16 @@
                                     <p><strong>Nội dung:</strong> {{ danhGia.noidungdanhgia }}</p>
                                 </div>
                                 <div class="footer">
-                                    <strong>Trạng thái:</strong> 
-                                    <span ng-class="{'approved': danhGia.trangthai === 1, 'pending': danhGia.trangthai === 0}">
+                                    <strong>Trạng thái:</strong>
+                                    <span
+                                        ng-class="{'approved': danhGia.trangthai === 1, 'pending': danhGia.trangthai === 0}">
                                         {{ danhGia.trangthai === 1 ? 'Đã duyệt' : 'Chờ duyệt' }}
                                     </span>
                                 </div>
                                 <hr />
                             </div>
                         </div>
-                    
+
                         <!-- Hiển thị lỗi -->
                         <div ng-if="errorMessage" class="error">
                             <p>{{ errorMessage }}</p>
