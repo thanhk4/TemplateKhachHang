@@ -41,6 +41,28 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
 
     loadSanPhamChiTiet();
 
+      // Đặt giá trị mặc định cho quantity
+    $scope.quantity = parseInt(sessionStorage.getItem('quantity')) || 1; // Lấy số lượng từ sessionStorage nếu có
+    $scope.maxQuantity = 100; // Giới hạn số lượng, có thể lấy từ dữ liệu sản phẩm
+
+    // Hàm thay đổi số lượng
+    $scope.changeQuantity = function (delta) {
+        let newQuantity = $scope.quantity + delta;
+        if (newQuantity >= 1 && newQuantity <= $scope.maxQuantity) {
+            $scope.quantity = newQuantity;
+            sessionStorage.setItem('quantity', $scope.quantity); // Lưu số lượng vào sessionStorage
+        }
+    };
+
+    // Hàm lấy giá trị số lượng từ phần tử span (hiển thị)
+    $scope.getQuantityDisplay = function() {
+        const quantityDisplay = document.getElementById("quantity-display");
+        if (quantityDisplay) {
+            return quantityDisplay.innerText || quantityDisplay.textContent; // Lấy giá trị hiển thị
+        }
+        return null;
+    };
+
     const apIDSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/GetSanPhamChiTietByThuocTinh";
 
     $scope.MuaSanPham = async function () {

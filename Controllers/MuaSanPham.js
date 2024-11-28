@@ -1,4 +1,4 @@
-app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) {
+app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, $scope, $location) {
     const quantityInput = document.querySelector(".quantity-input");
     const priceElement = document.querySelector(".total-price");
     const sanPhamCTId = $routeParams.id;
@@ -38,11 +38,10 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
                 throw new Error(`Lỗi API: ${response.status}`);
             }
 
-            // Chuyển đổi dữ liệu JSON từ response
             const data = await response.json();
 
-            // Trả về dữ liệu của sản phẩm chi tiết
-            return data;
+            // Nếu API trả về một đối tượng, chuyển đổi nó thành mảng
+            return Array.isArray(data) ? data : [data];
         } catch (error) {
             console.error("Lỗi khi lấy sản phẩm chi tiết:", error);
             return null; // Trả về null nếu có lỗi
@@ -133,7 +132,13 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
         }
     }
 
-
+    function getQuantityFromSession() {
+        // Lấy số lượng từ sessionStorage
+        const quantity = sessionStorage.getItem('quantity');
+    
+        // Nếu có số lượng trong sessionStorage, trả về giá trị đó, nếu không trả về 1 (giá trị mặc định)
+        return quantity ? parseInt(quantity) : 1;
+    }
     // Biến toàn cục lưu trữ danh sách sản phẩm
     let danhSachSanPham = [];
 
@@ -141,6 +146,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
     async function renderSanPham() {
         const sanPhamChitiets = await fetchSanPhamChitiet();
         const productList = document.querySelector(".product-list");
+        $scope.quantity = getQuantityFromSession();
 
         if (sanPhamChitiets.length === 0) {
             productList.innerHTML = "<p>Không có sản phẩm nào để hiển thị.</p>";
@@ -178,7 +184,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
                 idsp: idsp, // id của sản phẩm
                 tensp: sanPhamData.tensp,
                 giathoidiemhientai: giathoidiemhientai,
-                soluong: 1, // Giả sử ban đầu là 1 sản phẩm
+                soluong: $scope.quantity,
                 giamgia: 0 // Giảm giá mặc định nếu có
             });
 
@@ -189,7 +195,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
             productItem.innerHTML = `
             <!-- Sản phẩm -->
             <div class="d-flex align-items-center" style="width: 50%;">
-                <img src="../image/${sanPhamData.urlHinhanh}.png" alt="Product Image" style="width: 80px; height: auto;">
+                <img src="../image/${sanPhamData.urlHinhanh}" alt="Product Image" style="width: 80px; height: auto;">
                 <div class="ms-3" style="flex: 1;">
                     <p class="mb-1 fw-bold">${sanPhamData.tensp}</p>
                     <span class="text-muted">Phân Loại Hàng:</span>
@@ -204,7 +210,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
                 </div>
 
                 <div class="d-flex justify-content-center align-items-center" style="width: 30%;">
-                    <span class="text-black fw-bold quantity-display">${1}</span> <!-- Hiển thị số lượng là 1 -->
+                    <span class="text-black fw-bold quantity-display">${$scope.quantity}</span>
                 </div>
                 <div class="text-center text-danger fw-bold total-price" style="width: 35%;"></div>
             </div>
@@ -333,10 +339,11 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
     }
 
     $('#muaHangBtn').on('click', async function () {
+        const voucherCodeInputdata = document.getElementById('voucherCodeDisplay');
         const tongHoaDon = parseInt(document.getElementById("tongHoaDon")?.innerText.replace(/[VND.]/g, "") || 0) || 0;
         const diachi = document.getElementById("diachi")?.innerText.trim() || "";
         const sdt = document.getElementById("sdt")?.innerText.trim() || "";
-        const voucherCodeInput = document.getElementById("voucherCodeInput")?.value || 0;
+        const voucherCodeInput = voucherCodeInputdata.getAttribute('data-value') || 0;
         const userId = GetByidKH();
         const currentDate = new Date().toISOString();
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
@@ -682,40 +689,40 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
     document.getElementById("btnSaveAddress").addEventListener("click", async function () {
         var addressSelect = document.getElementById("addressSelect");
         var selectedAddressId = addressSelect.value; // Lấy id của địa chỉ đã chọn
-    
+
         // Kiểm tra xem người dùng có chọn địa chỉ không
         if (!selectedAddressId) {
             Swal.fire("Lỗi", "Vui lòng chọn một địa chỉ", "error");
             return;
         }
-    
+
         // Lấy thông tin địa chỉ chi tiết từ API hoặc mảng địa chỉ
         try {
             const response = await axios.get(`${apiAddressList}/${selectedAddressId}`);
-            
+
             if (response && response.data) {
                 // Tạo địa chỉ mới từ thông tin chi tiết của địa chỉ
                 var newAddress = response.data.diachicuthe + ", " +
-                                 response.data.phuongxa + ", " +
-                                 response.data.quanhuyen + ", " +
-                                 response.data.thanhpho;
-    
+                    response.data.phuongxa + ", " +
+                    response.data.quanhuyen + ", " +
+                    response.data.thanhpho;
+
                 // Cập nhật thông tin địa chỉ vào phần tử có id "diachi"
                 document.getElementById("diachi").textContent = newAddress;
-    
+
                 // Xóa phần tử "Mặc định" nếu có
                 var defaultBadge = document.querySelector(".badge.bg-primary-subtle.text-success");
                 if (defaultBadge) {
                     defaultBadge.remove(); // Xóa "Mặc định"
                 }
-    
+
                 // Hiển thị nút "Khôi phục" nếu địa chỉ đã thay đổi
                 document.getElementById("btnRestoreAddress").style.display = 'inline-block';
-    
+
                 // Ẩn modal sau khi lưu địa chỉ
                 var modal = bootstrap.Modal.getInstance(document.getElementById("exampleModal"));
                 modal.hide();
-    
+
                 // Hiển thị kết quả sau khi lưu thành công
                 printResult();
                 Swal.fire("Thành Công", "Thay đổi địa chỉ thành công.", "success");
@@ -726,7 +733,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
             Swal.fire("Lỗi", "Không thể tải thông tin địa chỉ", "error");
             console.error(error);
         }
-    });     
+    });
 
     /// Lắng nghe sự kiện "Khôi phục" địa chỉ mặc định
     document.getElementById("btnRestoreAddress").addEventListener("click", function () {
@@ -811,102 +818,106 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
     document.getElementById("AddNewAddressExample").addEventListener("click", function () {
         var addressSelect = document.getElementById("addressSelect");
         var btnSaveAddress = document.getElementById("btnSaveAddress");
-    
+
         // Kiểm tra trạng thái hiện tại của addressSelect và btnSaveAddress
-        if (addressSelect.disabled) {
+        if (btnSaveAddress.disabled == false) {
             // Nếu đang ở trạng thái disabled, thì chuyển sang enabled
-            addressSelect.disabled = false;
-            btnSaveAddress.disabled = false;
+            btnSaveAddress.disabled = true;
+            addressSelect.disabled = true;
         } else {
             // Nếu đang ở trạng thái enabled, thì chuyển sang disabled
-            addressSelect.disabled = true;
-            btnSaveAddress.disabled = true;
+            btnSaveAddress.disabled = false;
+            addressSelect.disabled = false;
         }
     });
 
-   // Lấy danh sách địa chỉ theo idKH
-   const loadAddressesByIdKH = async () => {
-       const idKH = GetByidKH(); // Hàm logic lấy idKH
-       const addressSelect = document.getElementById("addressSelect");
-       
-       // Reset nội dung của select
-       addressSelect.innerHTML = '<option disabled selected value="">Đang tải...</option>';
-       addressSelect.disabled = true;
+    const loadAddressesByIdKH = async () => {
+        const idKH = GetByidKH(); // Hàm logic lấy idKH
+        const addressSelect = document.getElementById("addressSelect");
 
-       if (!idKH) {
-           Swal.fire("Lỗi", "Không tìm thấy mã khách hàng.", "error");
-           return;
-       }
+        // Kiểm tra `idKH`
+        if (!idKH) {
+            addressSelect.innerHTML = '<option disabled selected value="">Không tìm thấy mã khách hàng</option>';
+            addressSelect.disabled = true;
+            return; // Ngưng thực hiện nếu không có `idKH`
+        }
 
-       try {
-           const response = await axios.get(`${apiAddressList}/khachhang/${idKH}`);
+        // Gọi API lấy danh sách địa chỉ
+        const response = await fetch(`${apiAddressList}/khachhang/${idKH}`);
 
-           if (response.data.length === 0) {
-               // Không có địa chỉ
-               addressSelect.innerHTML = '<option disabled selected value="">Tài khoản này chưa có địa chỉ, vui lòng thêm địa chỉ</option>';
-               addressSelect.disabled = true;
-               Swal.fire("Thông báo", "Không có địa chỉ nào liên quan đến khách hàng này.", "info");
-           } else {
-               // Có địa chỉ
-               addressSelect.innerHTML = '<option disabled selected value="" required>Chọn địa chỉ...</option>';
-               response.data.forEach(address => {
-                   addressSelect.innerHTML += `<option value="${address.id}"> ${address.diachicuthe}, ${address.phuongxa}, ${address.quanhuyen}, ${address.thanhpho}</option>`;
-               });
-               addressSelect.disabled = false; // Kích hoạt select khi có dữ liệu
-           }
-       } catch (error) {
-           addressSelect.innerHTML = '<option disabled selected value="">Không thể tải địa chỉ</option>';
-           Swal.fire("Lỗi", "Không thể tải danh sách địa chỉ.", "error");
-           console.error(error);
-       }
-   };
+        // Kiểm tra xem API có trả về dữ liệu không
+        if (!response.ok) {
+            throw new Error("Không thể lấy dữ liệu từ server.");
+        }
 
-   // Lưu địa chỉ mới api
-   document.getElementById("btnAddNewAddress").addEventListener("click", async () => {
-       const thanhpho = document.getElementById("province").value.trim();
-       const quanhuyen = document.getElementById("district").value.trim();
-       const phuongxa = document.getElementById("ward").value.trim();
-       const diachicuthe = document.getElementById("detailInput").value.trim();
-       const idkh = GetByidKH();
+        const data = await response.json(); // Chuyển dữ liệu sang JSON
 
-       if (!thanhpho || !quanhuyen || !phuongxa || !diachicuthe || !idkh) {
-           Swal.fire("Lỗi", "Vui lòng nhập đầy đủ thông tin.", "error");
-           return;
-       }
+        // Kiểm tra dữ liệu trả về có hợp lệ không
+        if (!data || data.length === 0) {
+            // Không có địa chỉ nào
+            addressSelect.innerHTML = '<option disabled selected value="">Tài khoản này chưa có địa chỉ, vui lòng thêm địa chỉ</option>';
+            addressSelect.disabled = true; // Dropdown không tương tác
+        } else {
+            // Có danh sách địa chỉ
+            addressSelect.innerHTML = '<option disabled selected value="" required>Chọn địa chỉ...</option>';
+            data.forEach(address => {
+                addressSelect.innerHTML += `<option value="${address.id}">${address.diachicuthe}, ${address.phuongxa}, ${address.quanhuyen}, ${address.thanhpho}</option>`;
+            });
+            addressSelect.disabled = false; // Dropdown hoạt động
+        }
+    };
 
-       const newAddress = {
-           idkh,
-           thanhpho,
-           quanhuyen,
-           phuongxa,
-           diachicuthe
-       };
 
-       try {
-           await axios.post(apiAddressList, newAddress);
-           Swal.fire("Thành công", "Địa chỉ mới đã được lưu.", "success");
-           loadAddressesByIdKH(); // Làm mới danh sách địa chỉ
-       } catch (error) {
-           Swal.fire("Lỗi", "Không thể lưu địa chỉ mới.", "error");
-           console.error(error);
-       }
-   });
 
-   document.querySelectorAll('.voucher-card').forEach(card => {
-        card.addEventListener('click', function() {
-        // Lấy ra id của voucher được chọn từ thẻ card
-        var radioButtonId = card.id.replace('card-', '');
-    
-        // Đánh dấu radio button tương ứng với thẻ card được chọn
-        var radioButton = document.getElementById(radioButtonId);
-        radioButton.checked = true;
-    
-        // Thêm lớp 'selected-card' vào thẻ card để làm nổi bật
-        document.querySelectorAll('.voucher-card').forEach(c => c.classList.remove('selected-card'));
-        card.classList.add('selected-card');
-        });
+    // Lưu địa chỉ mới api
+    document.getElementById("btnAddNewAddress").addEventListener("click", async () => {
+        var diachicuthe = document.getElementById("detailInput").value;
+        var phuongxa = document.getElementById("ward").selectedOptions[0].text;
+        var quanhuyen = document.getElementById("district").selectedOptions[0].text;
+        var thanhpho = document.getElementById("province").selectedOptions[0].text;
+        const idkh = GetByidKH();
+
+        if (!thanhpho || !quanhuyen || !phuongxa || !diachicuthe || !idkh) {
+            Swal.fire("Lỗi", "Vui lòng nhập đầy đủ thông tin.", "error");
+            return;
+        }
+
+        const newAddress = {
+            idkh,
+            thanhpho,
+            quanhuyen,
+            phuongxa,
+            diachicuthe
+        };
+
+        try {
+            await axios.post(apiAddressList, newAddress);
+
+            // Gọi lại nút AddNewAddressExample để xử lý thêm logic sau khi lưu
+            document.getElementById("AddNewAddressExample").click();
+            Swal.fire("Thành công", "Địa chỉ mới đã được lưu.", "success");
+            loadAddressesByIdKH(); // Làm mới danh sách địa chỉ
+        } catch (error) {
+            Swal.fire("Lỗi", "Không thể lưu địa chỉ mới.", "error");
+            console.error(error);
+        }
     });
 
+
+    document.querySelectorAll('.voucher-card').forEach(card => {
+        card.addEventListener('click', function () {
+            // Lấy ra id của voucher được chọn từ thẻ card
+            var radioButtonId = card.id.replace('card-', '');
+
+            // Đánh dấu radio button tương ứng với thẻ card được chọn
+            var radioButton = document.getElementById(radioButtonId);
+            radioButton.checked = true;
+
+            // Thêm lớp 'selected-card' vào thẻ card để làm nổi bật
+            document.querySelectorAll('.voucher-card').forEach(c => c.classList.remove('selected-card'));
+            card.classList.add('selected-card');
+        });
+    });
 
     // Hàm gọi API lấy danh sách voucher khi modal mở
     $('#addVoucherButton').on('show.bs.modal', function () {
@@ -917,12 +928,12 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
         try {
             // Gửi yêu cầu API lấy danh sách voucher
             const response = await fetch(discountApiUrl);
-    
+
             // Kiểm tra nếu response không thành công
             if (!response.ok) {
                 throw new Error(`Lỗi API danh sách voucher: ${response.status}`);
             }
-    
+
             // Hàm định dạng ngày
             const formatDate = (dateTimeString) => {
                 const date = new Date(dateTimeString); // Chuyển đổi chuỗi datetime sang đối tượng Date
@@ -932,22 +943,22 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
 
             // Chuyển đổi dữ liệu nhận được thành JSON
             const vouchers = await response.json();
-            
+
             // Lấy đối tượng chứa danh sách voucher
             const voucherListContainer = document.getElementById('voucher-list');
             voucherListContainer.innerHTML = ''; // Xóa nội dung cũ
-            
+
             // Lấy phần tử thông báo không có voucher
             const voucherNotice = document.getElementById('voucher-notice');
-            
+
             // Nếu không có voucher nào, hiển thị thông báo và ẩn danh sách voucher
             if (vouchers.length === 0) {
                 voucherNotice.style.display = 'block';  // Hiển thị thông báo không có voucher
             } else {
-                    voucherNotice.style.display = 'none';  // Ẩn thông báo nếu có voucher
-                    // Duyệt qua danh sách và tạo các thẻ lựa chọn voucher
-                    vouchers.forEach(voucher => {
-                        const voucherCard = document.createElement('div');
+                voucherNotice.style.display = 'none';  // Ẩn thông báo nếu có voucher
+                // Duyệt qua danh sách và tạo các thẻ lựa chọn voucher
+                vouchers.forEach(voucher => {
+                    const voucherCard = document.createElement('div');
                     voucherCard.classList.add('form-check');
 
                     const voucherRadio = document.createElement('input');
@@ -977,11 +988,11 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
 
                     const cardText2 = document.createElement('p');
                     cardText2.classList.add('card-text');
-    
-                   // Hiển thị đơn vị nếu hợp lệ, ẩn nếu không hợp lệ
+
+                    // Hiển thị đơn vị nếu hợp lệ, ẩn nếu không hợp lệ
                     if (voucher.donvi === '%' || voucher.donvi === 'VND') {
                         // Kiểm tra nếu giá trị voucher.giatri >= 1000, định dạng lại
-                        const formattedValue = voucher.giatri >= 1000 
+                        const formattedValue = voucher.giatri >= 1000
                             ? voucher.giatri.toLocaleString('vi-VN')  // Định dạng giá trị với dấu phẩy phân cách hàng nghìn
                             : voucher.giatri;
 
@@ -998,7 +1009,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
                     voucherLabel.appendChild(card);
                     voucherCard.appendChild(voucherRadio);
                     voucherCard.appendChild(voucherLabel);
-    
+
                     // Thêm voucher vào danh sách
                     voucherListContainer.appendChild(voucherCard);
                 });
@@ -1007,24 +1018,24 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
             console.error('Lỗi khi lấy danh sách voucher:', error);
             Swal.fire("Lỗi", "Đã xảy ra lỗi khi tải danh sách voucher.", "error");
         }
-    }    
-    
+    }
+
     // Xử lý khi click vào thẻ card
     document.querySelectorAll('.voucher-card').forEach(card => {
-        card.addEventListener('click', function() {
+        card.addEventListener('click', function () {
             // Lấy ra id của voucher được chọn từ thẻ card
             var radioButtonId = card.id.replace('card-voucher', '');
-    
+
             // Đánh dấu radio button tương ứng với thẻ card được chọn
             var radioButton = document.getElementById(`voucher${radioButtonId}`);
             radioButton.checked = true;
-    
+
             // Thêm lớp 'selected-card' vào thẻ card để làm nổi bật
             document.querySelectorAll('.voucher-card').forEach(c => c.classList.remove('selected-card'));
             card.classList.add('selected-card');
         });
     });
-           
+
     const confirmButton = document.querySelector('#addVoucherButton .btn-secondary');
     confirmButton.addEventListener('click', function () {
         const selectedVoucher = document.querySelector('input[name="voucher"]:checked');
@@ -1051,19 +1062,20 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams) 
                     .then(voucher => {
                         // Nếu API trả về voucher hợp lệ
                         if (voucher && voucher.giatri) {
-                            const voucherCodeInput = document.getElementById('voucherCodeInput');
+                            const voucherCodeInput = document.getElementById('voucherCodeDisplay');
 
                             // Gán ID làm giá trị (value) của input
-                            voucherCodeInput.value = selectedVoucherId;
+                            voucherCodeInput.setAttribute('data-value', selectedVoucherId);
 
                             // Hiển thị mô tả voucher bên trong input bằng cách thay đổi placeholder
                             voucherCodeInput.setAttribute('placeholder', voucher.mota);
+                            voucherCodeInput.textContent = `${voucher.mota}`;
                             voucherCodeInput.classList.add('active'); // Nếu cần style input sau khi chọn
 
                             const soTienGiamGia = document.getElementById('soTienGiamGia');
                             const tongHoaDonElement = document.getElementById('tongHoaDon');
                             const tongSanPhamElement = document.getElementById('tongSanPham');
-                            
+
                             const tongSanPhamValue = parseInt(tongSanPhamElement.textContent.replace(/[VND.]/g, ''));
                             let soTienGiam = 0;
 

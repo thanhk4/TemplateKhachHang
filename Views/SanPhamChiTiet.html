@@ -47,10 +47,10 @@
             <!-- Quantity and Buttons -->
             <div class="mt-2 d-flex align-items-center">
                 <div class="input-group input-group-custom mb-3">
-                    <button class="btn btn-outline-secondary quantity-btn" type="button" id="button-addon1">-</button>
-                    <input type="text" class="form-control text-center quantity-input" id="quantity" value="1" min="1">
-                    <button class="btn btn-outline-secondary quantity-btn" type="button" id="button-addon2">+</button>
-                </div>
+                    <button class="btn btn-outline-secondary quantity-btn" type="button" ng-click="changeQuantity(-1)">-</button>
+                    <span id="quantity-display" class="form-control text-center quantity-display">{{quantity}}</span>
+                    <button class="btn btn-outline-secondary quantity-btn" type="button" ng-click="changeQuantity(1)">+</button>
+                </div>                            
                 <a href="" ng-click="MuaSanPham()" class="btn btn-outline-dark chat-btn me-2">Mua ngay</a>
                 <button class="btn btn-dark add-cart-btn">Thêm vào giỏ hàng</button>
             </div>
