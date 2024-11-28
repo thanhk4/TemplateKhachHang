@@ -20,6 +20,10 @@ app.config(($routeProvider) => {
       templateUrl: "./Views/login.html",
       controller: "LoginController"
     })
+    .when("/muasanpham/:id", {
+      templateUrl: "./Views/MuaSanPham.html",
+      controller: "MuaSanPhamCtrl"
+    })
     .when("/dangky", {
       templateUrl: "./Views/dangky.html",
       controller: "dangkyController"
@@ -77,7 +81,6 @@ app.config(($routeProvider) => {
 
 // Run block để khởi tạo ứng dụng
 app.run(function ($rootScope, $location) {
-  console.log('Ứng dụng AngularJS đã khởi tạo thành công');
   $rootScope.showAccountInfo = false;
   // Kiểm tra trạng thái đăng nhập từ localStorage
   const userInfo = localStorage.getItem('userInfo');
