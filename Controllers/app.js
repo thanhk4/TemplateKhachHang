@@ -49,14 +49,7 @@ app.config(($routeProvider) => {
   templateUrl: './Views/diachi.html',
   controller: 'diachiController'
 })
-.when('/quenmatkhau', {
-  templateUrl: './Views/quenmatkhau.html',
-  controller: 'quenmatkhauController'
-})
-.when('/resetpassword', {
-  templateUrl: './Views/resetpassword.html',
-  controller: 'PasswordResetController'
-})
+
 .when('/doimatkhau2', {
   templateUrl: './Views/doimatkhau2.html',
   controller: 'doimatkhau2Controller'
@@ -74,9 +67,12 @@ app.config(($routeProvider) => {
 
 
 
+<<<<<<< HEAD
    
 // redirect to
 
+=======
+>>>>>>> 11314bd8b90df5d423e65133ce6bf7726ee0c4b5
 // Run block để khởi tạo ứng dụng
 app.run(function ($rootScope, $location) {
   console.log('Ứng dụng AngularJS đã khởi tạo thành công');

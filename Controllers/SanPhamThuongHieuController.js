@@ -39,5 +39,5 @@ app.controller("SanPhamThuongHieuController", function ($scope, $document, SanPh
 });
 
 
-// dsiss
+
 

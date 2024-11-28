@@ -1,73 +1,171 @@
-<div class="container-fluid">
-    <!-- Order Tabs -->
-    <div class="bg-white border-bottom mb-3">
-        <div class="container">
-            <div class="d-flex overflow-auto">
-                <button ng-repeat="tab in tabs" 
-                        ng-click="setActiveTab(tab.id)"
-                        class="px-4 py-3 text-nowrap border-bottom border-3 {{ activeTab === tab.id ? 'border-primary text-primary' : 'border-transparent text-secondary' }}"
-                        ng-class="{'fw-bold': activeTab === tab.id}">
-                    {{tab.label}}
-                </button>
-            </div>
-        </div>
-    </div>
+<!DOCTYPE html>
+<html lang="vi" ng-app="orderApp">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đơn Hàng Của Tôi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
+    <style>
+        .nav-link {
+            color: #000000;
+            position: relative;
+            padding: 15px 0;
+            margin: 0 20px;
+        }
+        
+        .nav-link.active {
+            color: #ee4d2d !important;
+            font-weight: 500;
+        }
+        
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #ee4d2d;
+        }
+        
+        .search-box {
+            background-color: #f6f6f6;
+            border-radius: 4px;
+            padding: 10px 15px;
+        }
+        
+        .search-input {
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+        }
+        
+        .btn-shopee {
+            background-color: #ee4d2d;
+            border-color: #ee4d2d;
+            color: white;
+        }
+        
+        .btn-shopee:hover {
+            background-color: #d73211;
+            border-color: #d73211;
+            color: white;
+        }
+        
+        .btn-outline-shopee {
+            border-color: #ee4d2d;
+            color: #ee4d2d;
+        }
+        
+        .btn-outline-shopee:hover {
+            background-color: #ee4d2d;
+            color: white;
+        }
+        
+        .status-cancelled {
+            color: #ee4d2d;
+            font-weight: 500;
+        }
+        
+        .product-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+        }
+        
+        .price {
+            color: #ee4d2d;
+            font-size: 1.1rem;
+        }
+        
+        .original-price {
+            text-decoration: line-through;
+            color: #757575;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body ng-controller="MuahangController">
+    <ul class="nav nav-tabs border-0 mb-4">
+        <li class="nav-item">
+            <a class="nav-link" ng-class="{'active': currentStatus === 'ALL'}" 
+               ng-click="filterByStatus('ALL')">Tất cả</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" ng-class="{'active': currentStatus === 0}" 
+               ng-click="filterByStatus(0)">Chờ xác nhận</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" ng-class="{'active': currentStatus === 1}" 
+               ng-click="filterByStatus(1)">Đơn hàng đã xác nhận</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" ng-class="{'active': currentStatus === 2}" 
+               ng-click="filterByStatus(2)">Đơn hàng đã được giao</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" ng-class="{'active': currentStatus === 3}" 
+               ng-click="filterByStatus(3)">Đơn hàng thành công</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" ng-class="{'active': currentStatus === 4}" 
+               ng-click="filterByStatus(4)">Đã hủy</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" ng-class="{'active': currentStatus === 5}" 
+               ng-click="filterByStatus(5)">Trả hàng</a>
+        </li>
+    </ul>
 
-    <!-- Search Bar -->
-    <div class="container mb-4">
-        <div class="input-group">
-            <span class="input-group-text bg-white border-end-0">
-                <i class="bi bi-search"></i>
-            </span>
-            <input type="text" class="form-control border-start-0" 
+        <!-- Search Bar -->
+        <div class="search-box mb-4">
+            <input type="text" class="search-input" 
                    placeholder="Bạn có thể tìm kiếm theo tên Shop, ID đơn hàng hoặc Tên Sản phẩm"
-                   ng-model="searchQuery"
-                   ng-change="searchOrders()">
+                   ng-model="searchText">
         </div>
-    </div>
 
-    <!-- Order List -->
-    <div class="container mb-4">
-        <div class="card mb-3" ng-repeat="order in orders">
-            <!-- Shop Header -->
-            <div class="card-header d-flex justify-content-between align-items-center">
+        <!-- Order List -->
+        <div class="card mb-3" ng-repeat="order in filteredOrders">
+            <div class="card-header bg-white d-flex justify-content-between align-items-center">
                 <div>
-                    <span class="badge bg-danger me-2">Yêu thích</span>
-                    <span>{{order.shopName}}</span>
+                    <button class="btn btn-sm btn-outline-secondary me-2">
+                        <i class="fas fa-heart"></i> Yêu thích
+                    </button>
+                    <span class="fw-bold">{{order.shopName}}</span>
                     <button class="btn btn-sm btn-outline-secondary ms-2">Chat</button>
                     <button class="btn btn-sm btn-outline-secondary ms-2">Xem Shop</button>
                 </div>
-                <span class="text-danger fw-bold">{{order.status}}</span>
+                <span class="status-cancelled">{{getStatusText(order.status)}}</span>
             </div>
-
-            <!-- Order Content -->
             <div class="card-body">
-                <div class="row">
-                    <div class="col-md-2">
-                        <img ng-src="{{order.productImage}}" alt="Product" class="img-fluid">
+                <div class="row align-items-center">
+                    <div class="col-2">
+                        <img ng-src="{{order.productImage}}" class="product-img" alt="Product Image">
                     </div>
-                    <div class="col-md-7">
-                        <h5 class="card-title">{{order.productName}}</h5>
-                        <p class="card-text text-muted">{{order.productVariant}}</p>
-                        <p class="card-text">x{{order.quantity}}</p>
+                    <div class="col-7">
+                        <h6 class="mb-2">{{order.productName}}</h6>
+                        <p class="text-muted mb-0">Phân loại hàng: {{order.variant}}</p>
+                        <p class="mb-0">x{{order.quantity}}</p>
                     </div>
-                    <div class="col-md-3 text-end">
-                        <p class="text-muted text-decoration-line-through">₫{{order.originalPrice}}</p>
-                        <p class="text-danger">₫{{order.discountedPrice}}</p>
+                    <div class="col-3 text-end">
+                        <p class="original-price mb-1">₫{{order.originalPrice | number}}</p>
+                        <p class="price mb-0">₫{{order.finalPrice | number}}</p>
                     </div>
                 </div>
             </div>
-
-            <!-- Order Footer -->
-            <div class="card-footer d-flex justify-content-between align-items-center">
-                <span class="text-muted">{{order.cancelReason}}</span>
-                <div>
-                    <button class="btn btn-danger">Mua Lại</button>
-                    <button class="btn btn-outline-secondary ms-2">Xem Chi Tiết Hủy Đơn</button>
-                    <button class="btn btn-outline-secondary ms-2">Liên Hệ Người Bán</button>
+            <div class="card-footer bg-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <span>Tổng số tiền: <span class="price">₫{{order.totalAmount | number}}</span></span>
+                    <div>
+                        <button class="btn btn-shopee" ng-if="order.status === 4">Mua Lại</button>
+                        <button class="btn btn-outline-secondary ms-2">Xem Chi Tiết Đơn Hàng</button>
+                        <button class="btn btn-outline-secondary ms-2">Liên Hệ Người Bán</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

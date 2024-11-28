@@ -1,35 +1,81 @@
-app.controller('MuahangController', function($scope) {
-    $scope.activeTab = 'all';
-    $scope.orders = [];
+app.controller("MuahangController", function ($scope, $http) {
+  const apiUrl = "https://localhost:7297/api/Hoadon";
 
-    $scope.tabs = [
-        { id: "all", label: "Tất cả" },
-        { id: "pending", label: "Chờ thanh toán" },
-        { id: "shipping", label: "Vận chuyển" },
-        { id: "delivering", label: "Chờ giao hàng" },
-        { id: "completed", label: "Hoàn thành" },
-        { id: "cancelled", label: "Đã hủy" },
-        { id: "refunded", label: "Trả hàng/Hoàn tiền" },
-    ];
+  $scope.currentStatus = "ALL"; // Giá trị mặc định là 'ALL'
+  $scope.searchText = "";
+  $scope.orders = []; // Mảng chứa tất cả các đơn hàng
+  $scope.filteredOrders = []; // Mảng chứa đơn hàng đã lọc
 
-    $scope.setActiveTab = function(tabId) {
-        $scope.activeTab = tabId;
-        // Thêm logic để lọc đơn hàng theo tab ở đây
+  // Tạo các mảng cho các trạng thái khác nhau
+  $scope.ordersByStatus = {
+    ALL: [],
+    0: [],
+    1: [],
+    2: [],
+    3: [],
+    4: [],
+    5: [],
+  };
+
+  // Hàm tải đơn hàng từ API
+  $scope.loadOrders = function () {
+    $http
+      .get(apiUrl)
+      .then(function (response) {
+        $scope.orders = response.data;
+        // Lọc đơn hàng theo trạng thái và lưu vào các mảng riêng biệt
+        $scope.applyFilters();
+      })
+      .catch(function (error) {
+        console.error("Lỗi khi tải đơn hàng:", error);
+        alert("Không thể tải danh sách đơn hàng. Vui lòng thử lại sau.");
+      });
+  };
+
+  // Hàm lọc đơn hàng theo trạng thái
+  $scope.filterByStatus = function (status) {
+    $scope.currentStatus = status;
+    $scope.applyFilters(); // Lọc lại danh sách đơn hàng theo trạng thái đã chọn
+  };
+
+  // Hàm trả về text cho trạng thái
+  $scope.getStatusText = function (status) {
+    const statusMap = {
+      0: "Chờ xác nhận",
+      1: "Đơn hàng đã xác nhận",
+      2: "Đơn hàng đã được giao",
+      3: "Đơn hàng thành công",
+      4: "Đơn hàng đã huỷ",
+      5: "Trả hàng",
     };
+    return statusMap[status] || "Không xác định";
+  };
 
-    // $scope.searchOrders = function() {
-    //     // Thêm logic tìm kiếm đơn hàng ở đây
-    // };
+  // Hàm áp dụng các bộ lọc
+  $scope.applyFilters = function () {
+    // Làm trống các mảng trạng thái trước khi thêm lại
+    Object.keys($scope.ordersByStatus).forEach(function (status) {
+      $scope.ordersByStatus[status] = [];
+    });
 
-    // // Lấy danh sách đơn hàng từ API
-  
+    // Chia các đơn hàng theo trạng thái
+    $scope.orders.forEach(function (order) {
+      $scope.ordersByStatus[order.status].push(order);
+    });
 
-    // // Lấy danh sách đơn hàng từ API
-    // apiService.getOrders().then(function(response) {
-    //     $scope.orders = response.data;
-    // }, function(error) {
-    //     console.error('Error fetching orders:', error);
-    // });
-   
+    // Cập nhật lại filteredOrders để hiển thị theo trạng thái đã chọn
+    if ($scope.currentStatus === "ALL") {
+      $scope.filteredOrders = $scope.orders; // Hiển thị tất cả đơn hàng
+    } else {
+      $scope.filteredOrders = $scope.ordersByStatus[$scope.currentStatus]; // Hiển thị đơn hàng theo trạng thái
+    }
+  };
+
+  // Initialize
+  $scope.loadOrders();
+
+  // Watch for search text changes
+  $scope.$watch("searchText", function () {
+    $scope.applyFilters(); // Khi tìm kiếm thay đổi, lọc lại đơn hàng
+  });
 });
-

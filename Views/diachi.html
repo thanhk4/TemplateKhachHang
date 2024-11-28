@@ -1,61 +1,67 @@
-<div class="border rounded p-3" style="background-color: rgb(233, 232, 232);" ng-controller="diachiController">
-    <h5 class="fw-bold mb-2 text-danger" style="margin-left: 15px;">Địa Chỉ Nhận Hàng</h5>
-    <div class="d-flex justify-content-between align-items-center">
-      <div style="margin-left: 15px;">
-        <span id="hovaten" class="fw-bold">...</span> -
-        <span id="sdt">...</span><br>
-        <span id="diachi">...</span>
-        <span class="badge bg-primary-subtle text-success border border-success me-2">Mặc định</span>
+<body ng-controller="diachiController">
+  <div class="container mt-4">
+      <div class="card mb-3" ng-repeat="address in addressList">
+          <div class="card-body">
+              <h5 class="card-title text-primary mb-3">Địa Chỉ Nhận Hàng</h5>
+              <div class="d-flex justify-content-between align-items-center">
+                  <div>
+                      <p class="mb-1"><strong>{{ address.hoten }}</strong> | {{ address.sdt }}</p>
+                      <p class="mb-1">{{ address.fullAddress }}</p>
+                      <span class="badge bg-success" ng-if="address.macdinh">Mặc định</span>
+                  </div>
+                  <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addressModal" ng-click="editAddress(address)">Thay Đổi</button>
+              </div>
+          </div>
       </div>
-      <div>
-        <a data-bs-toggle="modal" data-bs-target="#exampleModal">Thay Đổi</a>
-      </div>
-    </div>
+      <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addressModal" ng-click="newAddress()">Thêm Địa Chỉ Mới</button>
   </div>
-<!-- Modal -->
-<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-<div class="modal-dialog modal-lg">
-  <div class="modal-content">
-    <div class="modal-header">
-      <h1 class="modal-title fs-5" id="exampleModalLabel">Thay đổi địa chỉ</h1>
-      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-    </div>
-    <div class="modal-body">
-      <!-- Tùy chọn chọn địa chỉ hoặc thêm mới -->
-      <div class="mb-3">
-        <label for="addressSelect" class="form-label">Chọn Địa Chỉ</label>
-        <select class="form-select" id="addressSelect">
-          <option disabled selected value="">Chọn địa chỉ...</option>
-          <!-- Các tùy chọn sẽ được thêm bằng JavaScript -->
-        </select>
-        <button  class="btn btn-link text-primary p-0 mt-2" id="btnAddNewAddress">+ Thêm địa chỉ mới</button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="addressModal" tabindex="-1" aria-labelledby="addressModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h5 class="modal-title" id="addressModalLabel">{{ isEditing ? 'Cập Nhật Địa Chỉ' : 'Thêm Địa Chỉ Mới' }}</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                  <form>
+                      <div class="mb-3">
+                          <label for="hoten" class="form-label">Họ Tên</label>
+                          <input type="text" class="form-control" id="hoten" ng-model="currentAddress.hoten">
+                      </div>
+                      <div class="mb-3">
+                          <label for="sodienthoai" class="form-label">Số Điện Thoại</label>
+                          <input type="text" class="form-control" id="sodienthoai" ng-model="currentAddress.sodienthoai">
+                      </div>
+                      <div class="mb-3">
+                          <label for="thanhpho" class="form-label">Tỉnh/Thành phố</label>
+                          <input type="text" class="form-control" id="thanhpho" ng-model="currentAddress.thanhpho">
+                      </div>
+                      <div class="mb-3">
+                          <label for="quanhuyen" class="form-label">Quận/Huyện</label>
+                          <input type="text" class="form-control" id="quanhuyen" ng-model="currentAddress.quanhuyen">
+                      </div>
+                      <div class="mb-3">
+                          <label for="phuongxa" class="form-label">Phường/Xã</label>
+                          <input type="text" class="form-control" id="phuongxa" ng-model="currentAddress.phuongxa">
+                      </div>
+                      <div class="mb-3">
+                          <label for="diachicuthe" class="form-label">Địa Chỉ Cụ Thể</label>
+                          <input type="text" class="form-control" id="diachicuthe" ng-model="currentAddress.diachicuthe">
+                      </div>
+                      <div class="form-check mb-3">
+                          <input class="form-check-input" type="checkbox" id="macdinh" ng-model="currentAddress.macdinh">
+                          <label class="form-check-label" for="macdinh">
+                              Đặt làm địa chỉ mặc định
+                          </label>
+                      </div>
+                  </form>
+              </div>
+              <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                  <button type="button" class="btn btn-primary" ng-click="saveAddress()">Lưu địa chỉ</button>
+              </div>
+          </div>
       </div>
-    
-      <!-- Phần nhập địa chỉ mới -->
-      <div id="newAddressForm" style="display: none;">
-        <div class="mb-3">
-          <label for="province" class="form-label">Chọn Tỉnh/Thành</label>
-          <select class="form-select" id="province">
-            <option disabled value="">Chọn Tỉnh</option>
-            <!-- Các tùy chọn sẽ được thêm thông qua JavaScript -->
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="district" class="form-label">Chọn Quận/Huyện</label>
-          <select class="form-select" id="district" disabled>
-            <option disabled value="">Chọn Quận</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="ward" class="form-label">Chọn Phường/Xã</label>
-          <select class="form-select" id="ward" disabled>
-            <option disabled value="">Chọn Phường</option>
-          </select>
-        </div>
-        <div class="mb-3">
-          <label for="detailInput" class="form-label">Nhập chi tiết</label>
-          <input type="text" class="form-control" id="detailInput" placeholder="Nhập chi tiết">
-        </div>
-      </div>
-    </div>
-    <div class="modal-footer">
+  </div>
