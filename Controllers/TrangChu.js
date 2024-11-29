@@ -49,7 +49,7 @@ app.controller("TrangChuCtrl", function ($scope, $document, $rootScope, SanPhamS
         console.log("Xem chi tiết sản phẩm:", id);
         
         $location.path(`/sanphamchitiet/${id}`);
-    };//<!--gaaaa-->//<!--gaaaa-->
+    };//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->
 
 //<!--gaaaa-->
 
