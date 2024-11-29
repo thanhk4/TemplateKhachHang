@@ -55,7 +55,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location) {
         $scope.currentPage = 0; // Reset về trang đầu tiên
     };
 
-    // Chuyển trang
+    // Chuyển trang//<!--gaaaa-->
     $scope.goToPage = function (page) {
         if (page >= 0 && page < $scope.paginatedOrders.length) {
             $scope.currentPage = page;

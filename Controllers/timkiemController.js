@@ -47,4 +47,4 @@ app.controller('timkiemController', function ($scope, $routeParams, $http) {
     $scope.brandFilter = [];
     $scope.displayResults = [...$scope.filteredResults];
   };
-});
+});//<!--gaaaa-->

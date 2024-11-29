@@ -51,7 +51,7 @@ app.controller("TrangChuCtrl", function ($scope, $document, $rootScope, SanPhamS
         $location.path(`/sanphamchitiet/${id}`);
     };
 
-
+//<!--gaaaa-->
 
   });
   
