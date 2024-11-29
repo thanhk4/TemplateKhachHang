@@ -49,6 +49,24 @@
                         <li class="nav-item mx-3">
                             <a class="nav-link text-white fw-bold" href="#" style="font-size: 20px;">Liên Hệ</a>
                         </li>
+                        <li class="nav-item dropdown mx-3" ng-controller="ThuongHieuController">
+                            <a class="nav-link text-white fw-bold dropdown-toggle" href="#" id="navbarDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 20px;">
+                                Thương hiệu
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <!-- Hiển thị danh sách thương hiệu -->
+                                <li ng-repeat="thuongHieu in thuongHieus">
+                                    <a class="dropdown-item" href="#!sanphamthuonghieu/{{thuongHieu.id}}">
+                                        {{thuongHieu.tenthuonghieu}}
+                                    </a>
+                                </li>
+                                <!-- Hiển thị lỗi nếu có -->
+                                <li ng-if="errorMessage">
+                                    <span class="dropdown-item text-danger">{{errorMessage}}</span>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
                 <!-- Search bar -->
@@ -143,6 +161,7 @@
     <script src="Controllers/donhangcuabanController.js"></script>
     <script src="Controllers/SanPhamSaleController.js"></script>
     <script src="Controllers/timkiemController.js"></script>
+    <script src="Controllers/SanPhamThuongHieuController.js"></script>
     <script src="Controllers/Toastr.js"></script>
     <script>
         function selectLanguage(language, element) {
