@@ -1,4 +1,4 @@
-app.controller('donhangcuabanController', function ($scope, $http) {
+app.controller('donhangcuabanController', function ($scope, $http,$location) {
     // Lấy thông tin người dùng từ localStorage
     $scope.userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
@@ -19,7 +19,11 @@ app.controller('donhangcuabanController', function ($scope, $http) {
         "Đã hủy",
         "Trả hàng"
     ];
-
+    $scope.xemChiTiet = function (id) {
+        console.log("Xem chi tiết sản phẩm:", id);
+        $('#exampleModal').modal('hide');
+        $location.path(`/sanphamchitiet/${id}`);
+    };
     // Lấy danh sách hóa đơn từ API
     $http.get('https://localhost:7297/api/Hoadon/hoa-don-theo-ma-kh-' + $scope.userInfo.id)
         .then(function (response) {

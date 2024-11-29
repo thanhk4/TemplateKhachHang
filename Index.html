@@ -52,15 +52,14 @@
                     </ul>
                 </div>
                 <!-- Search bar -->
-                <form class="d-flex ms-auto align-items-center" role="search">
+                <form class="d-flex ms-auto align-items-center" ng-controller="mainController" ng-submit="btntimkiem()">
                     <div class="input-group">
-                        <input class="form-control" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-light" type="submit">
-                            <i class="bi bi-search"></i>
-                            <!-- Biểu tượng tìm kiếm -->
-                        </button>
+                      <input class="form-control" type="search" placeholder="Search" ng-model="search" required>
+                      <button class="btn btn-outline-light" type="submit">
+                        <i class="bi bi-search"></i>
+                      </button>
                     </div>
-                </form>
+                  </form>
 
                 <!-- Icons bên phải -->
                 <div class="d-flex align-items-center ms-3">
@@ -142,10 +141,10 @@
     <script src="Controllers/PasswordResetController.js"></script>
     <script src="Controllers/doimatkhau2.js"></script>
     <script src="Controllers/donhangcuabanController.js"></script>
-    <script src="Controllers/SanPhamSaleController.js"></script>
-    <script src="Controllers/timkiemController.js"></script>
+    <script src="./Controllers/timkiemController.js"></script>
     <script src="Controllers/Toastr.js"></script>
     <script>
+        
         function selectLanguage(language, element) {
             document.getElementById('dropdownMenuButton').innerText = language;
             const items = document.querySelectorAll('.dropdown-item');
