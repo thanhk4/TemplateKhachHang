@@ -24,9 +24,9 @@
         <!-- Brand Filter -->
         <div class="mb-4">
           <h6 class="font-weight-bold">Theo thương hiệu</h6>
-          <div class="form-check" ng-repeat="brand in dataThuonghieu">
+          <div class="form-check" ng-repeat="brand in dataThuonghieu" ng-if="brand.tinhtrang==0">
             <input class="form-check-input" type="checkbox" ng-model="brandFilter[brand.id]">
-            <label class="form-check-label">{{brand.tenthuonghieu}}</label>
+              <label class="form-check-label">{{brand.tenthuonghieu}}</label>
           </div>
         </div>
 
