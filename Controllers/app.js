@@ -15,7 +15,15 @@ app.config(($routeProvider) => {
     .when("/sanphamchitiet/:id", {
       templateUrl: "./Views/SanPhamChiTiet.html",
       controller: "SanPhamChiTietCtrl"
-  })
+    })
+    .when("/sanphamthuonghieu/:id", {
+      templateUrl: "./Views/SanPhamThuongHieu.html",
+      controller: "SanPhamThuongHieuController"
+    })
+    .when("/sanPhamSale", {
+      templateUrl: "./Views/SanPhamSale.html",
+      controller: "SanPhamSaleController"
+    })
     .when("/login", {
       templateUrl: "./Views/login.html",
       controller: "LoginController"
@@ -51,11 +59,6 @@ app.config(($routeProvider) => {
 .when('/doimatkhau2', {
   templateUrl: './Views/doimatkhau2.html',
   controller: 'doimatkhau2Controller'
-})
-
-.when("/sanphamthuonghieu/:id", {
-  templateUrl: "./Views/SanPhamThuongHieu.html",
-  controller: "SanPhamThuongHieuController"
 })
 .otherwise({
   redirectTo: "/"
