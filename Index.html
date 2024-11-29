@@ -22,7 +22,6 @@
 </head>
 
 <body ng-app="myApp" class="d-flex flex-column min-vh-100">
-
     <div class="col-12 flex-grow-1">
         <nav class="navbar navbar-expand-lg"
             style="background-color: #000; height: 70px; background-color: rgba(0, 0, 0, 0.63);">
@@ -69,95 +68,38 @@
                     <div class="nav-item ">
                         <a href="#" class="nav-link text-white">
                             <i class="bi bi-cart3" style="font-size: 1.5rem;"></i>
-
                         </a>
                     </div>
-
-
-            </div>
-         
-              
-
-           
-
-                    <!-- Icon người dùng với dropdown -->
-
-
-                    <ul class="navbar-nav ms-auto">
-                        <!-- Hiển thị "Đăng nhập" nếu chưa đăng nhập -->
-                        <li class="nav-item" ng-if="!isLoggedIn">
-                            <a class="nav-link" href="#!login">
-                                <i class="bi bi-person-circle"></i> Đăng Nhập
-                            </a>
-                        </li>
-
-                        <!-- Hiển thị thông tin người dùng và "Đăng xuất" nếu đã đăng nhập -->
-                        <li class="nav-item dropdown" ng-if="isLoggedIn">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
-                                data-bs-toggle="dropdown">
-                                <i class="bi bi-person-circle"></i> {{userInfo.ten}}
-                            </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-
-                                <li><a class="dropdown-item" href="#!thongtintaikhoan"><i
-                                            class="bi bi-person-badge">Thông
-                                            tin tài khoản</i></a></li>
-                                <li>
-                                    <hr class="dropdown-divider">
-                                </li>
-                                <li><button class="dropdown-item text-danger" ng-click="dangxuat()">Đăng xuất</button>
-                                </li>
-                            </ul>
-                        </li>
-                    </ul>
                 </div>
+                <!-- Icon người dùng với dropdown -->
+                <ul class="navbar-nav ms-auto">
+                    <!-- Hiển thị "Đăng nhập" nếu chưa đăng nhập -->
+                    <li class="nav-item" ng-if="!isLoggedIn">
+                        <a class="nav-link" href="#!login">
+                            <i class="bi bi-person-circle"></i> Đăng Nhập
+                        </a>
+                    </li>
+                    <!-- Hiển thị thông tin người dùng và "Đăng xuất" nếu đã đăng nhập -->
+                    <li class="nav-item dropdown" ng-if="isLoggedIn">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                            data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{userInfo.ten}}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#!thongtintaikhoan"><i class="bi bi-person-badge">Thông
+                                        tin tài khoản</i></a></li>
+                            <li>
+                                <hr class="dropdown-divider">
+                            </li>
+                            <li><button class="dropdown-item text-danger" ng-click="dangxuat()">Đăng xuất</button>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
             </div>
         </nav>
         <div ng-view style="max-width: 1500px;" class="container-fluid"></div>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
-        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"
-        integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-route/1.8.3/angular-route.min.js"></script>
-    <script src="Controllers/app.js"></script>
-    <script src="Controllers/DanhSachSanPham.js"></script>
-    <script src="Controllers/TrangChu.js"></script>
-    <script src="Controllers/SanPhamChiTiet.js"></script>
-    <script src="Controllers/MuaSanPham.js"></script>
-
-
-         <script src="Controllers/LoginController.js"></script>
-        <script src="Controllers/dangkyController.js"></script>
-        <script src="Controllers/ThongTinTaiKhoanController.js"></script>
-        <script src="Controllers/quenmatkhauController.js"></script>
-        <script src="Controllers/PasswordResetController.js"></script>
-        <script src="Controllers/doimatkhau2.js"></script>
-        
-        <script src="./Controllers/donhangcuabanController.js"></script>
-        <script src="./Controllers/SanPhamSaleController.js"></script>
-        <script src="./Controllers/timkiemController.js"></script>
-    
-
-  
-
-    
-
-
-
-
-
-       
-      
-      
-
-
     <footer class="footer mt-3 border-top text-dark">
         <div class="row align-items-center">
             <div class="col-3 text-center">
@@ -177,7 +119,31 @@
             </div>
         </div>
     </footer>
-<script src="/Controllers/Toastr.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
+        integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"
+        integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-route/1.8.3/angular-route.min.js"></script>
+    <script src="Controllers/app.js"></script>
+    <script src="Controllers/DanhSachSanPham.js"></script>
+    <script src="Controllers/TrangChu.js"></script>
+    <script src="Controllers/SanPhamChiTiet.js"></script>
+    <script src="Controllers/MuaSanPham.js"></script>
+    <script src="Controllers/LoginController.js"></script>
+    <script src="Controllers/dangkyController.js"></script>
+    <script src="Controllers/ThongTinTaiKhoanController.js"></script>
+    <script src="Controllers/quenmatkhauController.js"></script>
+    <script src="Controllers/PasswordResetController.js"></script>
+    <script src="Controllers/doimatkhau2.js"></script>
+    <script src="Controllers/donhangcuabanController.js"></script>
+    <script src="Controllers/SanPhamSaleController.js"></script>
+    <script src="Controllers/timkiemController.js"></script>
+    <script src="Controllers/Toastr.js"></script>
     <script>
         function selectLanguage(language, element) {
             document.getElementById('dropdownMenuButton').innerText = language;
