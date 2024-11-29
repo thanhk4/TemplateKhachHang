@@ -1,4 +1,4 @@
-app.controller('donhangcuabanController', function ($scope, $http) {
+app.controller('donhangcuabanController', function ($scope, $http,$location) {
     // Lấy thông tin người dùng từ localStorage
     $scope.userInfo = JSON.parse(localStorage.getItem('userInfo'));
 
@@ -10,7 +10,7 @@ app.controller('donhangcuabanController', function ($scope, $http) {
     $scope.currentPage = 0; // Trang hiện tại
     $scope.filterStatus = -1; // Mặc định là tất cả trạng thái (-1)
 
-    // Trạng thái đơn hàng
+    // Trạng thái đơn hàngaaaa
     $scope.orderStatuses = [
         "Chờ xác nhận",
         "Đã xác nhận",
@@ -19,7 +19,11 @@ app.controller('donhangcuabanController', function ($scope, $http) {
         "Đã hủy",
         "Trả hàng"
     ];
-
+    $scope.xemChiTiet = function (id) {
+        console.log("Xem chi tiết sản phẩm:", id);
+        $('#exampleModal').modal('hide');
+        $location.path(`/sanphamchitiet/${id}`);
+    };
     // Lấy danh sách hóa đơn từ API
     $http.get('https://localhost:7297/api/Hoadon/hoa-don-theo-ma-kh-' + $scope.userInfo.id)
         .then(function (response) {

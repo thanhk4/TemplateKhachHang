@@ -1,51 +1,3 @@
-<style>
-    /* Add your custom styles here */
-  body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f4f4f4;
-  }
-  
-  .product-card {
-    border-radius: 10px;
-    overflow: hidden;
-    transition: transform 0.3s ease;
-  }
-  
-  .product-card:hover {
-    transform: scale(1.05);
-  }
-  
-  .product-card img {
-    height: 200px;
-    object-fit: cover;
-  }
-  
-  .product-card .card-body {
-    padding: 15px;
-    text-align: center;
-  }
-  
-  .product-card .card-body h6 {
-    font-size: 14px;
-    color: #333;
-    margin-bottom: 10px;
-  }
-  
-  .product-card .card-body p {
-    font-size: 12px;
-    color: #666;
-  }
-  
-  .product-grid {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  
-  .product-grid .col-lg-2 {
-    margin-bottom: 20px;
-  }
-  
-  </style>
 <div class="container mt-5">
   <h2 class="text-center mb-4">Kết quả tìm kiếm cho: "{{searchKey}}"</h2>
 
@@ -67,43 +19,91 @@
           <input type="number" class="form-control mb-2" ng-model="priceFilter.min" min="0" placeholder="Nhập giá thấp nhất">
           <label class="form-label">Đến</label>
           <input type="number" class="form-control mb-3" ng-model="priceFilter.max" min="0" placeholder="Nhập giá cao nhất">
-          <button class="btn btn-danger w-100" ng-click="applyPriceFilter()">Áp dụng</button>
         </div>
 
         <!-- Brand Filter -->
         <div class="mb-4">
           <h6 class="font-weight-bold">Theo thương hiệu</h6>
           <div class="form-check" ng-repeat="brand in dataThuonghieu">
-            <input class="form-check-input" type="checkbox" ng-model="brandFilter[brand.id]" ng-change="applyBrandFilter()">
+            <input class="form-check-input" type="checkbox" ng-model="brandFilter[brand.id]">
             <label class="form-check-label">{{brand.tenthuonghieu}}</label>
           </div>
         </div>
 
-        <!-- Reset Filters Button -->
-        <hr>
-        <button class="btn btn-secondary w-100 mb-4" ng-click="resetFilters()">Xóa tất cả</button>
+        <!-- Apply and Reset Buttons -->
+        <button class="btn btn-danger w-100 mb-2" ng-click="applyAllFilters()">Áp dụng</button>
+        <button class="btn btn-secondary w-100" ng-click="resetFilters()">Xóa tất cả</button>
       </div>
     </div>
 
     <!-- Product List Section -->
     <div class="col-md-9">
+      
+      <!--aaaaaaa-->
       <div class="row product-grid">
         <!-- Product Cards -->
-        <div ng-repeat="item in displayResults" class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
+        <div ng-repeat="item in displayResults" class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4" style="height:350px;">
           <div class="card shadow-sm product-card">
             <img ng-src="{{item.urlHinhanh}}" alt="{{item.tensp}}" class="card-img-top img-fluid rounded">
             <div class="card-body">
-              <h6 class="fw-bold">{{item.tensp}}</h6>
+              <div ng-repeat="brand in dataThuonghieu">
+                <h6 class="fw-bold" ng-if="brand.id==item.idth">[{{brand.tenthuonghieu}}] - {{item.tensp}}</h6>
+              </div>
               <p class="text-muted">Giá sản phẩm: <span class="fw-bold">{{item.giaban | number}} VNĐ</span></p>
             </div>
           </div>
         </div>
       </div>
-
-      <!-- No Results Found -->
       <div ng-if="displayResults.length === 0 && !errorMessage" class="text-center text-danger mt-3">
         <p>Không tìm thấy kết quả nào phù hợp.</p>
       </div>
     </div>
   </div>
 </div>
+<style>
+  body {
+  font-family: 'Arial', sans-serif;
+  background-color: #f4f4f4;
+}
+
+.product-card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease;
+}
+
+.product-card:hover {
+  transform: scale(1.05);
+}
+
+.product-card img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.product-card .card-body {
+  padding: 15px;
+  text-align: center;
+}
+
+.product-card .card-body h6 {
+  font-size: 14px;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+.product-card .card-body p {
+  font-size: 12px;
+  color: #666;
+}
+
+.product-grid {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.product-grid .col-lg-2 {
+  margin-bottom: 20px;
+}
+
+</style>
