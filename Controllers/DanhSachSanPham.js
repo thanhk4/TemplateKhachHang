@@ -35,15 +35,7 @@ this.getDanhGiaByIdSPCT = function (id) {
             throw error;
         });
 };
-this.getSanPhamByThuongHieu = function (id) {
-    return $http.get(baseUrl + "Sanpham/GetALLSanPhamByThuongHieu/" + id)
-        .then(response => response.data)
-        .catch(error => {
-            console.error("Lỗi khi gọi API:", error);
-            throw error;
-        });
 
-}
 });
 
 

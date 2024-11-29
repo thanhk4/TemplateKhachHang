@@ -12,17 +12,17 @@ app.config(($routeProvider) => {
       templateUrl: "./Views/DanhSachSanPham.html",
       controller: "DanhSachSanPhamCtrl"
     })
-    .when("/danhsachsanphamSale", {
-      templateUrl: "./Views/SanPhamSale.html",
-      controller: "SanPhamSaleController"
-    })
     .when("/sanphamchitiet/:id", {
       templateUrl: "./Views/SanPhamChiTiet.html",
       controller: "SanPhamChiTietCtrl"
-    })
+  })
     .when("/login", {
       templateUrl: "./Views/login.html",
       controller: "LoginController"
+    })
+    .when("/muasanpham/:id", {
+      templateUrl: "./Views/MuaSanPham.html",
+      controller: "MuaSanPhamCtrl"
     })
     .when("/dangky", {
       templateUrl: "./Views/dangky.html",
@@ -39,7 +39,6 @@ app.config(($routeProvider) => {
     .when('/thongtintaikhoan', {
       templateUrl: './Views/thongtintaikhoan.html',
       controller: 'ThongTinTaiKhoanController'
-
   })
   .when('/quenmatkhau', {
     templateUrl: './Views/quenmatkhau.html',
@@ -49,19 +48,11 @@ app.config(($routeProvider) => {
     templateUrl: './Views/resetpassword.html',
     controller: 'PasswordResetController'
 })
-.when('/trangthai', {
-  templateUrl: './Views/Donmua.html',
-  controller: 'MuahangController'
-})
-.when('/diachi', {
-  templateUrl: './Views/diachi.html',
-  controller: 'diachiController'
-})
-
 .when('/doimatkhau2', {
   templateUrl: './Views/doimatkhau2.html',
   controller: 'doimatkhau2Controller'
 })
+
 .when("/sanphamthuonghieu/:id", {
   templateUrl: "./Views/SanPhamThuongHieu.html",
   controller: "SanPhamThuongHieuController"
@@ -69,39 +60,40 @@ app.config(($routeProvider) => {
 .otherwise({
   redirectTo: "/"
 });
-
-    });
     
 
 
 
 // Run block để khởi tạo ứng dụng
 app.run(function ($rootScope, $location) {
-  console.log('Ứng dụng AngularJS đã khởi tạo thành công');
   $rootScope.showAccountInfo = false;
   // Kiểm tra trạng thái đăng nhập từ localStorage
   const userInfo = localStorage.getItem('userInfo');
   if (userInfo) {
-    $rootScope.isLoggedIn = true;
-    $rootScope.userInfo = JSON.parse(userInfo);
+      $rootScope.isLoggedIn = true;
+      $rootScope.userInfo = JSON.parse(userInfo);
   } else {
-    $rootScope.isLoggedIn = false;
-    $rootScope.userInfo = null;
+      $rootScope.isLoggedIn = false;
+      $rootScope.userInfo = null;
   }
+  
+
   // Hàm đăng xuất
   $rootScope.dangxuat = function () {
-    $rootScope.isLoggedIn = false;
-    $rootScope.userInfo = null;
-    localStorage.removeItem('userInfo');
-    console.log("Đăng xuất thành công");
-    $location.path('/login');
+      $rootScope.isLoggedIn = false;
+      $rootScope.userInfo = null;
+      localStorage.removeItem('userInfo');
+      console.log("Đăng xuất thành công");
+      $location.path('/login');
   };
 
   // Gắn một listener để theo dõi tất cả các lỗi toàn cục
   $rootScope.$on('$error', function (event, error) {
-    console.error('Lỗi toàn cục:', error);
+      console.error('Lỗi toàn cục:', error);
+      
   });
 });
+
 app.service('ThuongHieuService', function($http) {
   const apiUrl = 'https://localhost:7297/api/Thuonghieu'; // Thay URL API của bạn
 
