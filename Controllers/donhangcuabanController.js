@@ -59,7 +59,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location) {
     $scope.goToPage = function (page) {
         if (page >= 0 && page < $scope.paginatedOrders.length) {
             $scope.currentPage = page;
-        }//<!--gaaaa-->//<!--gaaaa-->
+        }//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->
     };
     $scope.chitiethd = function(id)
     { $http.get('https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
