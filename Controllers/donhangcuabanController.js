@@ -10,7 +10,7 @@ app.controller('donhangcuabanController', function ($scope, $http) {
     $scope.currentPage = 0; // Trang hiện tại
     $scope.filterStatus = -1; // Mặc định là tất cả trạng thái (-1)
 
-    // Trạng thái đơn hàng
+    // Trạng thái đơn hàngaaaa
     $scope.orderStatuses = [
         "Chờ xác nhận",
         "Đã xác nhận",
