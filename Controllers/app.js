@@ -20,6 +20,10 @@ app.config(($routeProvider) => {
       templateUrl: "./Views/login.html",
       controller: "LoginController"
     })
+    .when("/diachicuaban", {
+      templateUrl: "./Views/diachicuaban.html",
+      controller: "DiachicuabanCtrl"
+    })
     .when("/muasanpham/:id", {
       templateUrl: "./Views/MuaSanPham.html",
       controller: "MuaSanPhamCtrl"
