@@ -97,7 +97,15 @@ app.run(function ($rootScope, $location) {
       
   });
 });
-
+app.controller('mainController', function ($scope, $location) {
+  $scope.btntimkiem = function () {
+    if ($scope.search && $scope.search.trim() !== '') {
+      $location.path('/timkiem/' + $scope.search);
+    } else {
+      alert("Vui lòng nhập từ khóa để tìm kiếm!");
+    }
+  };
+});
 app.service('ThuongHieuService', function($http) {
   const apiUrl = 'https://localhost:7297/api/Thuonghieu'; // Thay URL API của bạn
 
