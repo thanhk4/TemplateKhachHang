@@ -6,7 +6,7 @@ app.config(($routeProvider) => {
   $routeProvider
     .when("/", {
       templateUrl: "./Views/TrangChu.html",
-      controller: "TrangChuCtrl"
+      controller: "TrangChuCtrl",
     })
     .when("/danhsachsanpham", {
       templateUrl: "./Views/DanhSachSanPham.html",
@@ -70,7 +70,7 @@ app.config(($routeProvider) => {
 
 
 // Run block để khởi tạo ứng dụng
-app.run(function ($rootScope, $location) {
+app.run(function ($rootScope, $location, $http) {
   $rootScope.showAccountInfo = false;
   // Kiểm tra trạng thái đăng nhập từ localStorage
   const userInfo = localStorage.getItem('userInfo');
@@ -82,6 +82,62 @@ app.run(function ($rootScope, $location) {
       $rootScope.userInfo = null;
   }
   
+  // Kiểm tra trạng thái khách hàng mỗi khi chuyển trang
+    $rootScope.$on('$routeChangeStart', function (event, next, current) {
+      const idkh = GetByidKH();
+      if ($rootScope.isLoggedIn) {
+          // Gọi API để kiểm tra trạng thái của khách hàng
+          $http.get(`https://localhost:7297/api/Khachhang/${idkh}`)  
+              .then(function(response) {
+                  if (response.data.trangthai === "Tài khoản bị khoá") {
+                      // Nếu trạng thái là 1, gọi hàm đăng xuất
+                      $rootScope.dangxuat();
+                      Swal.fire({
+                        icon: 'error',               // Chọn icon là lỗi (error)
+                        title: 'Lỗi',                // Tiêu đề thông báo
+                        text: 'Tài khoản của bạn đã bị khoá',  // Nội dung thông báo
+                        confirmButtonText: 'Đóng'    // Văn bản cho nút xác nhận
+                      });  
+                  }
+              })
+              .catch(function(error) {
+                  console.error("Lỗi khi gọi API kiểm tra trạng thái:", error);
+              });
+      }
+  });
+
+  // Hàm đăng xuất
+  $rootScope.dangxuat = function () {
+    $rootScope.isLoggedIn = false;
+    $rootScope.userInfo = null;
+    localStorage.removeItem('userInfo');
+    $location.path('/login');
+  };
+
+
+  // Hàm lấy thông tin khách hàng từ localStorage
+  function GetByidKH() {
+      // Lấy dữ liệu từ localStorage
+      const userInfoString = localStorage.getItem("userInfo");
+      let userId = 0; // Giá trị mặc định nếu không có thông tin khách hàng
+
+      // Kiểm tra nếu dữ liệu tồn tại
+      if (userInfoString) {
+          try {
+              // Chuyển đổi chuỗi JSON thành đối tượng
+              const userInfo = JSON.parse(userInfoString);
+
+              // Kiểm tra và lấy giá trị id từ userInfo
+              userId = userInfo?.id || 0;
+          } catch (error) {
+              console.error("Lỗi khi phân tích dữ liệu userInfo:", error);
+          }
+      } else {
+          console.warn("Dữ liệu userInfo không tồn tại trong localStorage.");
+      }
+
+      return userId;
+  }
 
   // Hàm đăng xuất
   $rootScope.dangxuat = function () {
