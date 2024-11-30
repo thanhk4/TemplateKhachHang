@@ -1,58 +1,21 @@
-app.controller("GiohangCtrl", function ($document, $rootScope, $routeParams, $scope, $location) {
-
-    let link = angular.element('<link rel="stylesheet" href="css/giohang.css">');
+app.controller("GiohangCtrl", function ($document, $rootScope, $scope) {
+    // Thêm CSS
+    const link = angular.element('<link rel="stylesheet" href="css/giohang.css">');
     $document.find('head').append(link);
-    $rootScope.$on('$destroy', function () {
-        link.remove();
-    });
+    $rootScope.$on('$destroy', () => link.remove());
+
     // API URLs
-    const apiSPCTUrl = "https://localhost:7297/api/Sanphamchitiet";
-    const apiSPUrl = "https://localhost:7297/api/Sanpham";
-    const apiTTSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/thuoctinh";
-    const discountApiUrl = "https://localhost:7297/api/Giamgia";
-    const apiKHUrl = "https://localhost:7297/api/Khachhang";
+    const apiUrls = {
+        gioHang: "https://localhost:7297/api/Giohang/giohangkhachhang/",
+        gioHangChiTiet: "https://localhost:7297/api/Giohangchitiet/giohangchitietbygiohang/",
+        sanPhamChiTiet: "https://localhost:7297/api/Sanphamchitiet",
+        sanPham: "https://localhost:7297/api/Sanpham",
+        thuocTinh: "https://localhost:7297/api/Sanphamchitiet/thuoctinh",
+        saleChiTiet: "https://localhost:7297/api/Salechitiet/SanPhamCT"
+    };
 
-    // Hàm gọi API để lấy sản phẩm chi tiết theo idspct
-    async function fetchSanPhamChitiet() {
-        try {
-            // Kiểm tra nếu idspct có giá trị hợp lệ
-            if (!sanPhamCTId) {
-                console.error("idspct không hợp lệ");
-                return null;
-            }
-
-            // Gọi API với idspct
-            const response = await fetch(`${apiSPCTUrl}/${sanPhamCTId}`);
-
-            if (!response.ok) {
-                throw new Error(`Lỗi API: ${response.status}`);
-            }
-
-            const data = await response.json();
-
-            // Nếu API trả về một đối tượng, chuyển đổi nó thành mảng
-            return Array.isArray(data) ? data : [data];
-        } catch (error) {
-            console.error("Lỗi khi lấy sản phẩm chi tiết:", error);
-            return null; // Trả về null nếu có lỗi
-        }
-    }
-
-
-    // Hàm gọi API để lấy thông tin sản phẩm (tensp, urlhinhanh) theo idsp
-    async function fetchSanPhamById(idsp) {
-        try {
-            const response = await fetch(`${apiSPUrl}/${idsp}`);
-            if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
-            return await response.json();
-        } catch (error) {
-            console.error("Lỗi khi lấy thông tin sản phẩm:", error);
-            return null;
-        }
-    }
-
-    // Hàm lấy thông tin khách hàng từ localStorage
-    function GetByidKH() {
+     // Hàm lấy thông tin khách hàng từ localStorage
+     function GetByidKH() {
         // Lấy dữ liệu từ localStorage
         const userInfoString = localStorage.getItem("userInfo");
         let userId = 0; // Giá trị mặc định nếu không có thông tin khách hàng
@@ -73,6 +36,82 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $routeParams, $sc
         }
 
         return userId;
+    }
+
+    // Hàm lấy id giỏ hàng
+    async function fetchGioHangId() {
+        const idkh = GetByidKH();
+        try {
+            const response = await fetch(`${apiUrls.gioHang}/${idkh}`);
+            if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
+            const datagiohang = JSON.parse(response);
+            fetchGioHangChiTiet(datagiohang.id)
+        } catch (error) {
+            console.error("Lỗi khi lấy id giỏ hàng:", error);
+            return null;
+        }
+    }
+
+    // Hàm lấy danh sách chi tiết giỏ hàng
+    async function fetchGioHangChiTiet(gioHangId) {
+        try {
+            const response = await fetch(`${apiUrls.gioHangChiTiet}/${gioHangId}`);
+            if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error("Lỗi khi lấy danh sách chi tiết giỏ hàng:", error);
+            return [];
+        }
+    }
+
+    // Hàm gọi API để lấy sản phẩm chi tiết theo idspct
+    async function fetchSanPhamChitiet(spctId) {
+        try {
+            // Kiểm tra nếu idspct có giá trị hợp lệ
+            if (!sanPhamCTId) {
+                console.error("idspct không hợp lệ");
+                return null;
+            }
+
+            // Gọi API với idspct
+            const response = await fetch(`${apiUrls.sanPhamChiTiet}/${sanPhamCTId}`);
+
+            if (!response.ok) {
+                throw new Error(`Lỗi API: ${response.status}`);
+            }
+
+            const data = await response.json();
+
+            // Nếu API trả về một đối tượng, chuyển đổi nó thành mảng
+            return Array.isArray(data) ? data : [data];
+        } catch (error) {
+            console.error("Lỗi khi lấy sản phẩm chi tiết:", error);
+            return null; // Trả về null nếu có lỗi
+        }
+    }
+
+    // Hàm gọi API để lấy thông tin sản phẩm (tensp, urlhinhanh) theo idsp
+    async function fetchSanPhamById(idsp) {
+        try {
+            const response = await fetch(`${apiUrls.sanPham}/${idsp}`);
+            if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error("Lỗi khi lấy thông tin sản phẩm:", error);
+            return null;
+        }
+    }
+
+    // Hàm lấy thuộc tính sản phẩm chi tiết
+    async function fetchThuocTinhSPCT(idspct) {
+        try {
+            const response = await fetch(`${apiUrls.thuocTinh}/${idspct}`);
+            if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error("Lỗi khi lấy thuộc tính sản phẩm chi tiết:", error);
+            return [];
+        }
     }
 
     // Hàm gọi API giảm giá chi tiết theo ID sản phẩm chi tiết
@@ -100,29 +139,9 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $routeParams, $sc
         }
     }
 
-    // Hàm xử lý cập nhật giá giảm
-    function calculateDiscountPrice(giaHienTai, giatrigiam, donVi) {
-        if (donVi === 0) {
-            return giaHienTai - giatrigiam; // Giảm giá theo giá trị trực tiếp
-        } else if (donVi === 1) {
-            return giaHienTai * (1- giatrigiam / 100);
-        }
-        return giaHienTai; // Nếu không xác định, giữ nguyên giá
-    }
-
-
-    function getQuantityFromSession() {
-        // Lấy số lượng từ sessionStorage
-        const quantity = sessionStorage.getItem('quantity');
-    
-        // Nếu có số lượng trong sessionStorage, trả về giá trị đó, nếu không trả về 1 (giá trị mặc định)
-        return quantity ? parseInt(quantity) : 1;
-    }
-    // Biến toàn cục lưu trữ danh sách sản phẩm
-    let danhSachSanPham = [];
-
-    // Hàm render sản phẩm
-    async function renderSanPham() {
+     // Hàm render sản phẩm
+     async function renderGioHang() {
+        const  idspctbygiohang = aw
         const sanPhamChitiets = await fetchSanPhamChitiet();
         const productList = document.querySelector(".product-list");
         $scope.quantity = getQuantityFromSession();
@@ -203,49 +222,8 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $routeParams, $sc
         
         initializeTotalPrices();
         updateTotals();
-    }        
+    }  
 
-
-    function createThuocTinhSelects(thuocTinhList, id) {
-        let thuocTinhSelects = '';
-        thuocTinhList.forEach(tt => {
-            thuocTinhSelects += `
-                <div 
-                    class="badge bg-primary text-white text-center d-inline-block me-2" 
-                    id="select-ttspct-${tt.idtt}" 
-                    style="pointer-events: none;">
-                    ${tt.tenthuoctinhchitiet}
-                </div>
-            `;
-        });
-        return thuocTinhSelects;
-    }
-
-    async function fetchThuocTinhSPCT(id) {
-        if (!id) {
-            console.error('ID không hợp lệ:', id);
-            return [];  // Trả về mảng rỗng thay vì undefined
-        }
-
-        try {
-            const response = await fetch(`${apiTTSPCTUrl}/${id}`);
-
-            if (!response.ok) {
-                throw new Error('Lỗi API: ' + response.statusText);
-            }
-
-            const data = await response.json();
-
-            // Kiểm tra dữ liệu trả về, nếu không có dữ liệu trả về mảng rỗng
-            if (!Array.isArray(data)) {
-                console.warn('Dữ liệu không phải là mảng:', data);
-                return []; // Trả về mảng rỗng nếu dữ liệu không phải mảng
-            }
-
-            return data;  // Trả về dữ liệu nếu hợp lệ
-        } catch (error) {
-            console.error('Lỗi khi lấy danh sách thuộc tính sản phẩm chi tiết:', error);
-            return [];  // Trả về mảng rỗng nếu có lỗi
-        }
-    }
+    fetchGioHangId()
+    renderSanPham();
 });

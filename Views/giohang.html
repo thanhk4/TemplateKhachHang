@@ -9,22 +9,6 @@
 </div>
 
 <div class="container">
-   <!-- Địa chỉ nhận hàng -->
-    <div class="border rounded p-3" style="background-color: rgb(233, 232, 232);">
-      <h5 class="fw-bold mb-2 text-danger" style="margin-left: 15px;">Địa Chỉ Nhận Hàng</h5>
-      <div class="d-flex justify-content-between align-items-center">
-        <div style="margin-left: 15px;">
-          <span id="hovaten" class="fw-bold">...</span> -
-          <span id="sdt">...</span><br>
-          <span id="diachi">...</span>
-          <span class="badge bg-primary-subtle text-success border border-success me-2">Mặc định</span>
-        </div>
-        <div>
-          <a data-bs-toggle="modal" class="btn btn-outline-secondary" data-bs-target="#exampleModal">Thay Đổi</a>
-        </div>
-      </div>
-    </div>
-  
     <!-- Sản phẩm -->
     <div class="border rounded p-3 my-3" style="background-color: rgb(233, 232, 232);">
         <div class="d-flex justify-content-between align-items-center">
@@ -39,17 +23,6 @@
         </div>
         
         <div class="product-list"></div>
-    </div>
-    <div class="border rounded p-3 mb-4">
-      <h5 class="fw-bold">Phương Thức Thanh Toán</h5>
-      <div class="btn-group d-flex justify-content-center" role="group">
-          <input type="radio" class="btn-check" name="paymentMethod" id="cashOnDelivery" autocomplete="off" value="1" checked>
-          <label class="btn btn-outline-primary" for="cashOnDelivery">Thanh toán khi nhận hàng</label>
-
-          <input type="radio" class="btn-check" name="paymentMethod" id="bankTransfer" autocomplete="off" value="2">
-          <label class="btn btn-outline-primary" for="bankTransfer">Chuyển khoản ngân hàng</label>
-          <form id="hidden-form" method="post"></form>
-      </div>
     </div>
     <!-- Tính toán và tổng tiền -->
     <div class="container mt-3 border pt-3 rounded">
