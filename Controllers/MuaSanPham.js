@@ -179,7 +179,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
     let danhSachSanPham = [];
 
     // Hàm render sản phẩm
-    async function renderSanPham() {
+    async function renderGioHang() {
         const sanPhamChitiets = await fetchSanPhamChitiet();
         const productList = document.querySelector(".product-list");
         $scope.quantity = getQuantityFromSession();

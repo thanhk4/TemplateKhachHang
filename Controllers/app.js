@@ -48,6 +48,10 @@ app.config(($routeProvider) => {
     templateUrl: './Views/quenmatkhau.html',
     controller: 'quenmatkhauController'
 })
+.when('/giohang', {
+  templateUrl: './Views/giohang.html',
+  controller: 'GiohangCtrl'
+})
   .when('/resetpassword', {
     templateUrl: './Views/resetpassword.html',
     controller: 'PasswordResetController'
