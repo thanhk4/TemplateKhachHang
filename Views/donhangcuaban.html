@@ -29,7 +29,7 @@
         <!-- Main Content -->
         <div class="col-md-9 p-4">
             <!-- Filter Buttons -->
-            <div class="mb-4 d-flex flex-wrap gap-2">
+            <div class="mb-4 d-flex justify-content-center gap-2">
                 <button ng-click="filterOrders(-1)" class="btn btn-outline-primary" ng-class="{active: filterStatus === -1}">Tất cả</button>
                 <button ng-click="filterOrders(0)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 0}">Chờ xác nhận</button>
                 <button ng-click="filterOrders(1)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 1}">Đã xác nhận</button>
@@ -47,10 +47,6 @@
                         <hr>
                         <div>
                             <div class="info-item">
-                                <span><i class="bi bi-cart"></i> Mã đơn hàng:</span>
-                                <span class="fw-bold">{{ x.id }}</span>
-                            </div>
-                            <div class="info-item">
                                 <span><i class="bi bi-clock"></i> Thời gian đặt:</span>
                                 <span>{{ x.thoigiandathang | date:'dd-MM-yyyy' }}</span>
                             </div>
@@ -66,21 +62,21 @@
                         <hr>
                         <div class="text-end">
                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" ng-click="chitiethd(x.id)">Chi tiết hóa đơn</button>
-           <!--gaaaa-->             </div>
+                        </div>
                     </div>
-                </div><!--gaaaa-->  <!--gaaaa-->  <!--gaaaa--> 
+                </div>
             </div>
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Chi tiết đơn hàng</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="row">
                                 <!-- Lặp qua từng sản phẩm trong hóa đơn -->
-                                <div class="col-12 mb-3 card p-3" ng-repeat="item in DataChitiet">
+                                <div class="col-6 p-3 mb-3 card p-3" ng-repeat="item in DataChitiet">
                                     <div class="row">
                                         <!-- Hình ảnh sản phẩm -->
                                         <div class="col-md-3 text-center">
@@ -98,9 +94,10 @@
                                             <h6 class="text-danger">Thành tiền:</h6>
                                             <p class="fw-bold text-danger">{{(item.giasp * item.soluong - item.giamgia) | number}} VNĐ</p>
                                         </div>
-                                        <hr>
-                                        <div class="text-end">
+                                        <hr ng-if="item.trangthaihd!=0">
+                                        <div class="text-end" ng-if="item.trangthaihd!=0">
                                             <a class="btn btn-danger" ng-click="xemChiTiet(item.idsp)">Mua lại</a>
+                                            <button type="button" class="btn btn-outline-secondary" ng-if="!isInDanhgia(item.id, dataDanhgia)">Đánh giá</button>
                                         </div>
                                     </div>
                                 </div>

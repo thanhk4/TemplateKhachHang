@@ -102,6 +102,7 @@ app.controller('mainController', function ($scope, $location) {
       alert("Vui lòng nhập từ khóa để tìm kiếm!");
     }
   };
+  
 });
 app.service('ThuongHieuService', function($http) {
   const apiUrl = 'https://localhost:7297/api/Thuonghieu'; // Thay URL API của bạn
