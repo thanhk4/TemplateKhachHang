@@ -16,7 +16,7 @@
                 <a href="#!donhangcuaban" class="list-group-item list-group-item-action active">
                     <i class="bi bi-box me-2"></i> Đơn hàng của bạn
                 </a>
-                <a href="#!diachi" class="list-group-item list-group-item-action">
+                <a href="#!diachicuaban" class="list-group-item list-group-item-action">
                     <i class="bi bi-geo-alt me-2"></i> Danh sách địa chỉ
                 </a>
                 <a href="#!resetpassword" class="list-group-item list-group-item-action">
@@ -51,7 +51,8 @@
                             </div>
                             <div class="info-item">
                                 <span><i class="bi bi-clock"></i> Thời gian đặt:</span>
-                                <span>{{ x.thoigiandathang | date:'dd-MM-yyyy' }}</span>
+                                <!-- Hiển thị ngày và giờ theo định dạng dd-MM-yyyy HH:mm -->
+                                <span>{{ x.thoigiandathang | date:'dd-MM-yyyy HH:mm' }}</span>
                             </div>
                             <div class="info-item">
                                 <span><i class="bi bi-wallet"></i> Tổng tiền:</span>

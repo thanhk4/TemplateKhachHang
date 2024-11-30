@@ -28,6 +28,10 @@ app.config(($routeProvider) => {
       templateUrl: "./Views/login.html",
       controller: "LoginController"
     })
+    .when("/diachicuaban", {
+      templateUrl: "./Views/diachicuaban.html",
+      controller: "DiachicuabanCtrl"
+    })
     .when("/muasanpham/:id", {
       templateUrl: "./Views/MuaSanPham.html",
       controller: "MuaSanPhamCtrl"
@@ -51,6 +55,10 @@ app.config(($routeProvider) => {
   .when('/quenmatkhau', {
     templateUrl: './Views/quenmatkhau.html',
     controller: 'quenmatkhauController'
+})
+.when('/giohang', {
+  templateUrl: './Views/giohang.html',
+  controller: 'GiohangCtrl'
 })
   .when('/resetpassword', {
     templateUrl: './Views/resetpassword.html',

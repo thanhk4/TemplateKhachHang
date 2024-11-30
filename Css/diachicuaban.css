@@ -1,0 +1,23 @@
+.address-item {
+    border-bottom: 1px solid #ddd;
+    padding: 15px 0;
+}
+
+.address-item:last-child {
+    border-bottom: none;
+}
+
+.default-label {
+    color: red;
+    font-weight: bold;
+}
+
+.btn-default {
+    color: #fff;
+    background-color: #f53d2d;
+    border: none;
+}
+
+.btn-default:hover {
+    background-color: #d93426;
+}
