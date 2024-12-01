@@ -38,7 +38,18 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                 console.error("Lỗi khi tải chi tiết sản phẩm:", error);
             });
     }
-
+    function LoadDanhGia() {
+        SanPhamService.getDanhGiaByIdSPCT(sanPhamId)
+            .then(function (data) {
+                $scope.danhGias = data;
+                console.log("Danh sách đánh giá:", $scope.danhGias);
+            })
+            .catch(function (error) {
+                $scope.errorMessage = "Không thể tải thông tin đánh giá. Vui lòng thử lại sau.";
+                console.error("Lỗi khi tải đánh giá:", error);
+            });
+    }
+    LoadDanhGia();
     loadSanPhamChiTiet();
 
       // Đặt giá trị mặc định cho quantity

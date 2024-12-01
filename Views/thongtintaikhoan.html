@@ -18,7 +18,7 @@
                 <a href="#!donhangcuaban" class="list-group-item list-group-item-action">
                     <i class="bi bi-box me-2"></i> Đơn hàng của bạn
                 </a>
-                <a href="#!diachi" class="list-group-item list-group-item-action">
+                <a href="#!diachicuaban" class="list-group-item list-group-item-action">
                     <i class="bi bi-geo-alt me-2"></i> Danh sách địa chỉ
                 </a>
                 <a href="#!resetpassword" class="list-group-item list-group-item-action">
@@ -37,23 +37,19 @@
                 <div class="card-body">
                     <div class="row mb-3 py-2 border-bottom">
                         <div class="col-md-3 text-muted">Họ và Tên:</div>
-                        <div class="col-md-9">{{userInfo.ten}}</div>
+                        <div class="col-md-9" id="hovaten">Chưa cập nhật</div>
                     </div>
                     <div class="row mb-3 py-2 border-bottom">
                         <div class="col-md-3 text-muted">Email:</div>
-                        <div class="col-md-9">{{userInfo.email}}</div>
+                        <div class="col-md-9" id="email">Chưa cập nhật</div>
                     </div>
                     <div class="row mb-3 py-2 border-bottom">
-                        <div class="col-md-3 text-muted">SDT:</div>
-                        <div class="col-md-9">{{Dangky.sdt}}</div>
-                    </div>
-                    <div class="row mb-3 py-2 border-bottom">
-                        <div class="col-md-3 text-muted">Ngày sinh:</div>
-                        <div class="col-md-9">{{ Dangky.ngaysinh | date:'dd-MM-yyyy' }}</div>
+                        <div class="col-md-3 text-muted">SĐT:</div>
+                        <div class="col-md-9" id="sdt">Chưa cập nhật</div>
                     </div>
                     <div class="row mb-3 py-2 border-bottom">
                         <div class="col-md-3 text-muted">Địa chỉ:</div>
-                        <div class="col-md-9">{{Dangky.diachi | date:'dd/MM/yyyy'}}</div>
+                        <div class="col-md-9" id="diachi">Chưa cập nhật</div>
                     </div>
                 </div>
             </div>
