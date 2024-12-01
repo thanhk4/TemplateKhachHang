@@ -46,7 +46,7 @@ app.config(($routeProvider) => {
     })
     .when("/timkiem/:search", {
       templateUrl: './Views/timkiem.html',
-      controller: 'timkiemController'//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->
+      controller: 'timkiemController'
     })
     .when('/thongtintaikhoan', {
       templateUrl: './Views/thongtintaikhoan.html',
@@ -77,12 +77,7 @@ app.config(($routeProvider) => {
 
 
 
-<<<<<<< HEAD
-   
-// redirect to
 
-=======
->>>>>>> 11314bd8b90df5d423e65133ce6bf7726ee0c4b5
 // Run block để khởi tạo ứng dụng
 app.run(function ($rootScope, $location, $http) {
   $rootScope.showAccountInfo = false;
