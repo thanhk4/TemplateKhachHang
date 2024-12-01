@@ -55,14 +55,14 @@ app.controller('donhangcuabanController', function ($scope, $http,$location) {
         $scope.currentPage = 0; // Reset về trang đầu tiên
     };
 
-    // Chuyển trang
+    // Chuyển trang//<!--gaaaa-->
     $scope.goToPage = function (page) {
         if (page >= 0 && page < $scope.paginatedOrders.length) {
             $scope.currentPage = page;
-        }
+        }//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->
     };
-    $scope.chitiethd = function(id)
-    { $http.get('https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
+    $scope.chitiethd = function(id){ 
+        $http.get('https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
         .then(function (response) {
             $scope.DataChitiet = response.data;
             console.log($scope.DataChitiet)
@@ -71,4 +71,20 @@ app.controller('donhangcuabanController', function ($scope, $http,$location) {
             console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
         });
     }
+    $http.get('https://localhost:7297/api/Danhgias')
+    .then(function(response){
+        $scope.dataDanhgia=response.data
+        console.log($scope.dataDanhgia)
+    })
+    .catch(function (error) {
+        console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
+    });
+    $scope.isInDanhgia = function(itemId, danhgiaList) {
+        for (var i = 0; i < danhgiaList.length; i++) {
+            if (danhgiaList[i].idhdct === itemId) {
+                return true;
+            }
+        }
+        return false;
+    };
 });

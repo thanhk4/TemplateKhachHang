@@ -1,19 +1,19 @@
 <div class="container-fluid">
     <div class="row">
         <!-- Sidebar -->
-        <div class="col-md-3 bg-light p-4 rounded shadow-sm">
+        <div class="col-md-3 bg-light p-4" style="min-height: 100vh; background-color: #f8f9fa !important;">
             <div class="text-center mb-4">
-                <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center mx-auto" 
-                     style="width: 100px; height: 100px; font-size: 2.5rem; background-color: #dc3545 !important;">
+                <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center mx-auto"
+                    style="width: 100px; height: 100px; font-size: 2.5rem; background-color: #dc3545 !important;">
                     {{userInfo.ten.charAt(0)}}
                 </div>
-                <h5 class="mt-3 text-dark">Xin chào, <span class="text-primary">{{userInfo.ten}}</span></h5>
+                <h5 class="mt-3">Xin chào, {{userInfo.ten}}</h5>
             </div>
             <div class="list-group">
                 <a href="#!thongtintaikhoan" class="list-group-item list-group-item-action">
                     <i class="bi bi-person me-2"></i> Thông tin tài khoản
                 </a>
-                <a href="#!donhangcuaban" class="list-group-item list-group-item-action active">
+                <a href="#!donhangcuaban" class="list-group-item list-group-item-action active"style="background-color: #0d6efd !important; border-color: #0d6efd;">
                     <i class="bi bi-box me-2"></i> Đơn hàng của bạn
                 </a>
                 <a href="#!diachicuaban" class="list-group-item list-group-item-action">
@@ -22,13 +22,14 @@
                 <a href="#!resetpassword" class="list-group-item list-group-item-action">
                     <i class="bi bi-key me-2"></i> Đổi mật khẩu
                 </a>
+
             </div>
         </div>
 
         <!-- Main Content -->
         <div class="col-md-9 p-4">
-            <!-- Filter Buttons -->
-            <div class="mb-4 d-flex flex-wrap gap-2">
+            <!-- Filter uttons -->
+            <div class="mb-4 d-flex justify-content-center gap-2">
                 <button ng-click="filterOrders(-1)" class="btn btn-outline-primary" ng-class="{active: filterStatus === -1}">Tất cả</button>
                 <button ng-click="filterOrders(0)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 0}">Chờ xác nhận</button>
                 <button ng-click="filterOrders(1)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 1}">Đã xác nhận</button>
@@ -36,19 +37,16 @@
                 <button ng-click="filterOrders(3)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 3}">Thành công</button>
                 <button ng-click="filterOrders(4)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 4}">Đã hủy</button>
                 <button ng-click="filterOrders(5)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 5}">Trả hàng</button>
+                <button class="btn btn-outline-primary">Tạo hóa đơn trả</button>
             </div>
-
-            <!-- Order Cards -->
+`           
+            <!-- Order Cardsaaaaa -->
             <div class="row">
                 <div class="col-md-6 mb-4" ng-repeat="x in paginatedOrders[currentPage]">
                     <div class="order-card p-4 shadow-sm rounded">
                         <p class="order-status text-end text-primary">{{ orderStatuses[x.trangthai] }}</p>
                         <hr>
                         <div>
-                            <div class="info-item">
-                                <span><i class="bi bi-cart"></i> Mã đơn hàng:</span>
-                                <span class="fw-bold">{{ x.id }}</span>
-                            </div>
                             <div class="info-item">
                                 <span><i class="bi bi-clock"></i> Thời gian đặt:</span>
                                 <!-- Hiển thị ngày và giờ theo định dạng dd-MM-yyyy HH:mm -->
@@ -71,16 +69,16 @@
                 </div>
             </div>
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
+                <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                            <h5 class="modal-title" id="exampleModalLabel">Chi tiết đơn hàng</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
                             <div class="row">
                                 <!-- Lặp qua từng sản phẩm trong hóa đơn -->
-                                <div class="col-12 mb-3 card p-3" ng-repeat="item in DataChitiet">
+                                <div class="col-6 p-3 mb-3 card p-3" ng-repeat="item in DataChitiet">
                                     <div class="row">
                                         <!-- Hình ảnh sản phẩm -->
                                         <div class="col-md-3 text-center">
@@ -98,9 +96,10 @@
                                             <h6 class="text-danger">Thành tiền:</h6>
                                             <p class="fw-bold text-danger">{{(item.giasp * item.soluong - item.giamgia) | number}} VNĐ</p>
                                         </div>
-                                        <hr>
-                                        <div class="text-end">
-                                            <button class="btn btn-danger" ng-click="xemChiTiet(item.idspct)">Mua lại</button>
+                                        <hr ng-if="item.trangthaihd!=0">
+                                        <div class="text-end" ng-if="item.trangthaihd!=0">
+                                            <a class="btn btn-danger" ng-click="xemChiTiet(item.idsp)">Mua lại</a>
+                                            <button type="button" class="btn btn-outline-secondary" ng-if="!isInDanhgia(item.id, dataDanhgia)">Đánh giá</button>
                                         </div>
                                     </div>
                                 </div>

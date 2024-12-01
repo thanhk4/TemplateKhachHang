@@ -46,7 +46,7 @@ app.config(($routeProvider) => {
     })
     .when("/timkiem/:search", {
       templateUrl: './Views/timkiem.html',
-      controller: 'timkiemController'
+      controller: 'timkiemController'//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->
     })
     .when('/thongtintaikhoan', {
       templateUrl: './Views/thongtintaikhoan.html',
@@ -169,7 +169,9 @@ app.controller('mainController', function ($scope, $location) {
     } else {
       alert("Vui lòng nhập từ khóa để tìm kiếm!");
     }
+    $http.get()
   };
+  
 });
 app.service('ThuongHieuService', function($http) {
   const apiUrl = 'https://localhost:7297/api/Thuonghieu'; // Thay URL API của bạn
@@ -196,7 +198,7 @@ app.controller('ThuongHieuController', function($scope, ThuongHieuService) {
               console.error("Lỗi khi gọi API thương hiệu:", error);
           });
   };
-
+///aqsdfgádfc
   // Gọi hàm khi Controller khởi tạo
   $scope.loadThuongHieu();
 });
