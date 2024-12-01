@@ -1,4 +1,4 @@
-app.controller('ThongTinTaiKhoanController', function($scope, $rootScope, $location) {
+app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $location) {
     // Kiểm tra đăng nhập
     if (!$rootScope.isLoggedIn) {
         $location.path('/login');
@@ -39,24 +39,27 @@ app.controller('ThongTinTaiKhoanController', function($scope, $rootScope, $locat
             if (!khachHangData) throw new Error("Dữ liệu khách hàng không hợp lệ.");
 
             // Gắn dữ liệu vào các phần tử HTML
-            updateCustomerInfo(khachHangData);
+            data(khachHangData);
 
             return khachHangData;
 
         } catch (error) {
             console.error("Lỗi khi lấy thông tin khách hàng:", error);
-            alert("Có lỗi xảy ra khi tải thông tin khách hàng. Vui lòng thử lại.");
         }
     }
 
     // Hàm cập nhật dữ liệu vào HTML
-    function updateCustomerInfo(khachHangData) {
+    function data(khachHangData) {
         const defaultText = "Chưa cập nhật";
         document.getElementById("hovaten").innerText = khachHangData.ten || defaultText;
         document.getElementById("sdt").innerText = khachHangData.sdt || defaultText;
         document.getElementById("diachi").innerText = khachHangData.diachi || defaultText;
+        document.getElementById("ngaysinh").innerText = khachHangData.ngaysinh || defaultText;
         document.getElementById("email").innerText = khachHangData.email || defaultText;
     }
+
+    // Hiển thị thông tin khách hàng khi nhấn nút "Sửa thông tin"
+  
 
     // Gọi API khi controller khởi tạo
     fetchkhachangById();
