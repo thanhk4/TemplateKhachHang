@@ -130,7 +130,7 @@ app.controller('ThuongHieuController', function($scope, ThuongHieuService) {
               console.error("Lỗi khi gọi API thương hiệu:", error);
           });
   };
-///aqsdfg
+///aqsdfgádfcccc
   // Gọi hàm khi Controller khởi tạo
   $scope.loadThuongHieu();
 });
