@@ -37,8 +37,9 @@
                 <button ng-click="filterOrders(3)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 3}">Thành công</button>
                 <button ng-click="filterOrders(4)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 4}">Đã hủy</button>
                 <button ng-click="filterOrders(5)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 5}">Trả hàng</button>
+                <button class="btn btn-outline-primary">Tạo hóa đơn trả</button>
             </div>
-
+`           
             <!-- Order Cards -->
             <div class="row">
                 <div class="col-md-6 mb-4" ng-repeat="x in paginatedOrders[currentPage]">

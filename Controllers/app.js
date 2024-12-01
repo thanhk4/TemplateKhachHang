@@ -101,6 +101,7 @@ app.controller('mainController', function ($scope, $location) {
     } else {
       alert("Vui lòng nhập từ khóa để tìm kiếm!");
     }
+    $http.get()
   };
   
 });
@@ -129,7 +130,7 @@ app.controller('ThuongHieuController', function($scope, ThuongHieuService) {
               console.error("Lỗi khi gọi API thương hiệu:", error);
           });
   };
-
+///aqsdfg
   // Gọi hàm khi Controller khởi tạo
   $scope.loadThuongHieu();
 });
