@@ -6,64 +6,74 @@ app.config(($routeProvider) => {
   $routeProvider
     .when("/", {
       templateUrl: "./Views/TrangChu.html",
-      controller: "TrangChuCtrl"
+      controller: "TrangChuCtrl",
     })
     .when("/danhsachsanpham", {
       templateUrl: "./Views/DanhSachSanPham.html",
       controller: "DanhSachSanPhamCtrl"
     })
-    .when("/danhsachsanphamSale", {
-      templateUrl: "./Views/SanPhamSale.html",
-      controller: "SanPhamSaleController"
-    })
     .when("/sanphamchitiet/:id", {
       templateUrl: "./Views/SanPhamChiTiet.html",
       controller: "SanPhamChiTietCtrl"
+    })
+    .when("/sanphamthuonghieu/:id", {
+      templateUrl: "./Views/SanPhamThuongHieu.html",
+      controller: "SanPhamThuongHieuController"
+    })
+    .when("/sanPhamSale", {
+      templateUrl: "./Views/SanPhamSale.html",
+      controller: "SanPhamSaleController"
     })
     .when("/login", {
       templateUrl: "./Views/login.html",
       controller: "LoginController"
     })
+    .when("/diachicuaban", {
+      templateUrl: "./Views/diachicuaban.html",
+      controller: "DiachicuabanCtrl"
+    })
+    .when("/muasanpham/:id", {
+      templateUrl: "./Views/MuaSanPham.html",
+      controller: "MuaSanPhamCtrl"
+    })
     .when("/dangky", {
       templateUrl: "./Views/dangky.html",
       controller: "dangkyController"
     })
+    .when("/donhangcuaban", {
+      templateUrl: "./Views/donhangcuaban.html",
+      controller:'donhangcuabanController'
+    })
+    .when("/timkiem/:search", {
+      templateUrl: './Views/timkiem.html',
+      controller: 'timkiemController'//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->
+    })
     .when('/thongtintaikhoan', {
       templateUrl: './Views/thongtintaikhoan.html',
       controller: 'ThongTinTaiKhoanController'
-
   })
   .when('/quenmatkhau', {
     templateUrl: './Views/quenmatkhau.html',
     controller: 'quenmatkhauController'
 })
+.when('/giohang', {
+  templateUrl: './Views/giohang.html',
+  controller: 'GiohangCtrl'
+})
   .when('/resetpassword', {
     templateUrl: './Views/resetpassword.html',
     controller: 'PasswordResetController'
 })
-.when('/trangthai', {
-  templateUrl: './Views/Donmua.html',
-  controller: 'MuahangController'
-})
-.when('/diachi', {
-  templateUrl: './Views/diachi.html',
-  controller: 'diachiController'
-})
-
 .when('/doimatkhau2', {
   templateUrl: './Views/doimatkhau2.html',
   controller: 'doimatkhau2Controller'
-})
-.when("/sanphamthuonghieu/:id", {
-  templateUrl: "./Views/SanPhamThuongHieu.html",
-  controller: "SanPhamThuongHieuController"
 })
 .otherwise({
   redirectTo: "/"
 });
 
-    });
-    
+   
+});
 
 
 
@@ -74,31 +84,100 @@ app.config(($routeProvider) => {
 =======
 >>>>>>> 11314bd8b90df5d423e65133ce6bf7726ee0c4b5
 // Run block để khởi tạo ứng dụng
-app.run(function ($rootScope, $location) {
-  console.log('Ứng dụng AngularJS đã khởi tạo thành công');
+app.run(function ($rootScope, $location, $http) {
   $rootScope.showAccountInfo = false;
   // Kiểm tra trạng thái đăng nhập từ localStorage
   const userInfo = localStorage.getItem('userInfo');
   if (userInfo) {
-    $rootScope.isLoggedIn = true;
-    $rootScope.userInfo = JSON.parse(userInfo);
+      $rootScope.isLoggedIn = true;
+      $rootScope.userInfo = JSON.parse(userInfo);
   } else {
-    $rootScope.isLoggedIn = false;
-    $rootScope.userInfo = null;
+      $rootScope.isLoggedIn = false;
+      $rootScope.userInfo = null;
   }
+  
+  // Kiểm tra trạng thái khách hàng mỗi khi chuyển trang
+    $rootScope.$on('$routeChangeStart', function (event, next, current) {
+      const idkh = GetByidKH();
+      if ($rootScope.isLoggedIn) {
+          // Gọi API để kiểm tra trạng thái của khách hàng
+          $http.get(`https://localhost:7297/api/Khachhang/${idkh}`)  
+              .then(function(response) {
+                  if (response.data.trangthai === "Tài khoản bị khoá") {
+                      // Nếu trạng thái là 1, gọi hàm đăng xuất
+                      $rootScope.dangxuat();
+                      Swal.fire({
+                        icon: 'error',               // Chọn icon là lỗi (error)
+                        title: 'Lỗi',                // Tiêu đề thông báo
+                        text: 'Tài khoản của bạn đã bị khoá',  // Nội dung thông báo
+                        confirmButtonText: 'Đóng'    // Văn bản cho nút xác nhận
+                      });  
+                  }
+              })
+              .catch(function(error) {
+                  console.error("Lỗi khi gọi API kiểm tra trạng thái:", error);
+              });
+      }
+  });
+
   // Hàm đăng xuất
   $rootScope.dangxuat = function () {
     $rootScope.isLoggedIn = false;
     $rootScope.userInfo = null;
     localStorage.removeItem('userInfo');
-    console.log("Đăng xuất thành công");
     $location.path('/login');
+  };
+
+
+  // Hàm lấy thông tin khách hàng từ localStorage
+  function GetByidKH() {
+      // Lấy dữ liệu từ localStorage
+      const userInfoString = localStorage.getItem("userInfo");
+      let userId = 0; // Giá trị mặc định nếu không có thông tin khách hàng
+
+      // Kiểm tra nếu dữ liệu tồn tại
+      if (userInfoString) {
+          try {
+              // Chuyển đổi chuỗi JSON thành đối tượng
+              const userInfo = JSON.parse(userInfoString);
+
+              // Kiểm tra và lấy giá trị id từ userInfo
+              userId = userInfo?.id || 0;
+          } catch (error) {
+              console.error("Lỗi khi phân tích dữ liệu userInfo:", error);
+          }
+      } else {
+          console.warn("Dữ liệu userInfo không tồn tại trong localStorage.");
+      }
+
+      return userId;
+  }
+
+  // Hàm đăng xuất
+  $rootScope.dangxuat = function () {
+      $rootScope.isLoggedIn = false;
+      $rootScope.userInfo = null;
+      localStorage.removeItem('userInfo');
+      console.log("Đăng xuất thành công");
+      $location.path('/login');
   };
 
   // Gắn một listener để theo dõi tất cả các lỗi toàn cục
   $rootScope.$on('$error', function (event, error) {
-    console.error('Lỗi toàn cục:', error);
+      console.error('Lỗi toàn cục:', error);
+      
   });
+});
+app.controller('mainController', function ($scope, $location) {
+  $scope.btntimkiem = function () {
+    if ($scope.search && $scope.search.trim() !== '') {
+      $location.path('/timkiem/' + $scope.search);
+    } else {
+      alert("Vui lòng nhập từ khóa để tìm kiếm!");
+    }
+    $http.get()
+  };
+  
 });
 app.service('ThuongHieuService', function($http) {
   const apiUrl = 'https://localhost:7297/api/Thuonghieu'; // Thay URL API của bạn
@@ -125,8 +204,7 @@ app.controller('ThuongHieuController', function($scope, ThuongHieuService) {
               console.error("Lỗi khi gọi API thương hiệu:", error);
           });
   };
-
+///aqsdfgádfc
   // Gọi hàm khi Controller khởi tạo
   $scope.loadThuongHieu();
 });
-

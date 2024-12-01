@@ -17,13 +17,6 @@ app.controller('dangkyController', function($scope, $http) {
             Diachi: $scope.user.diachi,
             Password: $scope.user.password
         }).then(function(response) {
-            localStorage.setItem('Dangky', JSON.stringify({
-                ten: $scope.user.ten,
-                sdt: $scope.user.sdt,
-                ngaysinh: $scope.user.ngaysinh,
-                email: $scope.user.email,
-                diachi: $scope.user.diachi
-            }));
             $scope.successMessage = 'Đăng ký thành công';
             $scope.errorMessage = '';
             setTimeout(function() {

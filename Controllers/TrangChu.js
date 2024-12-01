@@ -5,7 +5,15 @@ app.controller("TrangChuCtrl", function ($scope, $document, $rootScope, SanPhamS
     $rootScope.$on('$destroy', function() {
       link.remove();
     });
-
+    $scope.btntimkiem = function () {
+      if ($scope.search && $scope.search.trim() !== '') {
+        $location.path('/timkiem/' + $scope.search);
+      } else {
+        alert("Vui lòng nhập từ khóa để tìm kiếm!");
+      }
+    };
+    
+    
     $scope.sanPhams = [];
     $scope.errorMessage = null;
     $scope.SanPhamGiamGia = [];
@@ -41,9 +49,9 @@ app.controller("TrangChuCtrl", function ($scope, $document, $rootScope, SanPhamS
         console.log("Xem chi tiết sản phẩm:", id);
         
         $location.path(`/sanphamchitiet/${id}`);
-    };
+    };//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->
 
-
+//<!--gaaaa-->
 
   });
   

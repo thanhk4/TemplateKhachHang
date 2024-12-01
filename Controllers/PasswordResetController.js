@@ -1,4 +1,4 @@
-app.controller('PasswordResetController', function ($scope, $http) {
+app.controller('PasswordResetController', function ($scope, $http, $rootScope, $location) {
    
 
     // Hàm để thay đổi tab
@@ -58,12 +58,8 @@ app.controller('PasswordResetController', function ($scope, $http) {
         // Gửi yêu cầu đổi mật khẩu tới backend
         $http.post('https://localhost:7297/api/Khachhang/doimatkhau', changePasswordDto)
             .then(function (response) {
-                $scope.successMessage = 'Đổi mật khẩu thành công.';
-              
-                setTimeout(function () {
-                    $location.path('login.html');
-                    $scope.$apply(); 
-                }, 2000);
+                Swal.fire("Đổi mật khẩu thành công", "Tài khoản sẽ được đăng xuất, vui lòng đăng nhật lại với mật khẩu mới.", "success"); 
+                $rootScope.dangxuat();
             })
             .catch(function (error) {
                 $scope.generalErrorMessage = error.data?.message || 'Đã xảy ra lỗi không xác định.';

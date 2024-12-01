@@ -1,13 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Document</title>
-       
-  
- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 
@@ -19,16 +17,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular-route.min.js"></script>
     <meta http-equiv="Content-Security-Policy" content="font-src 'self' data: https://cdn.jsdelivr.net;">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <link rel="stylesheet" href="css/Index.css">
-
 </head>
 
 <body ng-app="myApp" class="d-flex flex-column min-vh-100">
-
     <div class="col-12 flex-grow-1">
         <nav class="navbar navbar-expand-lg"
-            style="background-color: #000; height: 70px; background-color: rgba(0, 0, 0, 0.63); margin: 9px;">
+            style="background-color: #000; height: 70px; background-color: rgba(0, 0, 0, 0.63);">
             <div class="container-fluid" style="max-width: 1500px;">
                 <!-- Logo và Tên -->
                 <a class="navbar-brand d-flex align-items-center" href="#/!">
@@ -44,143 +40,177 @@
                                 Phẩm</a>
                         </li>
                         <li class="nav-item mx-3">
-                            <a class="nav-link text-white fw-bold" href="#" style="font-size: 20px;">Sale</a>
-                        </li>
-                        <li class="nav-item mx-3">
                             <a class="nav-link text-white fw-bold" href="#" style="font-size: 20px;">Tin
                                 Tức</a>
                         </li>
                         <li class="nav-item mx-3">
                             <a class="nav-link text-white fw-bold" href="#" style="font-size: 20px;">Liên Hệ</a>
                         </li>
+                        <li class="nav-item dropdown mx-3" ng-controller="ThuongHieuController">
+                            <a class="nav-link text-white fw-bold dropdown-toggle" href="#" id="navbarDropdown"
+                                role="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 20px;">
+                                Thương hiệu
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                <!-- Hiển thị danh sách thương hiệu -->
+                                <li ng-repeat="thuongHieu in thuongHieus">
+                                    <a class="dropdown-item" href="#!sanphamthuonghieu/{{thuongHieu.id}}">
+                                        {{thuongHieu.tenthuonghieu}}
+                                    </a>
+                                </li>
+                                <!-- Hiển thị lỗi nếu có -->
+                                <li ng-if="errorMessage">
+                                    <span class="dropdown-item text-danger">{{errorMessage}}</span>
+                                </li>
+                            </ul>
+                        </li>
                     </ul>
                 </div>
+                <!-- Search bar -->
+                <form class="d-flex ms-auto align-items-center" role="search">
+                    <div class="input-group" ng-controller="mainController">
+                        <input class="form-control" type="search" placeholder="Search" ng-model="search" aria-label="Search" style="width: 300px; ;">
+                        <button class="btn btn-outline-light" type="submit" ng-click="btntimkiem()">
+                            <i class="bi bi-search"></i>
+                            <!-- Biểu tượng tìm kiếm -->
+                        </button>
+                    </div>
+                </form>
 
+                <!-- Icons bên phải -->
+                <div class="d-flex align-items-center ms-3">
+                    <!-- Icon giỏ hàng -->
+                    <div class="nav-item ">
 
-
-            </div>
-            <!-- Search bar -->
-            <form class="d-flex ms-auto align-items-center" role="search">
-                <div class="input-group">
-                    <input class="form-control" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-light" type="submit">
-                        <i class="bi bi-search"></i>
-                        <!-- Biểu tượng tìm kiếm -->
-                    </button>
+                        <a href="#!giohang" class="nav-link text-white">
+                            <i class="bi bi-cart3" style="font-size: 1.5rem;"></i>
+                            <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                                
+                                <span class="visually-hidden">unread messages</span>
+                            </span>
+                        </a>
+                    </div>
                 </div>
-            </form>
-
-            <!-- Icons bên phải -->
-            <div class="d-flex align-items-center ms-3">
-                <!-- Icon giỏ hàng -->
-                <div class="nav-item ">
-                    <a href="#" class="nav-link text-white">
-                        <i class="bi bi-cart3" style="font-size: 1.5rem;"></i>
-
-                    </a>
-                </div>
-
                 <!-- Icon người dùng với dropdown -->
-
-               
-
-
-
-                        <!-- Icon người dùng với dropdown -->
-                        
-                        <ul class="navbar-nav ms-auto">
-                            <!-- Hiển thị "Đăng nhập" nếu chưa đăng nhập -->
-                            <li class="nav-item" ng-if="!isLoggedIn">
-                                <a class="nav-link" href="#!login">
-                                    <i class="bi bi-person-circle"></i> Đăng Nhập
-                                </a>
+                <ul class="navbar-nav ms-auto">
+                    <!-- Hiển thị "Đăng nhập" nếu chưa đăng nhập -->
+                    <li class="nav-item" ng-if="!isLoggedIn">
+                        <a class="nav-link" href="#!login">
+                            <i class="bi bi-person-circle"></i> Đăng Nhập
+                        </a>
+                    </li>
+                    <!-- Hiển thị thông tin người dùng và "Đăng xuất" nếu đã đăng nhập -->
+                    <li class="nav-item dropdown" ng-if="isLoggedIn">
+                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
+                            data-bs-toggle="dropdown">
+                            <i class="bi bi-person-circle"></i> {{userInfo.ten}}
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="#!thongtintaikhoan"><i class="bi bi-person-badge">Thông
+                                        tin tài khoản</i></a></li>
+                            <li>
+                                <hr class="dropdown-divider">
                             </li>
-                        
-                            <!-- Hiển thị thông tin người dùng và "Đăng xuất" nếu đã đăng nhập -->
-                            <li class="nav-item dropdown" ng-if="isLoggedIn">
-                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                    <i class="bi bi-person-circle"></i> {{userInfo.ten}}
-                                </a>
-                                <ul class="dropdown-menu dropdown-menu-end">
-                                   
-                                    <li><a class="dropdown-item" href="#!thongtintaikhoan"><i class="bi bi-person-badge">Thông tin tài khoản</i></a></li>
-                                    <li><hr class="dropdown-divider"></li>
-                                    <li><button class="dropdown-item text-danger" ng-click="dangxuat()">Đăng xuất</button></li>
-                                </ul>
+                            <li><button class="dropdown-item text-danger" ng-click="dangxuat()">Đăng xuất</button>
                             </li>
                         </ul>
-                        
-                        
-                        
-                       
-                    </div>
-                </nav>
-                    <div ng-view style="max-width: 1500px;" class="container-fluid"></div>
-                </div>
-
-
-    
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div ng-view style="max-width: 1500px;" class="container-fluid"></div>
+    </div>
+    <footer class="footer mt-3 border-top text-dark  py-5 " style="background: white;">
+        <div class="container-fluid" style="max-width: 1500px;" >
+          <div class="row">
+            <!-- Logo Section -->
+            <div class="col-md-3 mb-4 mb-md-0">
+              <h2 class="h3 mb-2">Tho7mau</h2>
+              <p class="text-muted"><img src="/image/logo.png" alt="" style="max-width: 100px;"></p>
+            </div>
+      
+            <!-- Headquarters Section -->
+            <div class="col-md-3 mb-4 mb-md-0">
+              <h3 class="h5 mb-3 text-primary">Trụ sở chính</h3>
+              <p class="mb-1"><i class="bi bi-geo-alt-fill me-2 text-primary"></i>Số 99 Hai Bà Trưng</p>
+              <p class="mb-1">Hoàn Kiếm, Hà Nội</p>
+              <p class="mb-1"><i class="bi bi-telephone-fill me-2 text-primary"></i>024 3456 7890</p>
+              <p class="mb-0"><i class="bi bi-envelope-fill me-2 text-primary"></i>lienhe@web.com</p>
+            </div>
+      
+            <!-- Social Media Section -->
+            <div class="col-md-3 mb-4 mb-md-0">
+              <h3 class="h5 mb-3 text-primary">Mạng xã hội</h3>
+              <ul class="list-unstyled">
+                <li class="mb-2">
+                  <a href="#" class="text-decoration-none text-muted d-flex align-items-center">
+                    <i class="bi bi-facebook me-2 text-primary" style="font-size: 1.2rem;"></i>Facebook
+                  </a>
+                </li>
+                <li class="mb-2">
+                  <a href="#" class="text-decoration-none text-muted d-flex align-items-center">
+                    <i class="bi bi-instagram me-2 text-primary" style="font-size: 1.2rem;"></i>Instagram
+                  </a>
+                </li>
+                <li>
+                  <a href="#" class="text-decoration-none text-muted d-flex align-items-center">
+                    <i class="bi bi-linkedin me-2 text-primary" style="font-size: 1.2rem;"></i>LinkedIn
+                  </a>
+                </li>
+              </ul>
+            </div>
+      
+            <!-- Contact Section -->
+            <div class="col-md-3">
+              <h3 class="h5 mb-3 text-primary">Liên hệ</h3>
+              <p class="text-muted">Nếu có bất kỳ thắc mắc, câu hỏi hoặc nhận xét, vui lòng gọi:</p>
+              <p class="fw-bold text-primary">024 3456 7890</p>
+            </div>
+          </div>
+      
+          <!-- Bottom Section -->
+          <div class="row mt-4 pt-4 border-top">
+            <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
+              <small class="text-muted">
+                © 2035 bản quyền của Tho7mau. Tự hào tạo ra với 
+                <a href="https://wix.com" class="text-decoration-none text-primary">Tho7mau.com</a>
+              </small>
+            </div>
+            <div class="col-md-6 text-center text-md-end">
+              <a href="#" class="text-decoration-none text-muted">
+                <small>Chính sách Quyền riêng tư</small>
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js" integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"
         integrity="sha512-894YE6QWD5I59HgZOGReFYm4dnWc1Qt5NtvYSaNcOP+u1T9qYdvdihz0PPSiiqn/+/3e7Jo4EaG7TubfWGUrMQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.26.1/axios.min.js"
         integrity="sha512-bPh3uwgU5qEMipS/VOmRqynnMXGGSRv+72H/N260MQeXZIK4PG48401Bsby9Nq5P5fz7hy5UGNmC/W1Z51h2GQ=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.2/angular.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-route/1.8.3/angular-route.min.js"></script>
     <script src="Controllers/app.js"></script>
     <script src="Controllers/DanhSachSanPham.js"></script>
     <script src="Controllers/TrangChu.js"></script>
     <script src="Controllers/SanPhamChiTiet.js"></script>
     <script src="Controllers/MuaSanPham.js"></script>
-
-  <script src="Controllers/LoginController.js"></script>
-        <script src="Controllers/dangkyController.js"></script>
-        <script src="Controllers/ThongTinTaiKhoanController.js"></script>
-        <script src="Controllers/quenmatkhauController.js"></script>
-        <script src="Controllers/PasswordResetController.js"></script>
-        <script src="Controllers/doimatkhau2.js"></script>
-        <script src="Controllers/MuahangController.js"></script>
-        <script src="Controllers/diachiController.js"></script>
-    
-
-        <footer class="footer mt-3 border-top text-dark" style="padding: 50px;">
-            <div class="row align-items-center">
-                <div class="col-3 text-center">
-                    <p class="mb-0">Lazada 2024. All rights reserved.</p>
-                </div>
-                <div class="col-9">
-                    <ul class="nav d-flex justify-content-end">
-                        <li class="nav-item"><a class="nav-link" href="#">Lazada
-                                University</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Vay
-                                Kinh Doanh</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Trung
-                                tâm hỗ trợ</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#">Ứng
-                                dụng Lazada Seller Center</a></li>
-                    </ul>
-                </div>
-
-    
-
-
-
-
-
-       
-      
-      <script src="/Controllers/Toastr.js"></script>
-
-
+    <script src="Controllers/LoginController.js"></script>
+    <script src="Controllers/dangkyController.js"></script>
+    <script src="Controllers/ThongTinTaiKhoanController.js"></script>
+    <script src="Controllers/quenmatkhauController.js"></script>
+    <script src="Controllers/PasswordResetController.js"></script>
+    <script src="Controllers/doimatkhau2.js"></script>
+    <script src="Controllers/donhangcuabanController.js"></script>
+    <script src="Controllers/timkiemController.js"></script>
+    <script src="Controllers/SanPhamThuongHieuController.js"></script>
+    <script src="Controllers/Toastr.js"></script>
+    <script src="Controllers/diachicuaban.js"></script>
+    <script src="Controllers/giohang.js"></script>
     <script>
-
         function selectLanguage(language, element) {
             document.getElementById('dropdownMenuButton').innerText = language;
             const items = document.querySelectorAll('.dropdown-item');
@@ -190,7 +220,6 @@
             element.classList.add('active');
         }
     </script>
-
 </body>
 
 </html>

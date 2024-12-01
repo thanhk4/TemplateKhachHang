@@ -36,10 +36,27 @@
     width: 200px;
 }
 
-.btn-outline-secondary {
-    color: #ff4500;
-    border-color: #ff4500;
+/* Đảm bảo rằng các card trải full chiều rộng */
+.voucher-card {
+    width: 100%;  /* Thẻ card sẽ chiếm toàn bộ chiều rộng của phần chứa */
+    margin-bottom: 10px;  /* Thêm một chút khoảng cách giữa các card */
+    cursor: pointer;  /* Thêm con trỏ khi hover */
 }
+
+/* Làm cho label và card có chiều rộng đầy đủ */
+.form-check label {
+    width: 100%;
+    cursor: pointer;
+}
+
+/* Làm nổi bật khi chọn card */
+.selected-card {
+    border: 2px solid #007bff; /* Thêm đường viền xanh khi chọn */
+    background-color: rgba(0, 123, 255, 0.1); /* Nền màu khi chọn */
+}
+
+    
+
 
 
 

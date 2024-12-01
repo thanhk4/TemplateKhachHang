@@ -1,4 +1,3 @@
-
 app.controller("SanPhamSaleController", function ($scope, $document, SanPhamService, $location) {
     // Gắn file CSS cho controller
     let link = angular.element('<link rel="stylesheet" href="css/DanhSachSanPham.css">');

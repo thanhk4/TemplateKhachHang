@@ -42,8 +42,7 @@ this.getSanPhamByThuongHieu = function (id) {
             console.error("Lỗi khi gọi API:", error);
             throw error;
         });
-
-}
+    }
 });
 
 
