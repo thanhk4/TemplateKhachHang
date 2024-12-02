@@ -49,7 +49,8 @@ app.config(($routeProvider) => {
       controller: 'timkiemController'//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->
     })
     .when("/trahang/:idhdct", {
-      templateUrl: './Views/trahang.html'
+      templateUrl: './Views/trahang.html',
+      controller:'trahangController'
     })
     .when('/thongtintaikhoan', {
       templateUrl: './Views/thongtintaikhoan.html',
