@@ -122,7 +122,7 @@ app.run(function ($rootScope, $location, $http) {
     $location.path('/login');
   };
 
-
+//aa
   // Hàm lấy thông tin khách hàng từ localStorage
   function GetByidKH() {
       // Lấy dữ liệu từ localStorage
