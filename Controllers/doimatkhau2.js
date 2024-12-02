@@ -1,4 +1,4 @@
-app.controller('doimatkhau2Controller', function ($scope, $http) {
+app.controller('doimatkhau2Controller', function ($scope, $http, $rootScope) {
     // Lấy thông tin userInfo từ localStorage hoặc từ backend
     const restPasswordInfo = JSON.parse(localStorage.getItem('resetPasswordInfo')); // Dữ liệu lưu trữ sau khi đăng nhập
     if (!restPasswordInfo) {
@@ -42,22 +42,25 @@ app.controller('doimatkhau2Controller', function ($scope, $http) {
         // Tạo DTO từ thông tin đã có
         const changePasswordDto = {
             email: restPasswordInfo.email, // Lấy email từ userInfo
-            oldPassword: restPasswordInfo.oldPassword,
+            oldPassword: "string",
             newPassword: $scope.passwordData.newPassword
         };
 
         console.log('Sending DTO:', changePasswordDto); // Log để kiểm tra dữ liệu
 
         // Gửi yêu cầu đổi mật khẩu tới backend
-        $http.post('https://localhost:7297/api/Khachhang/doimatkhau', changePasswordDto)
-            .then(function (response) {
-                $scope.successMessage = 'Đổi mật khẩu thành công.';
-                setTimeout(function () {
-                    $location.path = '#!login';
-                }, 2000);
-            })
-            .catch(function (error) {
-                $scope.generalErrorMessage = error.data?.message || 'Đã xảy ra lỗi không xác định.';
-            });
-    };
+        $http({
+            method: 'POST',
+            url: 'https://localhost:7297/api/Khachhang/quenmatkhau',
+            headers: { 'Content-Type': 'application/json' },
+            data: JSON.stringify(changePasswordDto)
+        })
+        .then(function (response) {
+            Swal.fire("KhôI phục mật khẩu thành công", "Vui lòng đăng nhật lại với mật khẩu mới.", "success"); ;
+            $rootScope.dangxuat();
+        })
+        .catch(function (error) {
+            $scope.generalErrorMessage = error.data?.message || 'Đã xảy ra lỗi không xác định.';
+        });
+    }        
 });
