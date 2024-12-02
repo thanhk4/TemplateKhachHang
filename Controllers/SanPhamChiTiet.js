@@ -1,4 +1,4 @@
-app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $routeParams, $location, SanPhamService) {
+app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $routeParams, $location, SanPhamService, $timeout) {
     let link = angular.element('<link rel="stylesheet" href="css/SanPhamChiTiet.css">');
     $document.find('head').append(link);
 
@@ -180,9 +180,12 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                 if (matchedSPCT.length > 0) {
                     const firstSPCTId = matchedSPCT[0].idspct;
                     AddGHCT(firstSPCTId)
-                    $scope.$apply(() => {
-                        $location.path(`/giohang`);
-                    });                
+                    $timeout(() => {
+                        $scope.$apply(() => {
+                            $location.path('/giohang'); // Chuyển hướng đến trang "Giỏ hàng"
+                        });
+                        $scope.isLoading = false; // Kết thúc tải (nếu cần)
+                    }, 3000);            
                 } else {
                     $scope.errorMessage = "Không có sản phẩm chi tiết nào phù hợp giữa hai API.";
                     console.log($scope.errorMessage);

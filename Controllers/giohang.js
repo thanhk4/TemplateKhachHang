@@ -546,13 +546,16 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
         selectedCheckboxes.forEach(checkbox => {
             selectedIds.push(checkbox.getAttribute('data-id'));
         });
-    
-        // Sử dụng $timeout để gọi $apply một cách an toàn trong AngularJS
+        
         $timeout(() => {
-            $location.path(`/hoadongiohang/${selectedIds.join(',')}`); // Chuyển hướng với các ID sản phẩm
-        });
+            $scope.$apply(() => {
+                $location.path(`/hoadongiohang/${selectedIds.join(',')}`); // Chuyển hướng đến trang "Giỏ hàng"
+            });
+            $scope.isLoading = false; // Kết thúc tải (nếu cần)
+        }, 3000); 
     };        
 
+    // Gọi render khi khởi tạo controller
     renderGioHang();
     
 });
