@@ -35,7 +35,7 @@ app.config(($routeProvider) => {
     .when("/muasanpham/:id", {
       templateUrl: "./Views/MuaSanPham.html",
       controller: "MuaSanPhamCtrl"
-    })
+    })  
     .when("/dangky", {
       templateUrl: "./Views/dangky.html",
       controller: "dangkyController"
@@ -52,6 +52,10 @@ app.config(($routeProvider) => {
       templateUrl: './Views/thongtintaikhoan.html',
       controller: 'ThongTinTaiKhoanController'
   })
+  .when('/hoadongiohang/:ids', {
+    templateUrl: './Views/hoadongiohang.html',
+    controller: 'HoadongiohangCtrl'
+})
   .when('/quenmatkhau', {
     templateUrl: './Views/quenmatkhau.html',
     controller: 'quenmatkhauController'
