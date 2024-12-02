@@ -33,11 +33,10 @@
                 <button ng-click="filterOrders(-1)" class="btn btn-outline-primary" ng-class="{active: filterStatus === -1}">Tất cả</button>
                 <button ng-click="filterOrders(0)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 0}">Chờ xác nhận</button>
                 <button ng-click="filterOrders(1)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 1}">Đã xác nhận</button>
-                <button ng-click="filterOrders(2)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 2}">Đã giao</button>
+                <button ng-click="filterOrders(2)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 2}">Đang giao</button>
                 <button ng-click="filterOrders(3)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 3}">Thành công</button>
                 <button ng-click="filterOrders(4)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 4}">Đã hủy</button>
                 <button ng-click="filterOrders(5)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 5}">Trả hàng</button>
-                <button class="btn btn-outline-primary">Tạo hóa đơn trả</button>
             </div>
             <!-- Order Cardsaaaaa -->
             <div class="row">
@@ -49,7 +48,7 @@
                             <div class="info-item">
                                 <span><i class="bi bi-clock"></i> Thời gian đặt:</span>
                                 <!-- Hiển thị ngày và giờ theo định dạng dd-MM-yyyy HH:mm -->
-                                <span>{{ x.thoigiandathang | date:'dd-MM-yyyy HH:mm' }}</span>
+                                <span>{{ x.thoigiandathang | date:'dd-MM-yyyy' }}</span>
                             </div>
                             <div class="info-item">
                                 <span><i class="bi bi-wallet"></i> Tổng tiền:</span>
@@ -62,6 +61,7 @@
                         </div>
                         <hr>
                         <div class="text-end">
+                            <button class="btn btn-outline-primary" ng-if="x.trangthai==0||x.trangthai==1" ng-click="huydonhang(x.id)">Hủy đơn hàng</button>
                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" ng-click="chitiethd(x.id)">Chi tiết hóa đơn</button>
                         </div>
                     </div>
@@ -77,13 +77,12 @@
                         <div class="modal-body">
                             <div class="row">
                                 <!-- Lặp qua từng sản phẩm trong hóa đơn -->
-                                <div class="col-6 p-3 mb-3 card p-3" ng-repeat="item in DataChitiet">
+                                <div class="col-md-6 p-3 mb-3 card p-3" ng-repeat="item in DataChitiet">
                                     <div class="row">
                                         <!-- Hình ảnh sản phẩm -->
                                         <div class="col-md-3 text-center">
                                             <img ng-src="{{item.urlHinhanh}}" alt="{{item.tensp}}" class="img-fluid rounded shadow-sm">
                                         </div>
-                                        <!-- Thông tin sản phẩm -->
                                         <div class="col-md-6">
                                             <h6 class="fw-bold">{{item.tensp}}</h6>
                                             <p class="text-muted">Số lượng: <span class="fw-bold">{{item.soluong}}</span></p>
@@ -97,8 +96,9 @@
                                         </div>
                                         <hr ng-if="item.trangthaihd!=0">
                                         <div class="text-end" ng-if="item.trangthaihd!=0">
-                                            <a class="btn btn-danger" ng-click="xemChiTiet(item.idsp)">Mua lại</a>
-                                            <button type="button" class="btn btn-outline-secondary" ng-if="!isInDanhgia(item.id, dataDanhgia)">Đánh giá</button>
+                                            <button type="button" class="btn btn-outline-secondary" ng-if="item.trangthaihd==3" ng-click="trahang()">Trả hàng</button>
+                                            <a class="btn btn-danger" ng-click="xemChiTiet(item.idsp)" ng-if="item.trangthaihd==3||item.trangthaihd==4||item.trangthaihd==5">Mua lại</a>
+                                            <button type="button" class="btn btn-outline-secondary" ng-if="item.trangthaihd==3">Đánh giá</button>
                                         </div>
                                     </div>
                                 </div>
