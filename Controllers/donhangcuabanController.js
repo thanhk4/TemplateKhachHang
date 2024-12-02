@@ -247,6 +247,8 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         $('#exampleModal').modal('hide');
         $location.path(`/trahang`);
     };
+    $scope.chitiethd = function(id){ 
+        $http.get('https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
             .then(function (response) {
                 $scope.DataChitiet = response.data;
                 console.log("Chi tiết hóa đơn:", $scope.DataChitiet);
