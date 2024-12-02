@@ -48,10 +48,60 @@
                         <div class="col-md-9" id="sdt">Chưa cập nhật</div>
                     </div>
                     <div class="row mb-3 py-2 border-bottom">
+                        <div class="col-md-3 text-muted">Ngày Sinh:</div>
+                        <div class="col-md-9" id="ngaysinh">Chưa cập nhật</div>
+                    </div>
+                    <div class="row mb-3 py-2 border-bottom">
                         <div class="col-md-3 text-muted">Địa chỉ:</div>
                         <div class="col-md-9" id="diachi">Chưa cập nhật</div>
                     </div>
+
+                  <div style="text-align: center;">  <button type="submit" data-bs-toggle="modal" data-bs-target="#editModal" id="btnChangeAcc" class="btn btn-primary"> Sửa</button></div> 
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Modal sửa thông tin -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color: #212529; color: white;">
+                <h5 class="modal-title" id="editModalLabel">Sửa thông tin tài khoản</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateForm">
+                    <div class="mb-3">
+                        <label for="editHoTen" class="form-label">Họ và Tên</label>
+                        <input type="text" id="editHoTen" name="hoTen" class="form-control" value="">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="editEmail" class="form-label">Email</label>
+                        <input type="email" id="editEmail" name="email" class="form-control" value="nguyenvana@example.com">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="editSDT" class="form-label">SĐT</label>
+                        <input type="text" id="editSDT" name="sdt" class="form-control" value="0123456789">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="editNgaysinh" class="form-label">Ngày sinh</label>
+                        <input type="date" id="editNgaysinh" name="editNgaysinh" class="form-control" value="">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="editDiaChi" class="form-label">Địa chỉ</label>
+                        <input id="editDiaChi" name="diaChi" class="form-control" value="Hà Nội">
+                    </div>
+                    
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" id="btnSave">Lưu thay đổi</button>
             </div>
         </div>
     </div>

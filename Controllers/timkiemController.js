@@ -39,7 +39,7 @@ app.controller('timkiemController', function ($scope, $routeParams, $http) {
       return matchesPrice && matchesBrand;
     });
   };
-
+///aaa
   // Reset Filters
   $scope.resetFilters = function () {
     $scope.priceFilter.min = null;
@@ -47,4 +47,4 @@ app.controller('timkiemController', function ($scope, $routeParams, $http) {
     $scope.brandFilter = [];
     $scope.displayResults = [...$scope.filteredResults];
   };
-});
+});//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->//;llládf0
