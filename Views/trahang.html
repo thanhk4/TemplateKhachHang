@@ -1,14 +1,41 @@
-<div class="container">
-    <div class="row m-5">
-        <div class="col">
-            <div class="card">
-                aaaa
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 bg-light p-4" style="min-height: 100vh; background-color: #f8f9fa !important;">
+            <div class="text-center mb-4">
+                <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center mx-auto"
+                    style="width: 100px; height: 100px; font-size: 2.5rem; background-color: #dc3545 !important;">
+                    {{userInfo.ten.charAt(0)}}
+                </div>
+                <h5 class="mt-3">Xin chào, {{userInfo.ten}}</h5>
+            </div>
+            <div class="list-group">
+                <a href="#!thongtintaikhoan" class="list-group-item">
+                    <i class="bi bi-person me-2"></i> Thông tin tài khoản
+                </a>
+                <a href="#!donhangcuaban" class="list-group-item active"style="background-color: #0d6efd !important; border-color: #0d6efd;">
+                    <i class="bi bi-box me-2"></i> Đơn hàng của bạn
+                </a>
+                <a href="#!diachicuaban" class="list-group-item">
+                    <i class="bi bi-geo-alt me-2"></i> Danh sách địa chỉ
+                </a>
+                <a href="#!resetpassword" class="list-group-item">
+                    <i class="bi bi-key me-2"></i> Đổi mật khẩu
+                </a>
+
             </div>
         </div>
-        <div class="col">
-            <div class="card">
-                aaaa
-            </div>
+
+        <!-- Main Contenta -->
+        <div class="col-md-9 p-4">
+            giang tra hang
         </div>
     </div>
 </div>
+
+<style>
+    body {
+    background-color: #f8f9fa;
+}
+
+</style>

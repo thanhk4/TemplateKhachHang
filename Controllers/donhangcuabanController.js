@@ -1,3 +1,4 @@
+
 app.service('OrderHistoryService', function ($http) {
     // Tìm đánh giá theo idhdct (id chi tiết hóa đơn)
     this.getRatingByOrderDetailId = function (orderDetailId) {
@@ -185,6 +186,67 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     };
     $scope.chitiethd = function (id) {
         $http.get('https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
+        .then(function (response) {
+            $scope.DataChitiet = response.data;
+            console.log($scope.DataChitiet)
+        })
+        .catch(function (error) {
+            console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
+        });
+    }
+    $http.get('https://localhost:7297/api/Danhgias')
+    .then(function(response){
+        $scope.dataDanhgia=response.data
+        console.log($scope.dataDanhgia)
+    })
+    .catch(function (error) {
+        console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
+    });
+    $scope.trahang = function (idhdct) {
+        Swal.fire({
+            title: 'Xác nhận hủy đơn hàng',
+            text: "Bạn có chắc chắn muốn trả đơn hàng này không?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Có, tôi chắc chắn!',
+            cancelButtonText: 'Hủy'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $http.get('https://localhost:7297/api/Khachhang/'+$scope.userInfo.id)
+                .then(function(response){
+                    $scope.dataKH = {
+                        id: response.id,
+                        ten: response.ten
+                    }
+                })
+                .catch(function(error){
+                    console.log(error)
+                })
+                $http.post('https://localhost:7297/api/Trahang/',dataTrahang)
+                    .then(function(response) {
+                        $('#exampleModal').modal('hide');
+                        $location.path(`/trahang/${idhdct}`);
+                    })
+                    .catch(function(error) {
+                        console.error("Lỗi khi lấy thông tin đơn hàng:", error);
+                        Swal.fire(
+                            'Lỗi!',
+                            'Không thể lấy thông tin đơn hàng. Vui lòng thử lại.',
+                            'error'
+                        );
+                    });
+            } else if (result.dismiss === Swal.DismissReason.cancel) {
+                // Người dùng chọn hủy xác nhận
+                Swal.fire(
+                    'Đã hủy',
+                    'Đơn hàng không bị thay đổi.',
+                    'info'
+                );
+            }
+        });
+        $('#exampleModal').modal('hide');
+        $location.path(`/trahang`);
+    };
             .then(function (response) {
                 $scope.DataChitiet = response.data;
                 console.log("Chi tiết hóa đơn:", $scope.DataChitiet);
