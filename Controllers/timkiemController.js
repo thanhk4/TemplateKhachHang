@@ -39,7 +39,7 @@ app.controller('timkiemController', function ($scope, $routeParams, $http) {
       return matchesPrice && matchesBrand;
     });
   };
-
+///aaa
   // Reset Filters
   $scope.resetFilters = function () {
     $scope.priceFilter.min = null;
