@@ -555,11 +555,6 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
         }, 3000); 
     };        
 
-    // Tải lại giỏ hàng khi truy cập trang
-    $rootScope.$on('$routeChangeSuccess', function () {
-        renderGioHang();
-    });
-
     // Gọi render khi khởi tạo controller
     renderGioHang();
     
