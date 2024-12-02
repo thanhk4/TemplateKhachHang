@@ -48,6 +48,9 @@ app.config(($routeProvider) => {
       templateUrl: './Views/timkiem.html',
       controller: 'timkiemController'//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->
     })
+    .when("/trahang/:idhdct", {
+      templateUrl: './Views/trahang.html'
+    })
     .when('/thongtintaikhoan', {
       templateUrl: './Views/thongtintaikhoan.html',
       controller: 'ThongTinTaiKhoanController'
@@ -166,6 +169,7 @@ app.controller('mainController', function ($scope, $location) {
   $scope.btntimkiem = function () {
     if ($scope.search && $scope.search.trim() !== '') {
       $location.path('/timkiem/' + $scope.search);
+      $scope.search = '';
     } else {
       alert("Vui lòng nhập từ khóa để tìm kiếm!");
     }
