@@ -86,6 +86,13 @@
                                         </div>
                                         <div class="col-md-6">
                                             <h6 class="fw-bold">{{item.tensp}}</h6>
+                                            <!-- Hiển thị thuộc tính sản phẩm -->
+                                            <div ng-repeat="thuocTinh in item.thuocTinhSelects" 
+                                                class="badge bg-primary text-white text-center d-inline-block me-2"
+                                                id="select-ttspct-{{thuocTinh.id}}" 
+                                                style="pointer-events: none;">
+                                                {{thuocTinh.tenThuocTinh}}
+                                            </div>
                                             <p class="text-muted">Số lượng: <span class="fw-bold">{{item.soluong}}</span></p>
                                             <p class="text-muted">Giá sản phẩm: <span class="fw-bold">{{item.giasp | number}} VNĐ</span></p>
                                             <p ng-if="item.giamgia > 0" class="text-success">Giảm giá: -{{item.giamgia | number}} VNĐ</p>
