@@ -1,4 +1,4 @@
-app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParams, $scope, $location) {
+app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParams, $scope, $location, $timeout) {
     const quantityInput = document.querySelector(".quantity-input");
     const priceElement = document.querySelector(".total-price");
     const sanPhamCTId = $routeParams.id;
@@ -983,6 +983,17 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         }
     });
 
+    document.getElementById("AddNewAddressExample").addEventListener("click", function () {
+        var modal = bootstrap.Modal.getInstance(document.getElementById("exampleModal"));
+        $timeout(() => {
+            $scope.$apply(() => {
+                modal.hide();
+                $location.path(`/diachicuaban`); 
+            });
+            $scope.isLoading = false;
+        }, 1500); 
+    });
+
     /// Lắng nghe sự kiện "Khôi phục" địa chỉ mặc định
     document.getElementById("btnRestoreAddress").addEventListener("click", function () {
         // Gọi API để lấy lại địa chỉ mặc định
@@ -1065,21 +1076,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         }
     });
 
-    document.getElementById("AddNewAddressExample").addEventListener("click", function () {
-        var addressSelect = document.getElementById("addressSelect");
-        var btnSaveAddress = document.getElementById("btnSaveAddress");
-
-        // Kiểm tra trạng thái hiện tại của addressSelect và btnSaveAddress
-        if (btnSaveAddress.disabled == false) {
-            // Nếu đang ở trạng thái disabled, thì chuyển sang enabled
-            btnSaveAddress.disabled = true;
-            addressSelect.disabled = true;
-        } else {
-            // Nếu đang ở trạng thái enabled, thì chuyển sang disabled
-            btnSaveAddress.disabled = false;
-            addressSelect.disabled = false;
-        }
-    });
 
     const loadAddressesByIdKH = async () => {
         const idKH = GetByidKH(); // Hàm logic lấy idKH
@@ -1116,42 +1112,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             addressSelect.disabled = false; // Dropdown hoạt động
         }
     };
-
-
-
-    // Lưu địa chỉ mới api
-    document.getElementById("btnAddNewAddress").addEventListener("click", async () => {
-        var diachicuthe = document.getElementById("detailInput").value;
-        var phuongxa = document.getElementById("ward").selectedOptions[0].text;
-        var quanhuyen = document.getElementById("district").selectedOptions[0].text;
-        var thanhpho = document.getElementById("province").selectedOptions[0].text;
-        const idkh = GetByidKH();
-
-        if (!thanhpho || !quanhuyen || !phuongxa || !diachicuthe || !idkh) {
-            Swal.fire("Lỗi", "Vui lòng nhập đầy đủ thông tin.", "error");
-            return;
-        }
-
-        const newAddress = {
-            idkh,
-            thanhpho,
-            quanhuyen,
-            phuongxa,
-            diachicuthe
-        };
-
-        try {
-            await axios.post(apiAddressList, newAddress);
-
-            // Gọi lại nút AddNewAddressExample để xử lý thêm logic sau khi lưu
-            document.getElementById("AddNewAddressExample").click();
-            Swal.fire("Thành công", "Địa chỉ mới đã được lưu.", "success");
-            loadAddressesByIdKH(); // Làm mới danh sách địa chỉ
-        } catch (error) {
-            Swal.fire("Lỗi", "Không thể lưu địa chỉ mới.", "error");
-            console.error(error);
-        }
-    });
 
 
     document.querySelectorAll('.voucher-card').forEach(card => {

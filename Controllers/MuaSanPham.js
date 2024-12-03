@@ -1,4 +1,4 @@
-app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, $scope, $location) {
+app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, $scope, $location, $timeout) {
     const quantityInput = document.querySelector(".quantity-input");
     const priceElement = document.querySelector(".total-price");
     const sanPhamCTId = $routeParams.id;
@@ -144,7 +144,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
             const response = await fetch(`https://localhost:7297/api/Salechitiet/SanPhamCT/${spctId}`);
             if (!response.ok) {
                 if (response.status === 404) {
-                    console.warn("Không tìm thấy dữ liệu giảm giá chi tiết");
+                    
                     return null; // Không tìm thấy, trả về null
                 }
                 throw new Error(`Lỗi API giảm giá: ${response.status}`);
@@ -952,19 +952,14 @@ async function taoLinkThanhToan(idhd) {
     });
 
     document.getElementById("AddNewAddressExample").addEventListener("click", function () {
-        var addressSelect = document.getElementById("addressSelect");
-        var btnSaveAddress = document.getElementById("btnSaveAddress");
-
-        // Kiểm tra trạng thái hiện tại của addressSelect và btnSaveAddress
-        if (btnSaveAddress.disabled == false) {
-            // Nếu đang ở trạng thái disabled, thì chuyển sang enabled
-            btnSaveAddress.disabled = true;
-            addressSelect.disabled = true;
-        } else {
-            // Nếu đang ở trạng thái enabled, thì chuyển sang disabled
-            btnSaveAddress.disabled = false;
-            addressSelect.disabled = false;
-        }
+        var modal = bootstrap.Modal.getInstance(document.getElementById("exampleModal"));
+        $timeout(() => {
+            $scope.$apply(() => {
+                modal.hide();
+                $location.path(`/diachicuaban`); 
+            });
+            $scope.isLoading = false;
+        }, 1500); 
     });
 
     const loadAddressesByIdKH = async () => {
@@ -997,48 +992,11 @@ async function taoLinkThanhToan(idhd) {
             // Có danh sách địa chỉ
             addressSelect.innerHTML = '<option disabled selected value="" required>Chọn địa chỉ...</option>';
             data.forEach(address => {
-                addressSelect.innerHTML += `<option value="${address.id}">${address.ten} - ${address.sdt}__${address.diachicuthe} - ${address.phuongxa} - ${address.quanhuyen} - ${address.thanhpho}</option>`;
+                addressSelect.innerHTML += `<option value="${address.id}">${address.ten} - ${address.sdt}, ${address.diachicuthe} - ${address.phuongxa} - ${address.quanhuyen} - ${address.thanhpho}</option>`;
             });
             addressSelect.disabled = false; // Dropdown hoạt động
         }
     };
-
-
-
-    // Lưu địa chỉ mới api
-    document.getElementById("btnAddNewAddress").addEventListener("click", async () => {
-        var diachicuthe = document.getElementById("detailInput").value;
-        var phuongxa = document.getElementById("ward").selectedOptions[0].text;
-        var quanhuyen = document.getElementById("district").selectedOptions[0].text;
-        var thanhpho = document.getElementById("province").selectedOptions[0].text;
-        const idkh = GetByidKH();
-
-        if (!thanhpho || !quanhuyen || !phuongxa || !diachicuthe || !idkh) {
-            Swal.fire("Lỗi", "Vui lòng nhập đầy đủ thông tin.", "error");
-            return;
-        }
-
-        const newAddress = {
-            idkh,
-            thanhpho,
-            quanhuyen,
-            phuongxa,
-            diachicuthe
-        };
-
-        try {
-            await axios.post(apiAddressList, newAddress);
-
-            // Gọi lại nút AddNewAddressExample để xử lý thêm logic sau khi lưu
-            document.getElementById("AddNewAddressExample").click();
-            Swal.fire("Thành công", "Địa chỉ mới đã được lưu.", "success");
-            loadAddressesByIdKH(); // Làm mới danh sách địa chỉ
-        } catch (error) {
-            Swal.fire("Lỗi", "Không thể lưu địa chỉ mới.", "error");
-            console.error(error);
-        }
-    });
-
 
     document.querySelectorAll('.voucher-card').forEach(card => {
         card.addEventListener('click', function () {
