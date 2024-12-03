@@ -114,7 +114,6 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
      async function AddGHCT(idspct) {
         const idkh = await GetByidKH();
         const idgh = await fetchGioHangId(idkh);
-        $scope.quantity = parseInt(sessionStorage.getItem('quantity'));
         const soluong = $scope.quantity;
 
         const newGioHangCT = {
@@ -126,10 +125,7 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
 
         try {
             await axios.post(gioHangChiTiet, newGioHangCT);
-            Swal.fire("Thành công", "Địa chỉ mới đã được lưu.", "success");
-            $scope.$apply(() => {
-                $location.path(`/muasanpham/${firstSPCTId}`);
-            });  
+            Swal.fire("Thành công", "Thêm sản phẩm vào giỏ hàng thành công.", "success");
         } catch (error) {
             Swal.fire("Lỗi", "Không thể thêm sản phẩm vào giỏ hàng.", "error");
             console.error(error);
@@ -185,7 +181,7 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                             $location.path('/giohang'); // Chuyển hướng đến trang "Giỏ hàng"
                         });
                         $scope.isLoading = false; // Kết thúc tải (nếu cần)
-                    }, 3000);            
+                    }, 1500);            
                 } else {
                     $scope.errorMessage = "Không có sản phẩm chi tiết nào phù hợp giữa hai API.";
                     console.log($scope.errorMessage);
