@@ -48,7 +48,7 @@ app.config(($routeProvider) => {
       templateUrl: './Views/timkiem.html',
       controller: 'timkiemController'//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->
     })
-    .when("/trahang/:idhdct", {
+    .when("/trahang/:id", {
       templateUrl: './Views/trahang.html',
       controller:'trahangController'
     })

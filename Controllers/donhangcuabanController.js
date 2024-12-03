@@ -203,10 +203,19 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
     });
 
-    $scope.trahang = function (idhdct) {
+    $scope.trahang = function (id) {
+        if (!id) {
+            console.error("ID không hợp lệ!");
+            return;
+        }
+    
+        // Ẩn modal nếu nó đang hiển thị
         $('#exampleModal').modal('hide');
-                $location.path('/trahang/' + idhdct); 
+    
+        // Điều hướng đến trang trả hàng
+        $location.path('/trahang/' + id);
     };
+    
     
     //vvfgg
     $scope.chitiethd = function(id){ 
