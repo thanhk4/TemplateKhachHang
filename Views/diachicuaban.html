@@ -33,67 +33,7 @@
                     <button class="btn btn-default" data-bs-toggle="modal"
                     data-bs-target="#addDiaChi">+ Thêm địa chỉ mới</button>
                 </div>
-
-                <div class="address-item">
-                    <h6>Nguyễn Nhật Hưng<span> - </span><span class="text-muted">0981 961 533</span></h6>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p>Chung Cư Tht New City<br>Xã Kim Chung, Huyện Hoài Đức, Hà Nội</p>
-                        <div class="mt-2">
-                            <a class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                data-bs-target="#updateDiaChi">Cập nhật</a>
-                            <a class="btn btn-outline-danger">Xóa</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="address-item">
-                    <h6>Nguyễn Hoàng Hải<span> - </span><span class="text-muted">0338 494 102</span></h6>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p>Xóm 14 Đường 221b, Thôn Việt Hưng<br>Xã Nam Trung, Huyện Tiền Hải, Thái Bình</p>
-                        <div class="mt-2">
-                            <a class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                data-bs-target="#updateDiaChi">Cập nhật</a>
-                            <a class="btn btn-outline-danger">Xóa</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="address-item">
-                    <h6>Nguyễn Nhật Hưng<span> - </span><span class="text-muted">0981 961 533</span></h6>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p>36 Hẻm 8/236/11 Đường Lê Quang Đạo<br>Phường Phú Đô, Quận Nam Từ Liêm, Hà Nội</p>
-                        <div class="mt-2">
-                            <a class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                data-bs-target="#updateDiaChi">Cập nhật</a>
-                            <a class="btn btn-outline-danger">Xóa</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="address-item">
-                    <h6>Nguyễn Hoàng Hải<span> - </span><span class="text-muted">0983 109 183</span></h6>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p>163 Đường Trương Định<br>Phường Tân Mai, Thành Phố Biên Hòa, Đồng Nai</p>
-                        <div class="mt-2">
-                            <a class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                data-bs-target="#updateDiaChi">Cập nhật</a>
-                            <a class="btn btn-outline-danger">Xóa</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="address-item">
-                    <h6>Nguyễn Hoàng Hải<span> - </span><span class="text-muted">0338 494 102</span></h6>
-                    <div class="d-flex justify-content-between align-items-center">
-                        <p>Xóm 14, thôn Việt Hưng Nam Trung-Tiền Hải-Thái Bình<br>Xã Nam Trung, Huyện Tiền Hải, Thái
-                            Bình</p>
-                        <div class="mt-2">
-                            <a class="btn btn-outline-secondary" data-bs-toggle="modal"
-                                data-bs-target="#updateDiaChi">Cập nhật</a>
-                            <a class="btn btn-outline-danger">Xóa</a>
-                        </div>
-                    </div>
-                </div>
+                <div class="diachi-list"></div>
             </div>
         </div>
     </div>
@@ -110,12 +50,65 @@
             <div class="modal-body">
                 <form class="row g-3">
                     <div class="col-md-6">
+                        <label for="Updatetennguoinhan" class="form-label">Họ Và Tên</label>
+                        <input type="text" class="form-control" id="Updatetennguoinhan">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="Updatesdtnguoinhan" class="form-label">Số Điện Thoại</label>
+                        <input type="text" class="form-control" id="Updatesdtnguoinhan">
+                    </div>
+                    <div class="col-12">
+                        <div class="mb-3">
+                            <label for="updateprovince" class="form-label">Chọn Tỉnh/Thành</label>
+                            <select class="form-select" id="updateprovince">
+                                <option disabled value="">Chọn Tỉnh</option>
+                                <!-- Các tùy chọn sẽ được thêm thông qua JavaScript -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="updatedistrict" class="form-label">Chọn Quận/Huyện</label>
+                            <select class="form-select" id="updatedistrict" disabled>
+                                <option disabled value="">Chọn Quận</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="updateward" class="form-label">Chọn Phường/Xã</label>
+                            <select class="form-select" id="updateward" disabled>
+                                <option disabled value="">Chọn Phường</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="UpdatedetailInput" class="form-label">Địa chỉ cụ thể</label>
+                            <textarea class="form-control" id="UpdatedetailInput" rows="3"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="updateForm">Cập Nhật</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal thêm địa chỉ -->
+<div class="modal fade" id="addDiaChi" tabindex="-1" aria-labelledby="addDiaChiLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="addDiaChiLabel">Thêm Địa Chỉ</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="row g-3">
+                    <input type="hidden" id="updateAddressId" value="">
+                    <div class="col-md-6">
                         <label for="tennguoinhan" class="form-label">Họ Và Tên</label>
-                        <input type="email" class="form-control" id="tennguoinhan">
+                        <input type="text" class="form-control" id="tennguoinhan">
                     </div>
                     <div class="col-md-6">
                         <label for="sdtnguoinhan" class="form-label">Số Điện Thoại</label>
-                        <input type="password" class="form-control" id="sdtnguoinhan">
+                        <input type="text" class="form-control" id="sdtnguoinhan">
                     </div>
                     <div class="col-12">
                         <div class="mb-3">
@@ -145,59 +138,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Cập nhật</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal thêm địa chỉ -->
-<div class="modal fade" id="addDiaChi" tabindex="-1" aria-labelledby="addDiaChiLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="addDiaChiLabel">Thêm Địa Chỉ</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form class="row g-3">
-                    <div class="col-md-6">
-                        <label for="tennguoinhan" class="form-label">Họ Và Tên</label>
-                        <input type="email" class="form-control" id="tennguoinhan">
-                    </div>
-                    <div class="col-md-6">
-                        <label for="sdtnguoinhan" class="form-label">Số Điện Thoại</label>
-                        <input type="password" class="form-control" id="sdtnguoinhan">
-                    </div>
-                    <div class="col-12">
-                        <div class="mb-3">
-                            <label for="province" class="form-label">Chọn Tỉnh/Thành</label>
-                            <select class="form-select" id="province">
-                                <option disabled value="">Chọn Tỉnh</option>
-                                <!-- Các tùy chọn sẽ được thêm thông qua JavaScript -->
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="district" class="form-label">Chọn Quận/Huyện</label>
-                            <select class="form-select" id="district" disabled>
-                                <option disabled value="">Chọn Quận</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="ward" class="form-label">Chọn Phường/Xã</label>
-                            <select class="form-select" data-=""="ward" disabled>
-                                <option disabled value="">Chọn Phường</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label for="detailInput" class="form-label">Địa chỉ cụ thể</label>
-                            <textarea class="form-control" id="detailInput" rows="3"></textarea>
-                        </div>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary">Thêm địa chỉ</button>
+                <button type="button" class="btn btn-primary" id="btnSaveAddress">Thêm địa chỉ</button>
             </div>
         </div>
     </div>
