@@ -11,7 +11,6 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
     $scope.errorMessage = null;
     $scope.selectedValues = {};
     $scope.sanPhams = [];
-    $scope.selectedSPCTs = [];
 
     const sanPhamId = $routeParams.id;
 
@@ -34,8 +33,6 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                 $scope.sanPham = data;
                 $scope.groupedThuocTinhs = groupThuocTinhs(data.sanphamchitiets.flatMap(sp => sp.thuocTinhs));
                 console.log("Chi tiết sản phẩm:", $scope.sanPham);
-                console.log("Nhóm thuộc tính:", $scope.groupedThuocTinhs);
-                
 
                 if ($scope.sanPham.idthuonghieu !== null) {
                     LoadSanPhamTuongTu($scope.sanPham.idThuongHieu);
@@ -115,102 +112,10 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
     const apIDSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/GetSanPhamChiTietByThuocTinh";
 const apiIDSPtoIDSPCT = "https://localhost:7297/api/Sanphamchitiet/sanpham/";
 
-$scope.updateValidThuocTinhs = function () {
-    const selectedThuocTinhs = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
-
-    // Nếu không có thuộc tính nào được chọn, hiển thị tất cả thuộc tính hợp lệ
-    if (selectedThuocTinhs.length === 0) {
-        $scope.validThuocTinhs = angular.copy($scope.groupedThuocTinhs); // Mặc định tất cả các thuộc tính đều hợp lệ
-        return;
-    }
-
-    // Tìm các sản phẩm chi tiết khớp với thuộc tính đã chọn
-    const matchingSPCTs = $scope.sanPham.sanphamchitiets.filter(spct =>
-        selectedThuocTinhs.every(selected =>
-            spct.thuocTinhs.some(thuocTinh => thuocTinh.tenthuoctinhchitiet === selected)
-        )
-    );
-
-    // Xác định các thuộc tính hợp lệ từ các sản phẩm chi tiết phù hợp
-    const validThuocTinhs = {};
-    matchingSPCTs.forEach(spct => {
-        spct.thuocTinhs.forEach(thuocTinh => {
-            if (!validThuocTinhs[thuocTinh.tenthuoctinh]) {
-                validThuocTinhs[thuocTinh.tenthuoctinh] = new Set();
-            }
-            validThuocTinhs[thuocTinh.tenthuoctinh].add(thuocTinh.tenthuoctinhchitiet);
-        });
-    });
-
-    // Chuyển đổi các giá trị từ Set sang Array để dễ sử dụng trên view
-    $scope.validThuocTinhs = {};
-    Object.keys(validThuocTinhs).forEach(key => {
-        $scope.validThuocTinhs[key] = Array.from(validThuocTinhs[key]);
-    });
-
-    $scope.selectedSPCTs = matchingSPCTs;
-    console.log("Các thuộc tính hợp lệ:", $scope.selectedSPCTs);
-    
-};
-
-
-$scope.onThuocTinhChange = function () {
-    // Lấy danh sách các thuộc tính đã chọn
-    const selectedAttributes = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
-
-    // Cập nhật danh sách thuộc tính hợp lệ
-    $scope.updateValidThuocTinhs(); 
-    
-    // Cập nhật selectedSPCTs dựa trên thuộc tính đã chọn
-    $scope.selectedSPCTs = getSelectedSPCTs(selectedAttributes); // Lấy SPCT từ các thuộc tính đã chọn
-   // console.log("Các SPCT đã chọn:", $scope.selectedSPCTs);
-};
-
-// Hàm giả lập lấy các SPCT đã chọn
-function getSelectedSPCTs(selectedAttributes) {
-    return $scope.sanPham.sanphamchitiets.filter(spct => 
-        selectedAttributes.every(attribute => 
-            spct.thuocTinhs.some(thuocTinh => thuocTinh.tenthuoctinhchitiet === attribute)
-        )
-    );
-}
-
-$scope.isFormValid = true;  // Biến để kiểm tra tính hợp lệ của form
-
-$scope.validateSelection = function () {
-    // Kiểm tra tất cả các nhóm thuộc tính
-    $scope.isFormValid = true;
-    for (const key in $scope.groupedThuocTinhs) {
-        const selected = Object.keys($scope.selectedValues).filter(value => $scope.selectedValues[value]);
-        if (selected.length === 0) {
-            $scope.isFormValid = false;
-            break;
-        }
-    }
-    // Kiểm tra và hiển thị thông báo lỗi
-    if (!$scope.isFormValid) {
-        $scope.errorMessage = "Vui lòng chọn tất cả các thuộc tính của sản phẩm.";
-    } else {
-        $scope.errorMessage = "";
-    }
-};
-
-
-$scope.isDisabled = function (key, value) {
-    // Nếu chưa có thuộc tính nào được chọn, không làm mờ
-    if (Object.keys($scope.selectedValues).length === 0) {
-        return false;
-    }
-
-    // Nếu thuộc tính chưa được chọn và không hợp lệ, làm mờ
-    return !$scope.validThuocTinhs[key] || !$scope.validThuocTinhs[key].includes(value);
-};
-
-
 $scope.MuaSanPham = async function () {
     // Lấy danh sách các thuộc tính đã chọn
     const tenthuoctinhList = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
-    
+
     // Kiểm tra xem có thuộc tính nào được chọn không
     if (tenthuoctinhList.length > 0) {
         try {

@@ -94,11 +94,3 @@
 .select-hover:hover {
     cursor: pointer; /* Con trỏ chuột sẽ thành hình bàn tay khi hover */
 }
-.disabled {
-    opacity: 0.5;
-    pointer-events: none; /* Vô hiệu hóa thao tác chuột */
-}
-#quantity-display {
-    width: 60px; /* Độ rộng của vùng hiển thị số lượng */
-    text-align: center;
-}
