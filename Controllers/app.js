@@ -178,7 +178,7 @@ app.controller('mainController', function ($scope, $location) {
     } else {
       Swal.fire({
         title: 'Thông báo',
-        text: 'Vui lòng nhập từ khóa để tìm kiếm!',
+        text: 'Vui lòng nhập từ khóa để tìm kiếm!',//ss
         icon: 'info',
         confirmButtonText: 'OK',
         confirmButtonColor: '#3085d6',
