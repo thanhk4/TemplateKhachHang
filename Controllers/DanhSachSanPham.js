@@ -138,6 +138,12 @@ app.controller("DanhSachSanPhamCtrl", function ($scope, $document, SanPhamServic
                 $scope.sanPhams = data;
                 $scope.filteredProduct = data;
                 $scope.paginateOrders();
+                if (data.length === 0) {
+                    $scope.errorMessage = "Không tìm thấy sản phẩm phù hợp.";
+                } else {
+                    $scope.errorMessage = null; // Xóa thông báo lỗi nếu có dữ liệu
+                }
+    
                 console.log("Danh sách sản phẩm đã được cập nhật sau khi tìm kiếm.");
             })
             .catch(function (error) {
@@ -225,10 +231,10 @@ app.controller("DanhSachSanPhamCtrl", function ($scope, $document, SanPhamServic
         $location.path(`/sanphamchitiet/${id}`);
     };
 
-    // Tự động tải lại danh sách sản phẩm mỗi 10 giây
-    // const autoReload = $interval(function () {
-    //     loadSanPham();
-    // }, 60000); // 10000 ms = 10 giây
+    //Tự động tải lại danh sách sản phẩm mỗi 10 giây
+    const autoReload = $interval(function () {
+        loadSanPham();
+     }, 60000); // 10000 ms = 10 giây
 
     // Gọi hàm load dữ liệu ban đầu
     loadSanPham();
