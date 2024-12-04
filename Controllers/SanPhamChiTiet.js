@@ -9,7 +9,10 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
 
     $scope.sanPham = null;
     $scope.errorMessage = null;
-    $scope.selectedValues = {};  // Mảng lưu trạng thái các checkbox đã chọn
+    $scope.selectedValues = {};
+    $scope.sanPhams = [];
+
+    const sanPhamId = $routeParams.id;
 
     function groupThuocTinhs(thuocTinhs) {
         const grouped = {};
@@ -24,20 +27,48 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
         return grouped;
     }
 
-    const sanPhamId = $routeParams.id;
-
     function loadSanPhamChiTiet() {
         SanPhamService.getSanPhamById(sanPhamId)
             .then(function (data) {
                 $scope.sanPham = data;
                 $scope.groupedThuocTinhs = groupThuocTinhs(data.sanphamchitiets.flatMap(sp => sp.thuocTinhs));
                 console.log("Chi tiết sản phẩm:", $scope.sanPham);
+
+                if ($scope.sanPham.idthuonghieu !== null) {
+                    LoadSanPhamTuongTu($scope.sanPham.idThuongHieu);
+                } else {
+                    console.warn("Không tìm thấy idThuongHieu trong sản phẩm.");
+                }
             })
             .catch(function (error) {
                 $scope.errorMessage = "Không thể tải thông tin sản phẩm. Vui lòng thử lại sau.";
                 console.error("Lỗi khi tải chi tiết sản phẩm:", error);
             });
     }
+
+    function LoadSanPhamTuongTu(idThuongHieu) {
+        if (!idThuongHieu) {
+            console.warn("idThuongHieu không tồn tại.");
+            return;
+        }
+        SanPhamService.getSanPhamByThuongHieu(idThuongHieu)
+            .then(function (data) {
+                $scope.sanPhams = randomizeProducts(data, 4);;
+                console.log("Danh sách sản phẩm tương tự:", $scope.sanPhams);
+            })
+            .catch(function (error) {
+                $scope.errorMessage = "Không thể tải danh sách sản phẩm. Vui lòng thử lại sau.";
+                console.error("Lỗi khi tải sản phẩm tương tự:", error);
+            });
+    }
+    function randomizeProducts(products, maxItems) {
+        if (products.length > maxItems) {
+            const shuffled = products.sort(() => 0.5 - Math.random()); 
+            return shuffled.slice(0, maxItems); 
+        }
+        return products; 
+    }
+
     function LoadDanhGia() {
         SanPhamService.getDanhGiaByIdSPCT(sanPhamId)
             .then(function (data) {
@@ -49,8 +80,12 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                 console.error("Lỗi khi tải đánh giá:", error);
             });
     }
-    LoadDanhGia();
+    $scope.xemChiTiet = function (id) {
+        console.log("Xem chi tiết sản phẩm:", id);
+        $location.path(`/sanphamchitiet/${id}`);
+    };
     loadSanPhamChiTiet();
+    LoadDanhGia();
 
       // Đặt giá trị mặc định cho quantity
     $scope.quantity = parseInt(sessionStorage.getItem('quantity')) || 1; // Lấy số lượng từ sessionStorage nếu có

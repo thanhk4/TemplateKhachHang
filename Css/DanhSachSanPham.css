@@ -46,6 +46,12 @@
 .select-hover:hover {
     cursor: pointer; /* Con trỏ chuột sẽ thành hình bàn tay khi hover */
 }
+.disabled-link {
+    pointer-events: none; /* Vô hiệu hóa click */
+    opacity: 0.6; /* Làm mờ giao diện */
+    cursor: not-allowed;
+}
+
 
 
 

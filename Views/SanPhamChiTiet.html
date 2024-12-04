@@ -11,7 +11,7 @@
     <div class="row mt-4">
         <!-- Main Product Image -->
         <div class="col-md-5">
-            <img src="../image/{{sanPham.uRlHinhAnh}}" class="main-image" alt="Main Product Image">
+            <img src="{{sanPham.uRlHinhAnh}}" class="main-image" alt="Main Product Image">
         </div>
 
         <!-- Product Details -->
@@ -144,54 +144,27 @@
     <div class="mt-3">
         <h3 class="fw-bold text-center">Sản Phẩm Tương Tự</h3>
         <div class="row mt-2">
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#!sanphamchitiet" class="text-decoration-none text-reset">
+            <div class="col-lg-3 col-md-4 col-sm-6" ng-repeat="sanPham in sanPhams">
+                <a href="" class="text-decoration-none text-reset" ng-click="xemChiTiet(sanPham.id)">
                     <div class="card product-card h-100">
-                        <img src="../image/SanPham.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
+                        <img ng-if="sanPham.uRlHinhAnh" src="{{sanPham.uRlHinhAnh}}" alt="{{sanPham.tensp}}" class="card-img-top" 
+                        style="height: 286px; width: 100%;">
                         <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <p class="card-text">3,239,000₫</p>
+                            <h5 class="card-title">{{sanPham.tensp}}</h5>
+                            <div class="d-flex align-items-center">
+                                <p class="card-text me-2"
+                                    style="color: gray; text-decoration: line-through; margin-bottom: 0;">{{sanPham.giaban}}đ
+                                </p>
+                                <p class="card-text fw-bold" style="margin-bottom: 0;">{{sanPham.giasale}}đ</p>
+                                <span class="ms-auto">
+                                    Chi tiết <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </a>
             </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPham.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <p class="card-text">3,239,000₫</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPham.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <p class="card-text">3,239,000₫</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
-            <div class="col-lg-3 col-md-4 col-sm-6">
-                <a href="#" class="text-decoration-none text-reset">
-                    <div class="card product-card h-100">
-                        <img src="../image/SanPham.png" class="card-img-top" alt="..."
-                            style="height: 286px; width: 100%;">
-                        <div class="card-body">
-                            <h5 class="card-title">Nike P-6000</h5>
-                            <p class="card-text">3,239,000₫</p>
-                        </div>
-                    </div>
-                </a>
-            </div>
+           
         </div>
     </div>
 </div>
