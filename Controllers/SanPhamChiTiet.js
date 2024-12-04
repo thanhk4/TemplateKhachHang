@@ -205,6 +205,14 @@ $scope.isDisabled = function (key, value) {
     // Nếu thuộc tính chưa được chọn và không hợp lệ, làm mờ
     return !$scope.validThuocTinhs[key] || !$scope.validThuocTinhs[key].includes(value);
 };
+$scope.initialize = function () {
+    // Nếu không có dữ liệu ban đầu, khởi tạo danh sách rỗng
+    $scope.selectedSPCTs = $scope.selectedSPCTs || [];
+
+    // Kiểm tra các điều kiện hợp lệ
+    $scope.validateSelection();
+};
+$scope.initialize();
 
 
 $scope.MuaSanPham = async function () {

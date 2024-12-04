@@ -57,11 +57,26 @@
             <hr class="mt-3" style="border: 0; border-top: 2px solid;">
     
             <!-- Quantity and Buttons -->
-            <div class="mt-2 d-flex align-items-center">
+            <div class="mt-2 d-flex align-items-center" ng-if="selectedSPCTs && selectedSPCTs.length > 0">
+                <!-- Nút "Mua ngay" -->
+                <a href="" 
+                   ng-click="MuaSanPham()" 
+                   class="btn btn-outline-dark chat-btn"
+                   ng-class="{'btn-disabled': selectedSPCTs.length !== 1}">
+                   Mua ngay
+                </a>
                 
-                <a href="" ng-click="MuaSanPham()" class="btn btn-outline-dark chat-btn " ng-disabled="!isFormValid">Mua ngay</a>
-                <a href="" ng-click="GioHang()" class="btn btn-dark add-cart-btn" ng-disabled="!isFormValid">Thêm vào giỏ hàng</a>
+                <!-- Nút "Thêm vào giỏ hàng" -->
+                <a href="" 
+                   ng-click="GioHang()" 
+                   class="btn btn-dark add-cart-btn" 
+                   ng-class="{'btn-disabled': selectedSPCTs.length !== 1}">
+                   Thêm vào giỏ hàng
+                </a>
             </div>
+            
+            
+            
         </div>
     </div>
     

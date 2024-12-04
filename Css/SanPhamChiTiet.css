@@ -102,3 +102,7 @@
     width: 60px; /* Độ rộng của vùng hiển thị số lượng */
     text-align: center;
 }
+.btn-disabled {
+    opacity: 0.5; /* Làm mờ nút */
+    cursor: not-allowed; /* Thay đổi con trỏ */
+}
