@@ -98,12 +98,12 @@
                                         <div class="text-end" ng-if="item.trangthaihd!=0">
                                             <button type="button" class="btn btn-outline-secondary" ng-if="item.trangthaihd==3" ng-click="trahang(item.id)">Trả hàng</button>
                                             <a class="btn btn-danger" ng-click="xemChiTiet(item.idsp)" ng-if="item.trangthaihd==3||item.trangthaihd==4||item.trangthaihd==5">Mua lại</a>
-                                            <div ng-if="!item.existingReview">
-                                                <button class="btn btn-outline-primary" ng-click="openRatingModal(item)">Thêm đánh giá</button>
+                                            <div>
+                                                <button class="btn btn-outline-primary" ng-if="!item.existingReview" ng-if="item.trangthaihd==3" ng-click="openRatingModal(item)">Thêm đánh giá</button>
                                             </div>
                                             <div ng-if="item.existingReview">
-                                                <button class="btn btn-outline-info" ng-click="openRatingModal(item)">Sửa đánh giá</button>
-                                                <button class="btn btn-outline-danger" ng-click="deleteRating(item)">
+                                                <button class="btn btn-outline-info" ng-if="item.trangthaihd==3" ng-click="openRatingModal(item)">Sửa đánh giá</button>
+                                                <button class="btn btn-outline-danger" ng-if="item.trangthaihd==3" ng-click="deleteRating(item)">
                                                     Xóa đánh giá
                                                 </button>
                                             </div>
