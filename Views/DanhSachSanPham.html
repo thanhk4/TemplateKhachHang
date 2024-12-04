@@ -134,17 +134,17 @@
                                 <div class="card-body">
                                     <h5 class="card-title">{{sanPham.tensp}}</h5>
                                     <div class="d-flex align-items-center">
-                                        <p class="card-text me-2"
+                                        <p class="card-text me-2" ng-if="sanPham.giaban !== sanPham.giasale"
                                             style="color: gray; text-decoration: line-through; margin-bottom: 0;">
                                             {{sanPham.giaban}}đ
                                         </p>
                                         <p class="card-text fw-bold" style="margin-bottom: 0;">{{sanPham.giasale}}đ</p>
                                         <span class="ms-auto">
-                                            <span ng-if="sanPham.soluong > 0">Chi tiết <i
-                                                    class="bi bi-chevron-right"></i></span>
+                                            <span ng-if="sanPham.soluong > 0">Chi tiết <i class="bi bi-chevron-right"></i></span>
                                             <span ng-if="sanPham.soluong === 0" style="color: gray;">Hết hàng</span>
                                         </span>
                                     </div>
+                                    
                                 </div>
                             </div>
                         </a>
