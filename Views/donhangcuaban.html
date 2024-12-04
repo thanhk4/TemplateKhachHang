@@ -62,6 +62,7 @@
                         <hr>
                         <div class="text-end">
                             <button class="btn btn-outline-primary" ng-if="x.trangthai==0||x.trangthai==1" ng-click="huydonhang(x.id)">Hủy đơn hàng</button>
+                            <a class="btn btn-outline-secondary" ng-if="x.trangthai == 3" ng-click="trahang(x.id)">Trả hàng {{x.id}}</a>
                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" ng-click="chitiethd(x.id)">Chi tiết hóa đơn</button>
                         </div>
                     </div>
@@ -85,6 +86,13 @@
                                         </div>
                                         <div class="col-md-6">
                                             <h6 class="fw-bold">{{item.tensp}}</h6>
+                                            <!-- Hiển thị thuộc tính sản phẩm -->
+                                            <div ng-repeat="thuocTinh in item.thuocTinhSelects" 
+                                                class="badge bg-primary text-white text-center d-inline-block me-2"
+                                                id="select-ttspct-{{thuocTinh.id}}" 
+                                                style="pointer-events: none;">
+                                                {{thuocTinh.tenThuocTinh}}
+                                            </div>
                                             <p class="text-muted">Số lượng: <span class="fw-bold">{{item.soluong}}</span></p>
                                             <p class="text-muted">Giá sản phẩm: <span class="fw-bold">{{item.giasp | number}} VNĐ</span></p>
                                             <p ng-if="item.giamgia > 0" class="text-success">Giảm giá: -{{item.giamgia | number}} VNĐ</p>
@@ -96,14 +104,13 @@
                                         </div>
                                         <hr ng-if="item.trangthaihd!=0">
                                         <div class="text-end" ng-if="item.trangthaihd!=0">
-                                            <button type="button" class="btn btn-outline-secondary" ng-if="item.trangthaihd==3" ng-click="trahang()">Trả hàng</button>
                                             <a class="btn btn-danger" ng-click="xemChiTiet(item.idsp)" ng-if="item.trangthaihd==3||item.trangthaihd==4||item.trangthaihd==5">Mua lại</a>
-                                            <div ng-if="!item.existingReview">
-                                                <button class="btn btn-outline-primary" ng-click="openRatingModal(item)">Thêm đánh giá</button>
+                                            <div>
+                                                <button class="btn btn-outline-primary" ng-if="!item.existingReview" ng-if="item.trangthaihd==3" ng-click="openRatingModal(item)">Thêm đánh giá</button>
                                             </div>
                                             <div ng-if="item.existingReview">
-                                                <button class="btn btn-outline-info" ng-click="openRatingModal(item)">Sửa đánh giá</button>
-                                                <button class="btn btn-outline-danger" ng-click="deleteRating(item)">
+                                                <button class="btn btn-outline-info" ng-if="item.trangthaihd==3" ng-click="openRatingModal(item)">Sửa đánh giá</button>
+                                                <button class="btn btn-outline-danger" ng-if="item.trangthaihd==3" ng-click="deleteRating(item)">
                                                     Xóa đánh giá
                                                 </button>
                                             </div>

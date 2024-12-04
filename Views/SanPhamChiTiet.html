@@ -25,7 +25,7 @@
 
                 <!-- Tên thuộc tính (vd: Màu, Size) -->
                 <div class="mt-2">
-                    <h5>{{key}}</h5>
+                    <h5 class="id-thuoc-tinh" >{{key}}</h5>
                     <div class="d-flex flex-wrap gap-2">
                         <!-- Lặp qua từng giá trị của thuộc tính -->
                         <div ng-repeat="value in values" class="mb-1">
@@ -50,7 +50,7 @@
                         ng-click="changeQuantity(1)">+</button>
                 </div>
                 <a href="" ng-click="MuaSanPham()" class="btn btn-outline-dark chat-btn me-2">Mua ngay</a>
-                <button class="btn btn-dark add-cart-btn">Thêm vào giỏ hàng</button>
+                <a href="" ng-click="GioHang()" class="btn btn-dark add-cart-btn">Thêm vào giỏ hàng</a>
             </div>
         </div>
     </div>

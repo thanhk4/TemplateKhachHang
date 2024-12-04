@@ -1,3 +1,4 @@
+
 app.service('OrderHistoryService', function ($http) {
     // Tìm đánh giá theo idhdct (id chi tiết hóa đơn)
     this.getRatingByOrderDetailId = function (orderDetailId) {
@@ -185,24 +186,105 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     };
     $scope.chitiethd = function (id) {
         $http.get('https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
-            .then(function (response) {
+        .then(function (response) {
+            $scope.DataChitiet = response.data;
+            console.log($scope.DataChitiet)
+        })
+        .catch(function (error) {
+            console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
+        });
+    }
+    $http.get('https://localhost:7297/api/Danhgias')
+    .then(function(response){
+        $scope.dataDanhgia=response.data
+        console.log($scope.dataDanhgia)
+    })
+    .catch(function (error) {
+        console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
+    });
+
+    $scope.trahang = function (id) {
+        if (!id) {
+            console.error("ID không hợp lệ!");
+            return;
+        }
+    
+        // Ẩn modal nếu nó đang hiển thị
+        $('#exampleModal').modal('hide');
+    
+        // Điều hướng đến trang trả hàng
+        $location.path('/trahang/' + id);
+    };
+    
+    
+    //vvfgg
+    $scope.chitiethd = function (id) {
+        // Kiểm tra xem id có hợp lệ không
+        if (!id) {
+            console.error("ID không hợp lệ:", id);
+            return;
+        }
+    
+        $http.get('https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
+            .then(async function (response) {
                 $scope.DataChitiet = response.data;
                 console.log("Chi tiết hóa đơn:", $scope.DataChitiet);
-                $scope.DataChitiet.forEach(element => {
-                    OrderHistoryService.getRatingByOrderDetailId(element.id)
-                    .then(function (response) {
-                        element.existingReview = response.data;
+    
+                // Xử lý từng sản phẩm trong danh sách hóa đơn chi tiết
+                for (const element of $scope.DataChitiet) {
+                    try {
+                        // Lấy danh sách thuộc tính sản phẩm chi tiết
+                        const datathuoctinh = await fetchThuocTinhSPCT(element.idspct);
+                        element.thuocTinhSelects = createThuocTinhSelects(datathuoctinh, element.idspct);
+
+                        // Lấy đánh giá sản phẩm
+                        const ratingResponse = await OrderHistoryService.getRatingByOrderDetailId(element.id);
+                        element.existingReview = ratingResponse.data;
                         console.log("Đánh giá sản phẩm:", element.existingReview);
-                    }).catch(function (error) {
-                         console.error("Lỗi khi tải đánh giá:", error)
-                    });
-                })
-                
+                    } catch (error) {
+                        console.error("Lỗi khi tải đánh giá hoặc thuộc tính:", error);
+                    }
+                }
             })
             .catch(function (error) {
                 console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
             });
     };
+    
+    const apiTTSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/thuoctinh";
+    
+    async function fetchThuocTinhSPCT(id) {
+        if (!id) {
+            console.error("ID không hợp lệ:", id);
+            return [];
+        }
+    
+        try {
+            const response = await fetch(`${apiTTSPCTUrl}/${id}`);
+            if (!response.ok) {
+                throw new Error("Lỗi API: " + response.statusText);
+            }
+    
+            const data = await response.json();
+            if (!Array.isArray(data)) {
+                console.warn("Dữ liệu không phải là mảng:", data);
+                return [];
+            }
+    
+            return data;
+        } catch (error) {
+            console.error("Lỗi khi lấy danh sách thuộc tính sản phẩm chi tiết:", error);
+            return [];
+        }
+    }
+    
+    function createThuocTinhSelects(thuocTinhList, id) {
+        return thuocTinhList.map(tt => ({
+            id: tt.idtt,
+            tenThuocTinh: tt.tenthuoctinhchitiet[0],
+        }));
+    }
+
     $scope.openRatingModal = function (product) {
         console.log("Mở modal đánh giá cho sản phẩm:", product);
         $scope.selectedProduct = product;
@@ -260,7 +342,6 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             }
         }
     };
-    
     $scope.deleteRating = function (product) {
         if (!product.existingReview) {
             alert("Sản phẩm này chưa có đánh giá để xóa.");
@@ -278,7 +359,4 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             });
         }
     };
-    $scope.trahang = function(){
-        
-    }
 });

@@ -1,0 +1,64 @@
+.input-group-custom {
+    width: 120px; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+}
+
+.input-group-custom .form-control {
+    padding: 5px;
+    width: 40px;
+    border: none;
+    text-align: center;
+    font-weight: bold;
+}
+
+.input-group-custom .quantity-btn {
+    background-color: #f0f0f0;
+    color: black;
+    border: none;
+    width: 40px;
+}
+
+.custom-select-small {
+    width: 65px;
+    padding: 2px 8px; 
+    font-size: 0.875rem; 
+}
+
+.container {
+    padding: 10px;
+}
+
+.form-control {
+    width: 200px;
+}
+
+/* Đảm bảo rằng các card trải full chiều rộng */
+.voucher-card {
+    width: 100%;  /* Thẻ card sẽ chiếm toàn bộ chiều rộng của phần chứa */
+    margin-bottom: 10px;  /* Thêm một chút khoảng cách giữa các card */
+    cursor: pointer;  /* Thêm con trỏ khi hover */
+}
+
+/* Làm cho label và card có chiều rộng đầy đủ */
+.form-check label {
+    width: 100%;
+    cursor: pointer;
+}
+
+/* Làm nổi bật khi chọn card */
+.selected-card {
+    border: 2px solid #007bff; /* Thêm đường viền xanh khi chọn */
+    background-color: rgba(0, 123, 255, 0.1); /* Nền màu khi chọn */
+}
+
+    
+
+
+
+
+
+

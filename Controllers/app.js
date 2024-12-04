@@ -35,7 +35,7 @@ app.config(($routeProvider) => {
     .when("/muasanpham/:id", {
       templateUrl: "./Views/MuaSanPham.html",
       controller: "MuaSanPhamCtrl"
-    })
+    })  
     .when("/dangky", {
       templateUrl: "./Views/dangky.html",
       controller: "dangkyController"
@@ -48,10 +48,18 @@ app.config(($routeProvider) => {
       templateUrl: './Views/timkiem.html',
       controller: 'timkiemController'//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->
     })
+    .when("/trahang/:id", {
+      templateUrl: './Views/trahang.html',
+      controller:'trahangController'
+    })
     .when('/thongtintaikhoan', {
       templateUrl: './Views/thongtintaikhoan.html',
       controller: 'ThongTinTaiKhoanController'
   })
+  .when('/hoadongiohang/:ids', {
+    templateUrl: './Views/hoadongiohang.html',
+    controller: 'HoadongiohangCtrl'
+})
   .when('/quenmatkhau', {
     templateUrl: './Views/quenmatkhau.html',
     controller: 'quenmatkhauController'
@@ -67,6 +75,10 @@ app.config(($routeProvider) => {
 .when('/doimatkhau2', {
   templateUrl: './Views/doimatkhau2.html',
   controller: 'doimatkhau2Controller'
+})
+.when('/lienhe', {
+  templateUrl: './Views/Lienhe.html',
+  controller: 'lienheController'
 })
 .otherwise({
   redirectTo: "/"
@@ -166,6 +178,7 @@ app.controller('mainController', function ($scope, $location) {
   $scope.btntimkiem = function () {
     if ($scope.search && $scope.search.trim() !== '') {
       $location.path('/timkiem/' + $scope.search);
+      $scope.search = '';
     } else {
       alert("Vui lòng nhập từ khóa để tìm kiếm!");
     }

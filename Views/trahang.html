@@ -1,14 +1,343 @@
-<div class="container">
-    <div class="row m-5">
-        <div class="col">
-            <div class="card">
-                aaaa
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 bg-light p-4" style="min-height: 100vh; background-color: #f8f9fa !important;">
+            <div class="text-center mb-4">
+                <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center mx-auto"
+                    style="width: 100px; height: 100px; font-size: 2.5rem; background-color: #dc3545 !important;">
+                    {{userInfo.ten.charAt(0)}}
+                </div>
+                <h5 class="mt-3">Xin chào, {{userInfo.ten}}</h5>
+            </div>
+            <div class="list-group">
+                <a href="#!thongtintaikhoan" class="list-group-item">
+                    <i class="bi bi-person me-2"></i> Thông tin tài khoản
+                </a>
+                <a href="#!donhangcuaban" class="list-group-item active"style="background-color: #0d6efd !important; border-color: #0d6efd;">
+                    <i class="bi bi-box me-2"></i> Đơn hàng của bạn
+                </a>
+                <a href="#!diachicuaban" class="list-group-item">
+                    <i class="bi bi-geo-alt me-2"></i> Danh sách địa chỉ
+                </a>
+                <a href="#!resetpassword" class="list-group-item">
+                    <i class="bi bi-key me-2"></i> Đổi mật khẩu
+                </a>
+
             </div>
         </div>
-        <div class="col">
-            <div class="card">
-                aaaa
-            </div>
+
+        <!-- Main Contenta -->
+        <div class="col-md-9 p-4">
+            <!-- Breadcrumb Navigation -->
+            <nav aria-label="breadcrumb" class="row mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Trang chủ</a></li>
+                    <li class="breadcrumb-item"><a href="#!donhangcuaban">Đơn hàng của bạn</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Trả hàng</li>
+                </ol>
+            </nav>
+            <form name="form" novalidate ng-submit="submit()">
+                <!-- Invoice Information Section -->
+            <ul class="list-group mb-5 shadow-sm">
+                <li class="list-group-item active" aria-current="true">Thông tin hóa đơn</li>
+                <li class="list-group-item">
+                    <div class="info-item">
+                        <span><i class="bi bi-person"></i> Người đặt hàng</span>
+                        <span>{{ datahd.tenkh }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span><i class="bi bi-telephone"></i> Số điện thoại</span>
+                        <span>{{ datahd.sdt }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span><i class="bi bi-clock"></i> Thời gian đặt</span>
+                        <span>{{ datahd.thoigiandathang | date:'dd-MM-yyyy' }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span><i class="bi bi-wallet"></i> Tổng tiền</span>
+                        <span class="fw-bold text-success">{{ datahd.tongtiencantra | number }} VNĐ</span>
+                    </div>
+                    <div class="info-item">
+                        <span><i class="bi bi-geo-alt"></i> Địa chỉ</span>
+                        <span>{{ datahd.diachiship }}</span>
+                    </div>
+                </li>
+            </ul>
+        
+            <ul class="list-group mb-5 shadow-sm">
+                <li class="list-group-item active" aria-current="true">Danh sách sản phẩm trong hóa đơn</li>
+                <li class="list-group-item">
+                    <ul class="list-group">
+                        <li ng-repeat="x in datahdct" class="list-group-item mb-3 rounded shadow-sm">
+                            <input 
+                                class="form-check-input" 
+                                type="checkbox" 
+                                id="checkboxNoLabel" 
+                                ng-model="x.selected" 
+                                ng-change="toggleSelection(x.id, x.giasp)">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-center">
+                                    <img ng-src="{{x.urlHinhanh}}" alt="{{x.tensp}}" class="img-fluid rounded shadow-sm">
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="fw-bold">{{x.tensp}}</h6>
+                                    <div class="input-group input-group-custom mb-3">
+                                        <button class="btn btn-outline-secondary quantity-btn" type="button"
+                                            ng-click="changeQuantity(-1, x.soluong, x.giasp, x.id)">-</button>
+                                        <span id="quantity-display" class="text-center quantity-display">{{quantity}}</span>
+                                        <button class="btn btn-outline-secondary quantity-btn" type="button"
+                                            ng-click="changeQuantity(1, x.soluong, x.giasp, x.id)">+</button>
+                                    </div>
+                                    <p class="text-muted">Giá sản phẩm: <span class="fw-bold">{{x.giasp | number}} VNĐ</span></p>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </li>
+            </ul>        
+        
+            <!-- Additional Information Section -->
+            <ul class="list-group mb-5 shadow-sm">
+                <li class="list-group-item active" aria-current="true">Thông tin bổ sung</li>
+                <li class="list-group-item">
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Lý do trả hàng</label>
+                        <select class="form-select" id="reason" aria-label="Lý do trả hàng" ng-model="lydotrahang" name="lydotrahang" required>
+                            <option value="" selected disabled>Chọn lý do trả hàng</option>
+                            <option value="Hàng hóa không đúng mô tả">Hàng hóa không đúng mô tả</option>
+                            <option value="Sản phẩm bị hư hỏng hoặc lỗi">Sản phẩm bị hư hỏng hoặc lỗi</option>
+                            <option value="Giao sai sản phẩm">Giao sai sản phẩm</option>
+                            <option value="Sản phẩm giả mạo">Sản phẩm giả mạo</option>
+                            <option value="Chưa nhận được sản phẩm">Chưa nhận được sản phẩm</option>
+                            <option value="Thay đổi ý định">Thay đổi ý định</option>
+                            <option value="Đặt hàng nhầm">Đặt hàng nhầm</option>
+                            <option value="Lý do khác">Lý do khác</option>
+                        </select>
+                        <span class="text-danger" ng-if="form.lydotrahang.$touched && form.lydotrahang.$error.required">Không được bỏ trống</span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="refundMethod" class="form-label">Phương thức hoàn tiền</label>
+                        <select class="form-select" id="refundMethod" aria-label="Phương thức hoàn tiền" ng-model="phuongthuchoantien" name="phuongthuchoantien" required>
+                            <option value="" selected disabled>Chọn phương thức hoàn tiền</option>
+                            <option value="Ngân hàng">Hoàn tiền vào tài khoản ngân hàng</option>
+                            <option value="Thẻ thanh toán">Hoàn tiền qua thẻ thanh toán</option>
+                            <option value="Voucher">Hoàn tiền bằng voucher/mã giảm giá</option>
+                            <option value="Tiền mặt">Hoàn tiền trực tiếp bằng tiền mặt</option>
+                        </select>
+                        <span class="text-danger" ng-if="form.phuongthuchoantien.$touched && form.phuongthuchoantien.$error.required">Không được bỏ trống</span>
+                    </div>
+                    
+                    <!-- Điều khiển Collapse với ng-show -->
+                    <div ng-show="phuongthuchoantien === 'Thẻ thanh toán' || phuongthuchoantien === 'Ngân hàng'" class="collapse show" id="collapseExample">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="bank" class="form-label">Ngân hàng</label>
+                                <select class="form-select" aria-label="Ngân hàng" ng-model="nganhang">
+                                    <option value="" selected disabled>Chọn ngân hàng</option>
+                                    <option ng-repeat="bank in banks.data | orderBy:'shortName'" value="{{bank.shortName}}">
+                                        {{bank.name}} ({{bank.shortName}})
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="accountNumber" class="form-label">Số tài khoản/Số thẻ visa</label>
+                                <input type="text" class="form-control" ng-model="stk" id="accountNumber">
+                            </div>
+                            <div class="col">
+                                <label for="beneficiaryName" class="form-label">Tên người hưởng thụ</label>
+                                <input type="text" class="form-control" ng-model="tennguoihuongthu" id="beneficiaryName">
+                            </div>
+                        </div>                        
+                    </div>                    
+                    <div class="mb-3">
+                        <label for="additionalNote" class="form-label">Tình trạng</label>
+                        <select id="returnStatus" class="form-select" name="returnStatus" ng-model="tinhtrang" name="tinhtrang" required>
+                          <option value="Sản phẩm bị hỏng">Sản phẩm bị hỏng</option>
+                          <option value="Không còn mác hoặc bao bì gốc">Không còn mác hoặc bao bì gốc</option>
+                          <option value="Sản phẩm sai kích thước">Sản phẩm sai kích thước</option>
+                          <option value="Sản phẩm không đúng mô tả">Sản phẩm không đúng mô tả</option>
+                          <option value="Sản phẩm bị thiếu phụ kiện, linh kiện">Sản phẩm bị thiếu phụ kiện, linh kiện</option>
+                          <option value="Sản phẩm không hoạt động">Sản phẩm không hoạt động</option>
+                          <option value="Sản phẩm bị bẩn hoặc có vết ố">Sản phẩm bị bẩn hoặc có vết ố</option>
+                          <option value="Sản phẩm bị trầy xước, lỗi bề mặt">Sản phẩm bị trầy xước, lỗi bề mặt</option>
+                          <option value="Sản phẩm bị hư hỏng trong quá trình vận chuyển">Sản phẩm bị hư hỏng trong quá trình vận chuyển</option>
+                          <option value="Sản phẩm bị lỗi kỹ thuật">Sản phẩm bị lỗi kỹ thuật</option>
+                          <option value="Giao hàng muộn">Giao hàng muộn</option>
+                          <option value="Sản phẩm bị thiếu hoặc giao sai đơn hàng">Sản phẩm bị thiếu hoặc giao sai đơn hàng</option>
+                          <option value="Không còn nhu cầu sử dụng">Không còn nhu cầu sử dụng</option>
+                        </select>
+                        <span class="text-danger" ng-if="form.tinhtrang.$touched && form.tinhtrang.$error.required">Không được bỏ trống</span>
+                    </div>
+                    <div class="mb-3">
+                        <label for="fileUpload" class="form-label">Tải lên hình ảnh hoặc video</label>
+                        <input id="fileUpload" type="file" accept="image/*,video/*" multiple class="form-control" ng-model="hinhanh" name="hinhanh" readonly>
+                        <span class="text-danger" ng-if="form.hinhanh.$touched && form.hinhanh.$error.required">Không được bỏ trống</span>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ghi chú</label>
+                        <textarea class="form-control" ng-model="ghichu"></textarea>
+                    </div>
+                </li>
+                <li class="list-group-item">
+                    <p class="text-start fw-bold">Tổng số tiền hoàn: <span id="tongsotienhoan">0 VNĐ</span></p>
+                    <div class="row align-items-center fw-bold">
+                        <p class="col-auto mb-0" style="padding-right: 0px;">Hoàn tiền vào:</p>
+                        <p class="col text-start mb-0" id="hienthiphuongthucthanhtoandachon" value="" style="padding-left: 4px;"></p>
+                    </div>                                        
+                </li>
+                <li class="list-group-item">
+                    <button type="submit" class="btn btn-danger w-100">Gửi xác nhận</button>
+                </li>
+            </ul>
+            </form>
+            
         </div>
+        
     </div>
 </div>
+
+<style>
+   /* CSS (styles.css) */
+   body {
+    font-family: 'Roboto', sans-serif;
+    background-color: #f8f9fa;
+}
+
+.list-group-item {
+    border: none;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.list-group-item.active {
+    background-color: #dc3545;
+    color: #fff;
+    font-weight: bold;
+}
+
+.breadcrumb {
+    background-color: transparent;
+    padding: 0;
+}
+
+.breadcrumb-item a {
+    color: #6c757d;
+    text-decoration: none;
+}
+
+.breadcrumb-item a:hover {
+    color: #dc3545;
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    font-size: 0.95rem;
+}
+
+.img-fluid {
+    max-width: 100px;
+    border-radius: 8px;
+}
+
+.quantity-btn {
+    font-size: 0.85rem;
+}
+
+.quantity-display {
+    width: 44px;
+    margin-top: 5px;
+}
+
+textarea,
+input,
+select {
+    border-radius: 8px;
+}
+
+.btn-danger {
+    border-radius: 8px;
+    padding: 10px 20px;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.request-card {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    padding: 20px;
+    margin-right: 20px;
+}
+
+.product-list {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    width: 400px;
+    padding: 20px;
+}
+
+.request-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.close-btn {
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    color: #888;
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-control {
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 100%;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #004a99;
+}
+
+.product-list h2 {
+    margin-bottom: 20px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th, .table td {
+    padding: 10px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+</style>
