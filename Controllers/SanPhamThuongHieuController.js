@@ -18,6 +18,25 @@ app.controller("SanPhamThuongHieuController", function ($scope, $document, SanPh
     $scope.currentPage = 0;
     $scope.sanPhams = [];
     $scope.errorMessage = null;
+    $scope.listThuocTinh = [];
+    $scope.listThuongHieu = [];
+    $scope.searchParams = {
+        idThuongHieu: idThuongHieu, // Mã thương hiệu
+        giaMin: null, // Giá thấp nhất
+        giaMax: null, // Giá cao nhất
+        tenThuocTinhs: [] // Các thuộc tính lọc
+    };
+    $scope.toggleChiTiet = function (chiTiet) {
+        const index = $scope.searchParams.tenThuocTinhs.indexOf(chiTiet);
+        if (index === -1) {
+            // Nếu chưa có, thêm vào mảng
+            $scope.searchParams.tenThuocTinhs.push(chiTiet);
+        } else {
+            // Nếu đã có, xóa khỏi mảng
+            $scope.searchParams.tenThuocTinhs.splice(index, 1);
+        }
+    };
+
     // Hàm load dữ liệu từ API
     function loadSanPham() {
         SanPhamService.getSanPhamByThuongHieu(idThuongHieu)
@@ -32,7 +51,75 @@ app.controller("SanPhamThuongHieuController", function ($scope, $document, SanPh
                 console.error("Lỗi khi tải sản phẩm:", error);
             });
     }
-
+    function searchSanPhams() {
+        const params = {
+            idThuongHieu: $scope.searchParams.idThuongHieu,
+            giaMin: $scope.searchParams.giaMin,
+            giaMax: $scope.searchParams.giaMax,
+            tenThuocTinhs: $scope.searchParams.tenThuocTinhs
+        };SanPhamService.searchSanPham(params)
+            .then(function (data) {
+                $scope.sanPhams = data;
+                $scope.filteredProduct = data;
+                $scope.paginateOrders();
+                if (data.length === 0) {
+                    $scope.errorMessage = "Không tìm thấy sản phẩm phù hợp.";
+                } else {
+                    $scope.errorMessage = null; // Xóa thông báo lỗi nếu có dữ liệu
+                }
+    
+                console.log("Danh sách sản phẩm đã được cập nhật sau khi tìm kiếm.");
+            })
+            .catch(function (error) {
+                $scope.errorMessage = "Không thể tìm kiếm sản phẩm. Vui lòng thử lại sau.";
+                console.error("Lỗi khi tìm kiếm sản phẩm:", error);
+            });
+    }
+    $scope.applyFilters = function() {
+        searchSanPhams();
+    };
+   
+    function LoadThuocTinh() {
+        SanPhamService.getThuocTinhAll()
+            .then(function (data) {
+                // Dữ liệu ban đầu
+                console.log("Thuộc tính trước khi gộp:", data);
+    
+                // Gộp thuộc tính
+                $scope.groupedThuocTinhs = groupThuocTinhs(data);
+    
+                // Kiểm tra kết quả
+                console.log("Thuộc tính sau khi gộp:", $scope.groupedThuocTinhs);
+            })
+            .catch(function (error) {
+                $scope.errorMessage = "Không thể tải danh sách thuộc tính. Vui lòng thử lại sau.";
+                console.error("Lỗi khi tải thuộc tính:", error);
+            });
+    }
+    LoadThuocTinh();
+    function groupThuocTinhs(thuocTinhs) {
+        const grouped = {};
+    
+        thuocTinhs.forEach(thuocTinh => {
+            // Kiểm tra nếu thuộc tính chưa được thêm vào grouped
+            if (!grouped[thuocTinh.nameThuocTinh]) {
+                grouped[thuocTinh.nameThuocTinh] = [];
+            }
+    
+            // Duyệt qua các chi tiết thuộc tính và thêm vào grouped nếu chưa có
+            thuocTinh.thuocTinhChiTietViewModels.forEach(chitiet => {
+                if (!grouped[thuocTinh.nameThuocTinh].includes(chitiet.tenThucTinhChiTiet)) {
+                    grouped[thuocTinh.nameThuocTinh].push(chitiet.tenThucTinhChiTiet);
+                }
+            });
+        });
+    
+        // Chuyển từ object sang mảng để dễ hiển thị
+        return Object.keys(grouped).map(key => ({
+            nameThuocTinh: key,
+            chiTiet: grouped[key]
+        }));
+    }
     // Hàm phân trang
     $scope.paginateOrders = function () {
         $scope.paginatedProduct = [];
@@ -56,7 +143,7 @@ app.controller("SanPhamThuongHieuController", function ($scope, $document, SanPh
     // Tự động tải lại danh sách sản phẩm mỗi 10 giây
     const autoReload = $interval(function () {
         loadSanPham();
-    }, 10000); // 10000 ms = 10 giây
+    }, 60000); // 10000 ms = 10 giây
 
     // Gọi hàm load dữ liệu ban đầu
     loadSanPham();

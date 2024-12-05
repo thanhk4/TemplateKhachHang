@@ -11,27 +11,27 @@
         <div class="col-md-5">
             <img ng-src="{{sanPham.uRlHinhAnh}}" class="main-image" alt="Main Product Image">
         </div>
-    
+
         <div class="col-md-5">
             <h3>{{sanPham.tensp}}</h3>
             <div ng-if="selectedSPCTs && selectedSPCTs.length > 0">
-            <h4 class="text-danger">{{selectedSPCTs[0].giathoidiemhientai}}đ</h4>
-            <p>{{selectedSPCTs[0].mota}}</p>
+                <h4 class="text-danger">{{selectedSPCTs[0].giathoidiemhientai}}đ</h4>
+                <p>{{selectedSPCTs[0].mota}}</p>
             </div>
             <div ng-if="!selectedSPCTs || selectedSPCTs.length === 0">
                 <h4 class="text-danger">{{sanPham.giasale}} đ</h4>
-                
+
             </div>
             <!-- Hiển thị danh sách thuộc tính -->
             <div class="mt-3" ng-repeat="(key, values) in groupedThuocTinhs">
                 <h7>{{key}}</h7>
                 <div class="d-flex flex-wrap gap-2">
                     <div ng-repeat="value in values" class="mb-1">
-                        <input type="checkbox" class="btn-check" id="btn-check-{{key}}-{{$index}}"
-                               autocomplete="off" ng-model="selectedValues[value]" ng-change="onThuocTinhChange()"
-                               ng-disabled="isDisabled(key, value)">
+                        <input type="checkbox" class="btn-check" id="btn-check-{{key}}-{{$index}}" autocomplete="off"
+                            ng-model="selectedValues[value]" ng-change="onThuocTinhChange()"
+                            ng-disabled="isDisabled(key, value)">
                         <label class="btn btn-outline-secondary" for="btn-check-{{key}}-{{$index}}"
-                               ng-class="{'disabled': isDisabled(key, value)}">
+                            ng-class="{'disabled': isDisabled(key, value)}">
                             {{value}}
                         </label>
                     </div>
@@ -40,47 +40,43 @@
             <div class="d-flex align-items-center justify-content-center mb-3 mt-5">
                 <!-- Nút giảm số lượng -->
                 <button class="btn btn-outline-secondary mx-2" type="button" ng-click="changeQuantity(-1)">-</button>
-                
+
                 <!-- Hiển thị số lượng ở giữa -->
                 <span id="quantity-display" class="form-control text-center w-auto px-3">{{quantity}}</span>
-                
+
                 <!-- Nút tăng số lượng -->
                 <button class="btn btn-outline-secondary mx-2" type="button" ng-click="changeQuantity(1)">+</button>
             </div>
-            
+
             <div ng-if="selectedSPCTs && selectedSPCTs.length > 0">
                 <!-- Hiển thị số lượng tối đa -->
                 <p class="mt-2">Số lượng tối đa có sẵn: <strong>{{selectedSPCTs[0].soluong}}</strong></p>
             </div>
-            
-           
+
+
             <hr class="mt-3" style="border: 0; border-top: 2px solid;">
-    
+
             <!-- Quantity and Buttons -->
             <div class="mt-2 d-flex align-items-center" ng-if="selectedSPCTs && selectedSPCTs.length > 0">
                 <!-- Nút "Mua ngay" -->
-                <a href="" 
-                   ng-click="MuaSanPham()" 
-                   class="btn btn-outline-dark chat-btn"
-                   ng-class="{'btn-disabled': selectedSPCTs.length !== 1}">
-                   Mua ngay
+                <a href="" ng-click="MuaSanPham()" class="btn btn-outline-dark chat-btn"
+                    ng-class="{'btn-disabled': selectedSPCTs.length !== 1}">
+                    Mua ngay
                 </a>
-                
+
                 <!-- Nút "Thêm vào giỏ hàng" -->
-                <a href="" 
-                   ng-click="GioHang()" 
-                   class="btn btn-dark add-cart-btn" 
-                   ng-class="{'btn-disabled': selectedSPCTs.length !== 1}">
-                   Thêm vào giỏ hàng
+                <a href="" ng-click="GioHang()" class="btn btn-dark add-cart-btn"
+                    ng-class="{'btn-disabled': selectedSPCTs.length !== 1}">
+                    Thêm vào giỏ hàng
                 </a>
             </div>
-            
-            
-            
+
+
+
         </div>
     </div>
-    
-    
+
+
     <div class="mt-3">
         <div class="row">
             <div class="col-8">
@@ -125,9 +121,14 @@
                                         ng-class="{'approved': danhGia.trangthai === 1, 'pending': danhGia.trangthai === 0}">
                                         {{ danhGia.trangthai === 1 ? 'Đã duyệt' : 'Chờ duyệt' }}
                                     </span>
+                                    <div ng-if="danhGia.urlHinhanh">
+                                        <img ng-src="{{ danhGia.urlHinhanh }}" alt="Hình ảnh đánh giá" />
+                                        <p>URL Hình ảnh: {{ danhGia.urlHinhanh }}</p>
+                                    </div>
                                 </div>
                                 <hr />
                             </div>
+
                         </div>
 
                         <!-- Hiển thị lỗi -->
@@ -173,13 +174,14 @@
             <div class="col-lg-3 col-md-4 col-sm-6" ng-repeat="sanPham in sanPhams">
                 <a href="" class="text-decoration-none text-reset" ng-click="xemChiTiet(sanPham.id)">
                     <div class="card product-card h-100">
-                        <img ng-if="sanPham.uRlHinhAnh" src="{{sanPham.uRlHinhAnh}}" alt="{{sanPham.tensp}}" class="card-img-top" 
-                        style="height: 286px; width: 100%;">
+                        <img ng-if="sanPham.uRlHinhAnh" src="{{sanPham.uRlHinhAnh}}" alt="{{sanPham.tensp}}"
+                            class="card-img-top" style="height: 286px; width: 100%;">
                         <div class="card-body">
                             <h5 class="card-title">{{sanPham.tensp}}</h5>
                             <div class="d-flex align-items-center">
                                 <p class="card-text me-2"
-                                    style="color: gray; text-decoration: line-through; margin-bottom: 0;">{{sanPham.giaban}}đ
+                                    style="color: gray; text-decoration: line-through; margin-bottom: 0;">
+                                    {{sanPham.giaban}}đ
                                 </p>
                                 <p class="card-text fw-bold" style="margin-bottom: 0;">{{sanPham.giasale}}đ</p>
                                 <span class="ms-auto">
@@ -190,7 +192,7 @@
                     </div>
                 </a>
             </div>
-           
+
         </div>
     </div>
 </div>
