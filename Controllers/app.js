@@ -175,6 +175,9 @@ app.run(function ($rootScope, $location, $http) {
   });
 });
 app.controller('mainController', function ($scope, $location) {
+ 
+  
+
   $scope.btntimkiem = function () {
     if ($scope.search && $scope.search.trim() !== '') {
       $location.path('/timkiem/' + $scope.search);
@@ -255,3 +258,72 @@ fetch(apiUrl, requestOptions)
   .catch(error => {
     console.error("Lỗi:", error.message);
   });
+  let slgiohang = 0; // Khởi tạo số lượng giỏ hàng
+
+const userInfo = JSON.parse(localStorage.getItem('userInfo')); // Lấy thông tin người dùng từ localStorage
+const cartContainer = document.getElementById('cartContainer'); // Lấy phần tử hiển thị giỏ hàng
+
+// Hiển thị nội dung mặc định khi đang tải
+cartContainer.innerHTML = `
+    <a href="#!giohang" class="nav-link text-white">
+        <i class="bi bi-cart3" style="font-size: 1.5rem;"></i>
+    </a>
+`;
+
+// Kiểm tra nếu thông tin người dùng không tồn tại
+if (!userInfo || !userInfo.id) {
+    console.warn("Thông tin người dùng không hợp lệ hoặc bị thiếu.");
+    slgiohang = 0; // Đảm bảo số lượng giỏ hàng là 0
+    updateCartDOM(); // Cập nhật hiển thị giỏ hàng
+} else {
+    const id = userInfo.id;
+    const requestAPIGH = {
+        method: 'GET', // Sử dụng GET nếu endpoint yêu cầu
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    };
+
+    fetch('https://localhost:7297/api/Giohangchitiet/giohangchitietbygiohang/' + id, requestAPIGH)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);
+            }
+            return response.json(); // Chuyển đổi phản hồi thành JSON
+        })
+        .then(data => {
+            if (Array.isArray(data) && data.length > 0) {
+                data.forEach(x => {
+                    slgiohang += x.soluong; // Cộng dồn số lượng sản phẩm
+                });
+            } else {
+                slgiohang = 0; // Không có sản phẩm trong giỏ hàng
+            }
+            updateCartDOM(); // Cập nhật hiển thị giỏ hàng sau khi lấy dữ liệu
+        })
+        .catch(error => {
+            console.error("Lỗi khi lấy thông tin chi tiết giỏ hàng:", error);
+            updateCartDOM(); // Cập nhật hiển thị giỏ hàng ngay cả khi có lỗi
+        });
+}
+
+// Hàm cập nhật giao diện giỏ hàng dựa trên giá trị `slgiohang`
+function updateCartDOM() {
+    if (slgiohang > 0) {
+        cartContainer.innerHTML = `
+            <a href="#!giohang" class="nav-link text-white">
+                <i class="bi bi-cart3" style="font-size: 1.5rem;"></i>
+                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+                    ${slgiohang} <!-- Hiển thị số lượng sản phẩm -->
+                    <span class="visually-hidden">unread messages</span>
+                </span>
+            </a>
+        `;
+    } else {
+        cartContainer.innerHTML = `
+            <a href="#!giohang" class="nav-link text-white">
+                <i class="bi bi-cart3" style="font-size: 1.5rem;"></i>
+            </a>
+        `;
+    }
+}

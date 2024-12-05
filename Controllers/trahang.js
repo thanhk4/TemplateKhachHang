@@ -243,7 +243,8 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
     
                 try {
                     const hoadondata = await CheckHoaDon()
-                    if (hoadondata.trangthaiStr != "Đơn hàng thành công") 
+                    console.log(hoadondata)
+                    if (hoadondata.trangthai != 3) 
                     {
                         Swal.fire('Trả hàng thất bại!', 'Hoá đơn này đã trả hàng, vui lòng kiểm tra lại', 'error');
                         return;
