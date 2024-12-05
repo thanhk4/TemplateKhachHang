@@ -58,7 +58,6 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         "Trả hàng"
     ];
     $scope.xemChiTiet = function (id) {
-        console.log("Xem chi tiết sản phẩm:", id);
         $('#exampleModal').modal('hide');
         $location.path(`/sanphamchitiet/${id}`);
     };
@@ -92,21 +91,20 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
                             idgg: response.data.idgg,
                             trangthai: response.data.trangthai
                         };
-                        console.log($scope.dataGetById)
                         $scope.dataeidt = {
-                            idnv: $scope.dataGetById.idnv||null,
+                            idnv: $scope.dataGetById.idnv || 0,
                             idkh: $scope.dataGetById.idkh,
                             trangthaithanhtoan: $scope.dataGetById.trangthaithanhtoan,
                             donvitrangthai: $scope.dataGetById.donvitrangthai,
                             thoigiandathang: $scope.dataGetById.thoigiandathang,
                             diachiship: $scope.dataGetById.diachiship,
                             ngaygiaodukien: $scope.dataGetById.ngaygiaodukien,
-                            ngaygiaothucte: $scope.dataGetById.ngaygiaothucte||null,
+                            ngaygiaothucte: $scope.dataGetById.ngaygiaothucte || 0,
                             tongtiencantra: $scope.dataGetById.tongtiencantra,
                             tongtiensanpham: $scope.dataGetById.tongtiensanpham,
                             sdt: $scope.dataGetById.sdt,
-                            tonggiamgia: $scope.dataGetById.tonggiamgia||null,
-                            idgg: $scope.dataGetById.idgg||null,
+                            tonggiamgia: $scope.dataGetById.tonggiamgia || 0,
+                            idgg: $scope.dataGetById.idgg || 0,
                             trangthai: 4
                         };
     
@@ -116,7 +114,9 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
                                     'Đã hủy!',
                                     'Đơn hàng đã được hủy thành công.',
                                     'success'
-                                );
+                                ).then(() => {
+                                    location.reload(); // Tải lại toàn bộ trang
+                                });
                                 $scope.filterOrders(-1); // Hiển thị tất cả đơn hàng mặc định
                             })
                             .catch(function(error) {
@@ -151,7 +151,6 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     $http.get('https://localhost:7297/api/Hoadon/hoa-don-theo-ma-kh-' + $scope.userInfo.id)
         .then(function (response) {
             $scope.DataHoaDonMua = response.data;
-            console.log($scope.DataHoaDonMua)
             $scope.filterOrders(-1); // Hiển thị tất cả đơn hàng mặc định
         })
         .catch(function (error) {
@@ -188,20 +187,23 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         $http.get('https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
         .then(function (response) {
             $scope.DataChitiet = response.data;
-            console.log($scope.DataChitiet)
         })
         .catch(function (error) {
             console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
         });
     }
     $http.get('https://localhost:7297/api/Danhgias')
-    .then(function(response){
-        $scope.dataDanhgia=response.data
-        console.log($scope.dataDanhgia)
+    .then(function(response) {
+        if (response.data && response.data.length > 0) {
+            $scope.dataDanhgia = response.data;
+        } else {
+            console.warn("Không tìm thấy dữ liệu đánh giá.");
+        }
     })
     .catch(function (error) {
-        console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
+        console.error("Lỗi khi tải dữ liệu đánh giá:", error);
     });
+
 
     $scope.trahang = function (id) {
         if (!id) {
@@ -228,7 +230,6 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         $http.get('https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
             .then(async function (response) {
                 $scope.DataChitiet = response.data;
-                console.log("Chi tiết hóa đơn:", $scope.DataChitiet);
     
                 // Xử lý từng sản phẩm trong danh sách hóa đơn chi tiết
                 for (const element of $scope.DataChitiet) {
@@ -240,7 +241,6 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
                         // Lấy đánh giá sản phẩm
                         const ratingResponse = await OrderHistoryService.getRatingByOrderDetailId(element.id);
                         element.existingReview = ratingResponse.data;
-                        console.log("Đánh giá sản phẩm:", element.existingReview);
                     } catch (error) {
                         console.error("Lỗi khi tải đánh giá hoặc thuộc tính:", error);
                     }
@@ -286,7 +286,6 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     }
 
     $scope.openRatingModal = function (product) {
-        console.log("Mở modal đánh giá cho sản phẩm:", product);
         $scope.selectedProduct = product;
         $scope.reviewText = product.existingReview ? product.existingReview.noidungdanhgia : '';
         const myModal = new bootstrap.Modal(document.getElementById('ratingModal'), { keyboard: false });

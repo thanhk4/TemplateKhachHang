@@ -292,7 +292,7 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
                     <input type="checkbox" class="product-checkbox" id="checkbox${id}" data-id="${id}" style="margin: auto;">
                 </div>
                 <div class="d-flex align-items-center" style="width: 45%;">
-                    <img src="../image/${sanPhamData.urlHinhanh}" alt="Product Image" style="width: 80px; height: auto;">
+                    <img src="${sanPhamData.urlHinhanh}" alt="Product Image" style="width: 80px; height: auto;">
                     <div class="ms-3" style="flex: 1;">
                         <p class="mb-1 fw-bold">${sanPhamData.tensp}</p>
                         <span class="text-muted">Phân Loại Hàng:</span>

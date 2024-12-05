@@ -181,7 +181,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             const response = await fetch(`https://localhost:7297/api/Salechitiet/SanPhamCT/${spctId}`);
             if (!response.ok) {
                 if (response.status === 404) {
-                    console.warn("Không tìm thấy dữ liệu giảm giá chi tiết");
+                    console.warn("Sản Phẩm chi tiết không có dữ liệu giảm giá");
                     return null; // Không tìm thấy, trả về null
                 }
                 throw new Error(`Lỗi API giảm giá: ${response.status}`);
@@ -239,8 +239,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             const giohang = await fetchGioHangByIdKh(idkh);
             danhSachSanPham = []; // Reset lại danh sách sản phẩm mỗi lần render lại
 
-            console.log($scope.sanPhamChitiets);
-
             // Duyệt qua tất cả sản phẩm chi tiết trong $scope.sanPhamChitiets
             for (const sanPham of $scope.sanPhamChitiets) {
                 const { id, idsp, giathoidiemhientai } = sanPham[0];
@@ -292,7 +290,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
                 productItem.innerHTML = `
                     <div class="d-flex align-items-center" style="width: 50%;">
-                        <img src="../image/${sanPhamData.urlHinhanh}" alt="Product Image" style="width: 80px; height: auto;">
+                        <img src="${sanPhamData.urlHinhanh}" alt="Product Image" style="width: 80px; height: auto;">
                         <div class="ms-3" style="flex: 1;">
                             <p class="mb-1 fw-bold">${sanPhamData.tensp}</p>
                             <span class="text-muted">Phân Loại Hàng:</span>
@@ -480,7 +478,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
             const result = await deleteGioHangChiTiet(idgiohangct.id);
             if (result) {
-                alert("Sản phẩm đã được xóa khỏi giỏ hàng.");
+                return true;
             } else {
                 alert("Xóa sản phẩm thất bại, vui lòng thử lại.");
             }
@@ -502,12 +500,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
         // Điều chỉnh thời gian theo múi giờ Việt Nam
         currentDate.setMinutes(currentDate.getMinutes() + vietnamTimezoneOffset - currentDate.getTimezoneOffset());
-
-        const vietnamDate = currentDate.toISOString();
-
-        console.log(vietnamDate); // Ngày giờ theo chuẩn ISO, tương ứng với múi giờ Việt Nam
-
-        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
 
         const hoadonData = {
             idnv: 0,
@@ -628,12 +620,12 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                     Swal.fire("Lỗi", result.error, "error");
                     return null;  // Dừng nếu có lỗi từ BE
                 }
-                return result;
             } catch (error) {
                 console.error("Lỗi kết nối API khi thêm chi tiết hóa đơn:", error);
                 Swal.fire("Lỗi", "Kết nối thêm chi tiết hóa đơn thất bại.", "error");
             }
         }
+        return true;
     }
 
     // Hàm thêm lịch sử thanh toán
@@ -750,7 +742,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 body: JSON.stringify(payload)
             });
             const result = await response.json();
-            console.log(result)
 
             if (result.error) {
                 Swal.fire("Lỗi", result.error, "error");
@@ -1160,7 +1151,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
             // Kiểm tra nếu phản hồi từ API không có dữ liệu (empty response or 204 No Content)
             if (responseUsedVouchers.status === 204) {
-                console.log("Không có dữ liệu voucher từ hóa đơn.");
                 usedVouchers = []; // Nếu không có dữ liệu, gán empty array
             } else if (!responseUsedVouchers.ok) {
                 throw new Error(`Lỗi khi lấy dữ liệu từ API hóa đơn: ${responseUsedVouchers.status}`);

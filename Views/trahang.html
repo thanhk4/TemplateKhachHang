@@ -83,10 +83,10 @@
                                     <h6 class="fw-bold">{{x.tensp}}</h6>
                                     <div class="input-group input-group-custom mb-3">
                                         <button class="btn btn-outline-secondary quantity-btn" type="button"
-                                            ng-click="changeQuantity(-1, x.soluong, x.giasp, x.id)">-</button>
-                                        <span id="quantity-display" class="text-center quantity-display">{{quantity}}</span>
+                                            ng-click="changeQuantity(-1, x.id)">-</button>
+                                        <span id="quantity-display-{{x.id}}" class="text-center quantity-display">{{x.soluong}}</span>
                                         <button class="btn btn-outline-secondary quantity-btn" type="button"
-                                            ng-click="changeQuantity(1, x.soluong, x.giasp, x.id)">+</button>
+                                            ng-click="changeQuantity(1, x.id)">+</button>
                                     </div>
                                     <p class="text-muted">Giá sản phẩm: <span class="fw-bold">{{x.giasp | number}} VNĐ</span></p>
                                 </div>
@@ -169,8 +169,8 @@
                         <span class="text-danger" ng-if="form.tinhtrang.$touched && form.tinhtrang.$error.required">Không được bỏ trống</span>
                     </div>
                     <div class="mb-3">
-                        <label for="fileUpload" class="form-label">Tải lên hình ảnh hoặc video</label>
-                        <input id="fileUpload" type="file" accept="image/*,video/*" multiple class="form-control" ng-model="hinhanh" name="hinhanh" readonly>
+                        <label for="fileUpload" class="form-label">Tải lên hình ảnh</label>
+                        <input id="fileUpload" type="file" accept="image/*" multiple class="form-control" ng-model="hinhanh" name="hinhanh" readonly>
                         <span class="text-danger" ng-if="form.hinhanh.$touched && form.hinhanh.$error.required">Không được bỏ trống</span>
                     </div>
                     <div class="mb-3">
