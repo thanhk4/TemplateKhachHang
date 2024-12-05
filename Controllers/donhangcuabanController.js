@@ -47,11 +47,10 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     $scope.itemsPerPage = 6; // Số mục trên mỗi trang
     $scope.currentPage = 0; // Trang hiện tại
     $scope.filterStatus = -1; // Mặc định là tất cả trạng thái (-1)
-
-    // Trạng thái đơn hàngaaaa
+    // Trạng thái đơn hàngaaaaa
     $scope.orderStatuses = [
         "Chờ xác nhận",
-        "Đã xác nhận",
+        "Đang được giao",
         "Đang giao",
         "Thành công",
         "Đã hủy",
