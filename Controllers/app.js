@@ -180,7 +180,18 @@ app.controller('mainController', function ($scope, $location) {
       $location.path('/timkiem/' + $scope.search);
       $scope.search = '';
     } else {
-      alert("Vui lòng nhập từ khóa để tìm kiếm!");
+      Swal.fire({
+        title: 'Thông báo',
+        text: 'Vui lòng nhập từ khóa để tìm kiếm!',//ss
+        icon: 'info',
+        confirmButtonText: 'OK',
+        confirmButtonColor: '#3085d6',
+        background: '#fff',
+        color: '#333',
+        customClass: {
+            popup: 'custom-popup',
+        }
+    });
     }
     $http.get()
   };
@@ -215,3 +226,32 @@ app.controller('ThuongHieuController', function($scope, ThuongHieuService) {
   // Gọi hàm khi Controller khởi tạo
   $scope.loadThuongHieu();
 });
+const apiUrl = "https://localhost:7297/api/Trahang/tra-hang-qua-han";
+
+// Cấu hình yêu cầu
+const requestOptions = {
+  method: 'DELETE',
+  headers: {
+    'Content-Type': 'application/json',
+    // Thêm Authorization nếu cần
+    // 'Authorization': 'Bearer YOUR_TOKEN_HERE',
+  },
+};
+
+// Gửi yêu cầu xóa
+fetch(apiUrl, requestOptions)
+  .then(response => {
+    if (response.status === 404) {
+      throw new Error("Không tìm thấy bản ghi phù hợp để xóa.");
+    }
+    if (response.status === 500) {
+      throw new Error("Lỗi hệ thống trong quá trình xóa.");
+    }
+    if (!response.ok) {
+      throw new Error(`Lỗi không xác định! Status: ${response.status}`);
+    }
+    console.log("Xóa thành công!");
+  })
+  .catch(error => {
+    console.error("Lỗi:", error.message);
+  });
