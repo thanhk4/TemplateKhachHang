@@ -117,13 +117,9 @@
                                 </div>
                                 <div class="footer">
                                     <strong>Trạng thái:</strong>
-                                    <span
-                                        ng-class="{'approved': danhGia.trangthai === 1, 'pending': danhGia.trangthai === 0}">
-                                        {{ danhGia.trangthai === 1 ? 'Đã duyệt' : 'Chờ duyệt' }}
-                                    </span>
-                                    <div ng-if="danhGia.urlHinhanh">
-                                        <img ng-src="{{ danhGia.urlHinhanh }}" alt="Hình ảnh đánh giá" />
-                                        <p>URL Hình ảnh: {{ danhGia.urlHinhanh }}</p>
+                                    
+                                    <div ng-if="danhGia.urlHinhanh" >
+                                        <img ng-src="{{ danhGia.urlHinhanh }}" alt="Hình ảnh đánh giá" style="width: 300px;"/>
                                     </div>
                                 </div>
                                 <hr />
