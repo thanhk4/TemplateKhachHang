@@ -55,7 +55,7 @@ app.controller("SanPhamSaleController", function ($scope, $document, SanPhamServ
     // Tự động tải lại danh sách sản phẩm mỗi 10 giây
     const autoReload = $interval(function () {
         loadSanPham();
-    }, 10000); // 10000 ms = 10 giây
+    }, 60000); // 10000 ms = 10 giây
 
     // Gọi hàm load dữ liệu ban đầu
     loadSanPham();

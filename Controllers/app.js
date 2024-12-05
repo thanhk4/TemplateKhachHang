@@ -76,6 +76,10 @@ app.config(($routeProvider) => {
   templateUrl: './Views/doimatkhau2.html',
   controller: 'doimatkhau2Controller'
 })
+.when('/lienhe', {
+  templateUrl: './Views/Lienhe.html',
+  controller: 'lienheController'
+})
 .otherwise({
   redirectTo: "/"
 });

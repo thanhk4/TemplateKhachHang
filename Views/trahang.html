@@ -64,7 +64,6 @@
                 </li>
             </ul>
         
-            <!-- Product List Section -->
             <ul class="list-group mb-5 shadow-sm">
                 <li class="list-group-item active" aria-current="true">Danh sách sản phẩm trong hóa đơn</li>
                 <li class="list-group-item">
@@ -75,7 +74,7 @@
                                 type="checkbox" 
                                 id="checkboxNoLabel" 
                                 ng-model="x.selected" 
-                                ng-change="toggleSelection(x.id)">
+                                ng-change="toggleSelection(x.id, x.giasp)">
                             <div class="row align-items-center">
                                 <div class="col-md-3 text-center">
                                     <img ng-src="{{x.urlHinhanh}}" alt="{{x.tensp}}" class="img-fluid rounded shadow-sm">
@@ -84,19 +83,18 @@
                                     <h6 class="fw-bold">{{x.tensp}}</h6>
                                     <div class="input-group input-group-custom mb-3">
                                         <button class="btn btn-outline-secondary quantity-btn" type="button"
-                                            ng-click="changeQuantity(-1,x.soluong)">-</button>
-                                        <span id="quantity-display" class="form-control text-center quantity-display">{{quantity}}</span>
+                                            ng-click="changeQuantity(-1, x.id)">-</button>
+                                        <span id="quantity-display-{{x.id}}" class="text-center quantity-display">{{x.soluong}}</span>
                                         <button class="btn btn-outline-secondary quantity-btn" type="button"
-                                            ng-click="changeQuantity(1,x.soluong)">+</button>
+                                            ng-click="changeQuantity(1, x.id)">+</button>
                                     </div>
                                     <p class="text-muted">Giá sản phẩm: <span class="fw-bold">{{x.giasp | number}} VNĐ</span></p>
                                 </div>
                             </div>
                         </li>
-                        
                     </ul>
                 </li>
-            </ul>
+            </ul>        
         
             <!-- Additional Information Section -->
             <ul class="list-group mb-5 shadow-sm">
@@ -120,7 +118,7 @@
                     <div class="mb-3">
                         <label for="refundMethod" class="form-label">Phương thức hoàn tiền</label>
                         <select class="form-select" id="refundMethod" aria-label="Phương thức hoàn tiền" ng-model="phuongthuchoantien" name="phuongthuchoantien" required>
-                            <option selected disabled>Chọn phương thức hoàn tiền</option>
+                            <option value="" selected disabled>Chọn phương thức hoàn tiền</option>
                             <option value="Ngân hàng">Hoàn tiền vào tài khoản ngân hàng</option>
                             <option value="Thẻ thanh toán">Hoàn tiền qua thẻ thanh toán</option>
                             <option value="Voucher">Hoàn tiền bằng voucher/mã giảm giá</option>
@@ -128,25 +126,29 @@
                         </select>
                         <span class="text-danger" ng-if="form.phuongthuchoantien.$touched && form.phuongthuchoantien.$error.required">Không được bỏ trống</span>
                     </div>
-                    <div class=" row mb-3"> 
-                        <div class="col">
-                            <label for="refundMethod" class="form-label">Ngân hàng</label>
-                            <select class="form-select" aria-label="Ngân hàng" ng-model="nganhang">
-                                <option value="" selected disabled>Chọn ngân hàng</option>
-                                <option value="" ng-repeat="bank in banks.data | orderBy:'shortName'" value="{{bank.shortName}}">
-                                    {{bank.name}} ({{bank.shortName}})
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col">
-                            <label for="refundMethod" class="form-label">Số tài khoản/Số thẻ visa</label>
-                            <input type="text" class="form-control" ng-model="stk">
-                        </div>
-                        <div class="col">
-                            <label for="refundMethod" class="form-label">Tên người hưởng thụ</label>
-                            <input type="text" class="form-control" ng-model="tennguoihuongthu">
-                        </div>
-                    </div>
+                    
+                    <!-- Điều khiển Collapse với ng-show -->
+                    <div ng-show="phuongthuchoantien === 'Thẻ thanh toán' || phuongthuchoantien === 'Ngân hàng'" class="collapse show" id="collapseExample">
+                        <div class="row mb-3">
+                            <div class="col">
+                                <label for="bank" class="form-label">Ngân hàng</label>
+                                <select class="form-select" aria-label="Ngân hàng" ng-model="nganhang">
+                                    <option value="" selected disabled>Chọn ngân hàng</option>
+                                    <option ng-repeat="bank in banks.data | orderBy:'shortName'" value="{{bank.shortName}}">
+                                        {{bank.name}} ({{bank.shortName}})
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <label for="accountNumber" class="form-label">Số tài khoản/Số thẻ visa</label>
+                                <input type="text" class="form-control" ng-model="stk" id="accountNumber">
+                            </div>
+                            <div class="col">
+                                <label for="beneficiaryName" class="form-label">Tên người hưởng thụ</label>
+                                <input type="text" class="form-control" ng-model="tennguoihuongthu" id="beneficiaryName">
+                            </div>
+                        </div>                        
+                    </div>                    
                     <div class="mb-3">
                         <label for="additionalNote" class="form-label">Tình trạng</label>
                         <select id="returnStatus" class="form-select" name="returnStatus" ng-model="tinhtrang" name="tinhtrang" required>
@@ -167,8 +169,8 @@
                         <span class="text-danger" ng-if="form.tinhtrang.$touched && form.tinhtrang.$error.required">Không được bỏ trống</span>
                     </div>
                     <div class="mb-3">
-                        <label for="fileUpload" class="form-label">Tải lên hình ảnh hoặc video</label>
-                        <input id="fileUpload" type="file" accept="image/*,video/*" multiple class="form-control" ng-model="hinhanh" name="hinhanh" readonly>
+                        <label for="fileUpload" class="form-label">Tải lên hình ảnh</label>
+                        <input id="fileUpload" type="file" accept="image/*" multiple class="form-control" ng-model="hinhanh" name="hinhanh" readonly>
                         <span class="text-danger" ng-if="form.hinhanh.$touched && form.hinhanh.$error.required">Không được bỏ trống</span>
                     </div>
                     <div class="mb-3">
@@ -177,15 +179,11 @@
                     </div>
                 </li>
                 <li class="list-group-item">
-                    <p>Số tiền hoàn lại: 0 VNĐ</p>
-                    <div class="row">
-                        <div class="col">
-                            <p>Hoàn tiền vào:</p>
-                        </div>
-                        <div class="col">
-                            <p class="text-end">Hoàn tiền vào tài khoản ngân hàng</p>
-                        </div>
-                    </div>
+                    <p class="text-start fw-bold">Tổng số tiền hoàn: <span id="tongsotienhoan">0 VNĐ</span></p>
+                    <div class="row align-items-center fw-bold">
+                        <p class="col-auto mb-0" style="padding-right: 0px;">Hoàn tiền vào:</p>
+                        <p class="col text-start mb-0" id="hienthiphuongthucthanhtoandachon" value="" style="padding-left: 4px;"></p>
+                    </div>                                        
                 </li>
                 <li class="list-group-item">
                     <button type="submit" class="btn btn-danger w-100">Gửi xác nhận</button>
@@ -248,7 +246,8 @@
 }
 
 .quantity-display {
-    width: 40px;
+    width: 44px;
+    margin-top: 5px;
 }
 
 textarea,

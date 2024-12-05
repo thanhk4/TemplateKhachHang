@@ -109,9 +109,9 @@
                                         <div class="text-end" ng-if="item.trangthaihd!=0">
                                             <a class="btn btn-danger" ng-click="xemChiTiet(item.idsp)" ng-if="item.trangthaihd==3||item.trangthaihd==4||item.trangthaihd==5">Mua lại</a>
                                             <div>
-                                                <button class="btn btn-outline-primary" ng-if="!item.existingReview" ng-if="item.trangthaihd==3" ng-click="openRatingModal(item)">Thêm đánh giá</button>
+                                                <button class="btn btn-outline-primary mt-3" ng-if="!item.existingReview && item.trangthaihd==3"  ng-click="openRatingModal(item)">Thêm đánh giá</button>
                                             </div>
-                                            <div ng-if="item.existingReview">
+                                            <div ng-if="item.existingReview" class="mt-3">
                                                 <button class="btn btn-outline-info" ng-if="item.trangthaihd==3" ng-click="openRatingModal(item)">Sửa đánh giá</button>
                                                 <button class="btn btn-outline-danger" ng-if="item.trangthaihd==3" ng-click="deleteRating(item)">
                                                     Xóa đánh giá

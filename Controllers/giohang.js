@@ -227,6 +227,16 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
                 console.error(`Lỗi khi xử lý sản phẩm chi tiết với idspct: ${item.idspct}`, error);
             }
         }
+
+        // Hàm xử lý cập nhật giá giảm
+        function calculateDiscountPrice(giaHienTai, giatrigiam, donVi) {
+            if (donVi === 0) {
+                return giaHienTai - giatrigiam; // Giảm giá theo giá trị trực tiếp
+            } else if (donVi === 1) {
+                return giaHienTai * (1- giatrigiam / 100);
+            }
+            return giaHienTai; // Nếu không xác định, giữ nguyên giá
+        }
     
         console.log(sanPhamChitiets);
     
@@ -282,7 +292,7 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
                     <input type="checkbox" class="product-checkbox" id="checkbox${id}" data-id="${id}" style="margin: auto;">
                 </div>
                 <div class="d-flex align-items-center" style="width: 45%;">
-                    <img src="../image/${sanPhamData.urlHinhanh}" alt="Product Image" style="width: 80px; height: auto;">
+                    <img src="${sanPhamData.urlHinhanh}" alt="Product Image" style="width: 80px; height: auto;">
                     <div class="ms-3" style="flex: 1;">
                         <p class="mb-1 fw-bold">${sanPhamData.tensp}</p>
                         <span class="text-muted">Phân Loại Hàng:</span>
@@ -530,29 +540,97 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
     });
 
     
-    // Hàm chuyển trang
-    $scope.changePage = async function() {
-        // Lấy tất cả các checkbox đã chọn
-        const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
-        
-        // Kiểm tra nếu không có checkbox nào được chọn
-        if (selectedCheckboxes.length === 0) {
-            alert("Vui lòng chọn ít nhất một sản phẩm trong giỏ hàng.");
-            return false;
+    $scope.changePage = async function () {
+        try {
+            // Lấy tất cả các checkbox đã chọn
+            const selectedCheckboxes = document.querySelectorAll('.product-checkbox:checked');
+    
+            // Kiểm tra nếu không có checkbox nào được chọn
+            if (selectedCheckboxes.length === 0) {
+                alert("Vui lòng chọn ít nhất một sản phẩm trong giỏ hàng.");
+                return false;
+            }
+    
+            // Lấy ID khách hàng
+            const idkh = GetByidKH();
+            if (!idkh) {
+                alert("Không thể xác định khách hàng. Vui lòng đăng nhập lại.");
+                return false;
+            }
+    
+            // Lấy ID giỏ hàng
+            const idgh = await fetchGioHangId(idkh);
+            if (!idgh || !idgh.id) {
+                alert("Không thể lấy thông tin giỏ hàng. Vui lòng thử lại.");
+                return false;
+            }
+    
+            // Lấy danh sách chi tiết giỏ hàng
+            const gioHangChiTiet = await fetchGioHangChiTiet(idgh.id);
+            if (!gioHangChiTiet || gioHangChiTiet.length === 0) {
+                alert("Giỏ hàng trống. Vui lòng thêm sản phẩm vào giỏ hàng.");
+                return false;
+            }
+    
+            const selectedIds = [];
+            const productsWithIssues = []; // Danh sách sản phẩm có vấn đề về số lượng
+    
+            // Kiểm tra từng sản phẩm được chọn
+            for (const checkbox of selectedCheckboxes) {
+                const productId = checkbox.getAttribute('data-id');
+                const gioHangItem = gioHangChiTiet.find(item => item.idspct === parseInt(productId));
+    
+                if (!gioHangItem) {
+                    console.error(`Không tìm thấy sản phẩm với ID ${productId} trong giỏ hàng.`);
+                    continue;
+                }
+    
+                const cartQuantity = gioHangItem.soluong;
+    
+                // Gọi API lấy thông tin sản phẩm chi tiết
+                const productDetail = await fetchSanPhamChitiet2(productId);
+                if (!productDetail) {
+                    console.error(`Không thể lấy thông tin sản phẩm chi tiết cho ID ${productId}.`);
+                    continue;
+                }
+    
+                // Kiểm tra số lượng
+                if (cartQuantity > productDetail.soluong) {
+                    const sanPhamData = await fetchSanPhamById(productDetail.idsp);
+                    productsWithIssues.push(productDetail.tenSanPham || `ID: ${sanPhamData.tensp}`);
+                } else {
+                    selectedIds.push(productId); // Chỉ thêm sản phẩm hợp lệ
+                }
+            }
+    
+            // Nếu có sản phẩm vượt quá số lượng
+            if (productsWithIssues.length > 0) {
+                Swal.fire({
+                    title: 'Cảnh báo',
+                    icon: 'warning',
+                    html: `Các sản phẩm sau đây có số lượng trong giỏ hàng lớn hơn số lượng khả dụng:<br>- ${productsWithIssues.join('<br>- ')}`,
+                    confirmButtonText: 'OK',
+                    confirmButtonColor: '#3085d6'
+                });                
+                return false;
+            }
+    
+            // Chuyển hướng sang trang "Hóa đơn giỏ hàng"
+            $timeout(() => {
+                $scope.$apply(() => {
+                    $location.path(`/hoadongiohang/${selectedIds.join(',')}`); // Chuyển hướng với danh sách ID hợp lệ
+                });
+                $scope.isLoading = false; // Kết thúc tải (nếu cần)
+            }, 3000);
+    
+        } catch (error) {
+            console.error("Lỗi khi kiểm tra số lượng sản phẩm:", error);
+            alert("Có lỗi xảy ra khi kiểm tra số lượng sản phẩm. Vui lòng thử lại sau.");
         }
-    
-        // Lấy các data-id của các checkbox đã chọn
-        const selectedIds = [];
-        selectedCheckboxes.forEach(checkbox => {
-            selectedIds.push(checkbox.getAttribute('data-id'));
-        });
-    
-        // Sử dụng $timeout để gọi $apply một cách an toàn trong AngularJS
-        $timeout(() => {
-            $location.path(`/hoadongiohang/${selectedIds.join(',')}`); // Chuyển hướng với các ID sản phẩm
-        });
-    };        
+    };
+           
 
+    // Gọi render khi khởi tạo controller
     renderGioHang();
     
 });
