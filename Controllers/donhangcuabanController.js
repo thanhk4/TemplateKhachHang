@@ -147,6 +147,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         });
     };
     
+    
     // Lấy danh sách hóa đơn từ API
     $http.get('https://localhost:7297/api/Hoadon/hoa-don-theo-ma-kh-' + $scope.userInfo.id)
         .then(function (response) {
