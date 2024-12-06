@@ -500,6 +500,8 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
         // Điều chỉnh thời gian theo múi giờ Việt Nam
         currentDate.setMinutes(currentDate.getMinutes() + vietnamTimezoneOffset - currentDate.getTimezoneOffset());
+        
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
 
         const hoadonData = {
             idnv: 0,
@@ -508,6 +510,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             trangthaithanhtoan: 0,
             donvitrangthai: 0,
             thoigiandathang: currentDate,
+            ghichu: "",
             diachiship: diachi,
             ngaygiaodukien: currentDate,
             ngaygiaothucte: currentDate,
@@ -1176,23 +1179,8 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
                 try {
                     const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/${id.iDgiamgia}`);
-                    if (!responseVoucher.ok) {
-                        console.warn(`Lỗi khi lấy voucher với id: ${id.iDgiamgia}`);
-                        continue; // Bỏ qua id này nếu lỗi
-                    }
-                    const voucher = await responseVoucher.json();
-                    const updatengaybatdau = formatDate(voucher.ngaybatdau)
-                    const updatengayketthuc = formatDate(voucher.ngayketthuc)
-                    if (voucher.trangthai != "Đang phát hành") {
-                        continue; // 
-                    }
-                    if (updatengaybatdau > currentDateTime) {
-                        continue; // 
-                    }
-                    if (updatengayketthuc < currentDateTime) {
-                        continue; // 
-                    }
-                    vouchers.push(voucher); // Thêm voucher hợp lệ vào danh sách
+                    const data = await responseVoucher.json();
+                    vouchers.push(data);
                 } catch (error) {
                     console.warn(`Lỗi không xác định khi lấy voucher với id: ${id.iDgiamgia}`, error);
                 }
