@@ -144,7 +144,6 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
             const response = await fetch(`https://localhost:7297/api/Salechitiet/SanPhamCT/${spctId}`);
             if (!response.ok) {
                 if (response.status === 404) {
-                    
                     return null; // Không tìm thấy, trả về null
                 }
                 throw new Error(`Lỗi API giảm giá: ${response.status}`);
@@ -406,6 +405,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
             trangthaithanhtoan: 0,
             donvitrangthai: 0,
             thoigiandathang: currentDate,
+            ghichu: "",
             diachiship: diachi,
             ngaygiaodukien: currentDate,
             ngaygiaothucte: currentDate,
@@ -1018,10 +1018,7 @@ async function taoLinkThanhToan(idhd) {
         fetchVouchers();
     });
 
-    async function fetchVouchers() {
-        const currentDateTime = new Date().toLocaleString('vi-VN', {
-            timeZone: 'Asia/Ho_Chi_Minh',
-        });        
+    async function fetchVouchers() { 
         const idkh = GetByidKH();
         try {
             // Bước 1: Lấy idRank từ API khách hàng
@@ -1070,23 +1067,19 @@ async function taoLinkThanhToan(idhd) {
     
                 try {
                     const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/${id.iDgiamgia}`);
-                    if (!responseVoucher.ok) {
-                        console.warn(`Lỗi khi lấy voucher với id: ${id.iDgiamgia}`);
-                        continue; // Bỏ qua id này nếu lỗi
-                    }
-                    const voucher = await responseVoucher.json();
-                    const updatengaybatdau = formatDate(voucher.ngaybatdau)
-                    const updatengayketthuc = formatDate(voucher.ngayketthuc)
-                    if (voucher.trangthai != "Đang phát hành" ) {
+                    const data = await responseVoucher.json();
+                    const updatengaybatdau = formatDate(data.ngaybatdau)
+                    const updatengayketthuc = formatDate(data.ngayketthuc)
+                    if (data.trangthai != "Đang phát hành") {
                         continue; // 
                     }
-                    if (updatengaybatdau > currentDateTime){
+                    if (updatengaybatdau > formattedDate) {
                         continue; // 
                     }
-                    if (updatengayketthuc < currentDateTime){
+                    if (updatengayketthuc < formattedDate) {
                         continue; // 
                     }
-                    vouchers.push(voucher); // Thêm voucher hợp lệ vào danh sách
+                    vouchers.push(data);
                 } catch (error) {
                     console.warn(`Lỗi không xác định khi lấy voucher với id: ${id.iDgiamgia}`, error);
                 }

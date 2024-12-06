@@ -48,7 +48,11 @@ app.controller('dangkyController', function($scope, $http) {
             Ngaysinh: $scope.user.ngaysinh,
             Email: $scope.user.email,
             Diachi: $scope.user.diachi,
-            Password: $scope.user.password
+            Password: $scope.user.password,
+            tichdiem: 0,
+            diemsudung: 0,
+            trangthai: 0,
+            idrank: 1,
         }).then(function(response) {
             $scope.successMessage = 'Đăng ký thành công';
             $scope.errorMessage = '';
