@@ -80,6 +80,10 @@ app.config(($routeProvider) => {
   templateUrl: './Views/Lienhe.html',
   controller: 'lienheController'
 })
+.when('/giamgia', {
+  templateUrl: './Views/Vocher.html',
+  controller: 'vocherController'
+})
 .otherwise({
   redirectTo: "/"
 });
