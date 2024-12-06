@@ -255,7 +255,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                     if (!returnOrder) return;  // Nếu không có kết quả trả về, dừng
     
                     // Thêm hình ảnh sau khi tạo đơn trả hàng
-                    const checkhinhanh = await hinhanh(dataanh, returnOrder);
+                    const checkhinhanh = await hinhanh(returnOrder,dataanh);
                     if (!checkhinhanh) return; 
     
                     // Thêm chi tiết đơn trả hàng
