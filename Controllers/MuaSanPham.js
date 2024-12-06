@@ -144,7 +144,6 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
             const response = await fetch(`https://localhost:7297/api/Salechitiet/SanPhamCT/${spctId}`);
             if (!response.ok) {
                 if (response.status === 404) {
-                    
                     return null; // Không tìm thấy, trả về null
                 }
                 throw new Error(`Lỗi API giảm giá: ${response.status}`);
@@ -1069,6 +1068,17 @@ async function taoLinkThanhToan(idhd) {
                 try {
                     const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/${id.iDgiamgia}`);
                     const data = await responseVoucher.json();
+                    const updatengaybatdau = formatDate(data.ngaybatdau)
+                    const updatengayketthuc = formatDate(data.ngayketthuc)
+                    if (data.trangthai != "Đang phát hành") {
+                        continue; // 
+                    }
+                    if (updatengaybatdau > formattedDate) {
+                        continue; // 
+                    }
+                    if (updatengayketthuc < formattedDate) {
+                        continue; // 
+                    }
                     vouchers.push(data);
                 } catch (error) {
                     console.warn(`Lỗi không xác định khi lấy voucher với id: ${id.iDgiamgia}`, error);
