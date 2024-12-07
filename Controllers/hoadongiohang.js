@@ -1129,8 +1129,12 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
     });
 
     async function fetchVouchers() {
-        const currentDateTime = new Date().toLocaleString('vi-VN', {
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString('vi-VN', {
             timeZone: 'Asia/Ho_Chi_Minh',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
         });
         const idkh = GetByidKH();
         try {
@@ -1180,6 +1184,17 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 try {
                     const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/${id.iDgiamgia}`);
                     const data = await responseVoucher.json();
+                    const updatengaybatdau = formatDate(data.ngaybatdau)
+                    const updatengayketthuc = formatDate(data.ngayketthuc)
+                    if (data.trangthai != "Đang phát hành") {
+                        continue; // 
+                    }
+                    if (updatengaybatdau > formattedDate) {
+                        continue; // 
+                    }
+                    if (updatengayketthuc < formattedDate) {
+                        continue; // 
+                    }
                     vouchers.push(data);
                 } catch (error) {
                     console.warn(`Lỗi không xác định khi lấy voucher với id: ${id.iDgiamgia}`, error);
