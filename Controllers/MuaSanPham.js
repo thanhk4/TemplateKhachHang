@@ -1020,6 +1020,13 @@ async function taoLinkThanhToan(idhd) {
 
     async function fetchVouchers() { 
         const idkh = GetByidKH();
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString('vi-VN', {
+            timeZone: 'Asia/Ho_Chi_Minh',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+        });
         try {
             // Bước 1: Lấy idRank từ API khách hàng
             const responseRank = await fetch(`https://localhost:7297/api/khachhang/${idkh}`);
@@ -1210,7 +1217,6 @@ async function taoLinkThanhToan(idhd) {
                 fetch(`${discountApiUrl}/${selectedVoucherId}`)
                     .then(response => response.json())
                     .then(voucher => {
-                        // Nếu API trả về voucher hợp lệ
                         if (voucher && voucher.giatri) {
                             const voucherCodeInput = document.getElementById('voucherCodeDisplay');
 
@@ -1231,10 +1237,8 @@ async function taoLinkThanhToan(idhd) {
 
                             // Tính toán số tiền giảm tùy thuộc vào đơn vị của voucher
                             if (voucher.donvi === 'VND') {
-                                // Nếu đơn vị là VND, số tiền giảm là giá trị của voucher
                                 soTienGiam = voucher.giatri;
                             } else if (voucher.donvi === '%') {
-                                // Nếu đơn vị là %, tính số tiền giảm theo tỷ lệ phần trăm
                                 soTienGiam = tongSanPhamValue * (voucher.giatri / 100);
                             }
 
@@ -1247,7 +1251,27 @@ async function taoLinkThanhToan(idhd) {
 
                             // Gọi hàm updateTotals để tính lại tổng sản phẩm và hóa đơn
                             updateTotals();
-                            
+
+                            // Kiểm tra nếu tổng hóa đơn là 0
+                            if (tongHoaDonValue === 0) {
+                                const cashOnDeliveryRadio = document.getElementById("cashOnDelivery");
+                                const bankTransferRadio = document.getElementById("bankTransfer");
+                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
+
+                                // Chọn phương thức "Thanh toán khi nhận hàng"
+                                cashOnDeliveryRadio.checked = true;
+
+                                // Vô hiệu hóa và ẩn phương thức "Chuyển khoản ngân hàng"
+                                bankTransferRadio.disabled = true;
+                                bankTransferLabel.style.display = "none";
+                            } else {
+                                // Khôi phục trạng thái nếu tổng hóa đơn khác 0
+                                const bankTransferRadio = document.getElementById("bankTransfer");
+                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
+                                bankTransferRadio.disabled = false;
+                                bankTransferLabel.style.display = "inline-block";
+                            }
+
                             document.getElementById("btnRestoreVoucher").style.display = 'inline-block';
                             Swal.fire(
                                 'Xác Nhận Thành Công',
@@ -1319,8 +1343,33 @@ async function taoLinkThanhToan(idhd) {
             }
         });
     });    
-    
 
+        const tongHoaDonEl = document.getElementById("tongHoaDon");
+        const cashOnDeliveryRadio = document.getElementById("cashOnDelivery");
+        const bankTransferRadio = document.getElementById("bankTransfer");
+        const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
+  
+        // Hàm cập nhật trạng thái phương thức thanh toán
+        function updatePaymentMethod() {
+            const tongHoaDonValue = parseInt(tongHoaDonEl.textContent.replace(/[VND.]/g, ''));
+  
+            if (tongHoaDonValue === 0) {
+                cashOnDeliveryRadio.checked = true; // Chọn "Thanh toán khi nhận hàng"
+                bankTransferRadio.disabled = true; // Vô hiệu hóa "Chuyển khoản ngân hàng"
+                bankTransferLabel.style.display = "none"; // Ẩn nhãn
+            } else {
+                bankTransferRadio.disabled = false; // Bật lại "Chuyển khoản ngân hàng"
+                bankTransferLabel.style.display = "inline-block"; // Hiện lại nhãn
+            }
+        }
+  
+        // Theo dõi thay đổi nội dung của tổng hóa đơn
+        const observer = new MutationObserver(updatePaymentMethod);
+        observer.observe(tongHoaDonEl, { childList: true, subtree: true });
+  
+        // Khởi chạy khi tải trang
+        document.addEventListener("DOMContentLoaded", updatePaymentMethod);
+    
     loadAddressesByIdKH();
     fetchkhachangById();
     renderSanPham();
