@@ -1326,7 +1326,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 fetch(`${discountApiUrl}/${selectedVoucherId}`)
                     .then(response => response.json())
                     .then(voucher => {
-                        // Nếu API trả về voucher hợp lệ
                         if (voucher && voucher.giatri) {
                             const voucherCodeInput = document.getElementById('voucherCodeDisplay');
 
@@ -1347,10 +1346,8 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
                             // Tính toán số tiền giảm tùy thuộc vào đơn vị của voucher
                             if (voucher.donvi === 'VND') {
-                                // Nếu đơn vị là VND, số tiền giảm là giá trị của voucher
                                 soTienGiam = voucher.giatri;
                             } else if (voucher.donvi === '%') {
-                                // Nếu đơn vị là %, tính số tiền giảm theo tỷ lệ phần trăm
                                 soTienGiam = tongSanPhamValue * (voucher.giatri / 100);
                             }
 
@@ -1363,6 +1360,26 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
                             // Gọi hàm updateTotals để tính lại tổng sản phẩm và hóa đơn
                             updateTotals();
+
+                            // Kiểm tra nếu tổng hóa đơn là 0
+                            if (tongHoaDonValue === 0) {
+                                const cashOnDeliveryRadio = document.getElementById("cashOnDelivery");
+                                const bankTransferRadio = document.getElementById("bankTransfer");
+                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
+
+                                // Chọn phương thức "Thanh toán khi nhận hàng"
+                                cashOnDeliveryRadio.checked = true;
+
+                                // Vô hiệu hóa và ẩn phương thức "Chuyển khoản ngân hàng"
+                                bankTransferRadio.disabled = true;
+                                bankTransferLabel.style.display = "none";
+                            } else {
+                                // Khôi phục trạng thái nếu tổng hóa đơn khác 0
+                                const bankTransferRadio = document.getElementById("bankTransfer");
+                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
+                                bankTransferRadio.disabled = false;
+                                bankTransferLabel.style.display = "inline-block";
+                            }
 
                             document.getElementById("btnRestoreVoucher").style.display = 'inline-block';
                             Swal.fire(
