@@ -758,49 +758,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         return null;
     }
 
-
-    // Hàm tạo link thanh toán
-    async function taoLinkThanhToan(idhd) {
-        const ListdanhSachSanPham = danhSachSanPham.map(sanPham => {
-            const giaUuTien = sanPham.giamgia > 0 ? sanPham.giamgia : sanPham.giathoidiemhientai;
-            return {
-                name: sanPham.tensp,
-                quantity: sanPham.soluong,
-                price: giaUuTien
-            };
-        });
-
-        const tongHoaDon = parseInt(document.getElementById("tongHoaDon") ? document.getElementById("tongHoaDon").innerText.replace(/[VND.]/g, "") : 0) || 0;
-
-        const payload = {
-            orderCode: idhd,
-            items: ListdanhSachSanPham,
-            totalAmount: tongHoaDon,
-            description: "Thanh Toán Hoá Đơn"
-        };
-
-        try {
-            const response = await fetch('https://localhost:7297/api/checkout/create-payment-link', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const result = await response.json();
-
-            if (result.error) {
-                throw new Error(result.error || 'Có lỗi xảy ra trong quá trình xử lý.');
-            }
-
-            if (result.checkoutUrl) {
-                window.location.href = result.checkoutUrl;
-            } else {
-                Swal.fire('Lỗi', 'Không nhận được đường dẫn thanh toán.', 'error');
-            }
-        } catch (error) {
-            Swal.fire('Lỗi', error.message || 'Có lỗi xảy ra trong quá trình xử lý.', 'error');
-        }
-    }
-
     const host = "https://provinces.open-api.vn/api/";
 
     // Hàm để xóa dữ liệu trong các dropdown
