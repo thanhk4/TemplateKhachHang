@@ -62,13 +62,25 @@ async function fetchVouchers() {
             try {
                 const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/${id.iDgiamgia}`);
                 const data = await responseVoucher.json();
-                const updatengaybatdau = formatDate(data.ngaybatdau);
-                const updatengayketthuc = formatDate(data.ngayketthuc);
-                const formattedDate = formatDate(new Date());
+                const currentDate = new Date();
+                // Format currentDate để giữ đối tượng Date thay vì chuỗi
+                const formattedDate = new Date(
+                    currentDate.getFullYear(),
+                    currentDate.getMonth(),
+                    currentDate.getDate()
+                );
 
-                if (data.trangthai !== "Đang phát hành" || 
-                    updatengaybatdau > formattedDate || 
-                    updatengayketthuc < formattedDate) {
+                // Chuyển đổi updatengaybatdau và updatengayketthuc sang đối tượng Date
+                const updatengaybatdauDate = new Date(data.ngaybatdau);
+                const updatengayketthucDate = new Date(data.ngayketthuc);
+
+                if (data.trangthai !== "Đang phát hành") {
+                    continue;
+                }
+                if (updatengaybatdauDate > formattedDate) {
+                    continue;
+                }
+                if (formattedDate > updatengayketthucDate) {
                     continue;
                 }
                 vouchers.push(data);
