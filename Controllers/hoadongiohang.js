@@ -500,6 +500,8 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
         // Điều chỉnh thời gian theo múi giờ Việt Nam
         currentDate.setMinutes(currentDate.getMinutes() + vietnamTimezoneOffset - currentDate.getTimezoneOffset());
+        
+        const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
 
         const hoadonData = {
             idnv: 0,
@@ -508,6 +510,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             trangthaithanhtoan: 0,
             donvitrangthai: 0,
             thoigiandathang: currentDate,
+            ghichu: "",
             diachiship: diachi,
             ngaygiaodukien: currentDate,
             ngaygiaothucte: currentDate,
@@ -753,49 +756,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             Swal.fire("Lỗi", "Không thể tạo link thanh toán.", "error");
         }
         return null;
-    }
-
-
-    // Hàm tạo link thanh toán
-    async function taoLinkThanhToan(idhd) {
-        const ListdanhSachSanPham = danhSachSanPham.map(sanPham => {
-            const giaUuTien = sanPham.giamgia > 0 ? sanPham.giamgia : sanPham.giathoidiemhientai;
-            return {
-                name: sanPham.tensp,
-                quantity: sanPham.soluong,
-                price: giaUuTien
-            };
-        });
-
-        const tongHoaDon = parseInt(document.getElementById("tongHoaDon") ? document.getElementById("tongHoaDon").innerText.replace(/[VND.]/g, "") : 0) || 0;
-
-        const payload = {
-            orderCode: idhd,
-            items: ListdanhSachSanPham,
-            totalAmount: tongHoaDon,
-            description: "Thanh Toán Hoá Đơn"
-        };
-
-        try {
-            const response = await fetch('https://localhost:7297/api/checkout/create-payment-link', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
-            const result = await response.json();
-
-            if (result.error) {
-                throw new Error(result.error || 'Có lỗi xảy ra trong quá trình xử lý.');
-            }
-
-            if (result.checkoutUrl) {
-                window.location.href = result.checkoutUrl;
-            } else {
-                Swal.fire('Lỗi', 'Không nhận được đường dẫn thanh toán.', 'error');
-            }
-        } catch (error) {
-            Swal.fire('Lỗi', error.message || 'Có lỗi xảy ra trong quá trình xử lý.', 'error');
-        }
     }
 
     const host = "https://provinces.open-api.vn/api/";
@@ -1126,8 +1086,12 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
     });
 
     async function fetchVouchers() {
-        const currentDateTime = new Date().toLocaleString('vi-VN', {
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString('vi-VN', {
             timeZone: 'Asia/Ho_Chi_Minh',
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
         });
         const idkh = GetByidKH();
         try {
@@ -1176,23 +1140,19 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
                 try {
                     const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/${id.iDgiamgia}`);
-                    if (!responseVoucher.ok) {
-                        console.warn(`Lỗi khi lấy voucher với id: ${id.iDgiamgia}`);
-                        continue; // Bỏ qua id này nếu lỗi
-                    }
-                    const voucher = await responseVoucher.json();
-                    const updatengaybatdau = formatDate(voucher.ngaybatdau)
-                    const updatengayketthuc = formatDate(voucher.ngayketthuc)
-                    if (voucher.trangthai != "Đang phát hành") {
+                    const data = await responseVoucher.json();
+                    const updatengaybatdau = formatDate(data.ngaybatdau)
+                    const updatengayketthuc = formatDate(data.ngayketthuc)
+                    if (data.trangthai != "Đang phát hành") {
                         continue; // 
                     }
-                    if (updatengaybatdau > currentDateTime) {
+                    if (updatengaybatdau > formattedDate) {
                         continue; // 
                     }
-                    if (updatengayketthuc < currentDateTime) {
+                    if (updatengayketthuc < formattedDate) {
                         continue; // 
                     }
-                    vouchers.push(voucher); // Thêm voucher hợp lệ vào danh sách
+                    vouchers.push(data);
                 } catch (error) {
                     console.warn(`Lỗi không xác định khi lấy voucher với id: ${id.iDgiamgia}`, error);
                 }
@@ -1323,7 +1283,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 fetch(`${discountApiUrl}/${selectedVoucherId}`)
                     .then(response => response.json())
                     .then(voucher => {
-                        // Nếu API trả về voucher hợp lệ
                         if (voucher && voucher.giatri) {
                             const voucherCodeInput = document.getElementById('voucherCodeDisplay');
 
@@ -1344,10 +1303,8 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
                             // Tính toán số tiền giảm tùy thuộc vào đơn vị của voucher
                             if (voucher.donvi === 'VND') {
-                                // Nếu đơn vị là VND, số tiền giảm là giá trị của voucher
                                 soTienGiam = voucher.giatri;
                             } else if (voucher.donvi === '%') {
-                                // Nếu đơn vị là %, tính số tiền giảm theo tỷ lệ phần trăm
                                 soTienGiam = tongSanPhamValue * (voucher.giatri / 100);
                             }
 
@@ -1360,6 +1317,26 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
                             // Gọi hàm updateTotals để tính lại tổng sản phẩm và hóa đơn
                             updateTotals();
+
+                            // Kiểm tra nếu tổng hóa đơn là 0
+                            if (tongHoaDonValue === 0) {
+                                const cashOnDeliveryRadio = document.getElementById("cashOnDelivery");
+                                const bankTransferRadio = document.getElementById("bankTransfer");
+                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
+
+                                // Chọn phương thức "Thanh toán khi nhận hàng"
+                                cashOnDeliveryRadio.checked = true;
+
+                                // Vô hiệu hóa và ẩn phương thức "Chuyển khoản ngân hàng"
+                                bankTransferRadio.disabled = true;
+                                bankTransferLabel.style.display = "none";
+                            } else {
+                                // Khôi phục trạng thái nếu tổng hóa đơn khác 0
+                                const bankTransferRadio = document.getElementById("bankTransfer");
+                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
+                                bankTransferRadio.disabled = false;
+                                bankTransferLabel.style.display = "inline-block";
+                            }
 
                             document.getElementById("btnRestoreVoucher").style.display = 'inline-block';
                             Swal.fire(

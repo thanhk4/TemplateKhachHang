@@ -22,7 +22,9 @@
                 <a href="#!resetpassword" class="list-group-item list-group-item-action">
                     <i class="bi bi-key me-2"></i> Đổi mật khẩu
                 </a>
-
+                <a href="#!giamgia" class="list-group-item list-group-item-action ">
+                    <i class="bi bi-key me-2"></i> Vocher
+                </a>
             </div>
         </div>
 
@@ -36,9 +38,10 @@
                 <button ng-click="filterOrders(2)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 2}">Đang giao</button>
                 <button ng-click="filterOrders(3)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 3}">Thành công</button>
                 <button ng-click="filterOrders(4)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 4}">Đã hủy</button>
-                <button ng-click="filterOrders(5)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 5}">Trả hàng</button>
-                <button ng-click="filterOrders(4)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 4}">Trả không thành công</button>
-                <button ng-click="filterOrders(5)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 5}">Đang trả hàng</button>
+               <button ng-click="filterOrders(7)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 7}">Chờ trả hàng</button>
+                <button ng-click="filterOrders(5)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 5}">Trả hàng thành công</button>
+                <button ng-click="filterOrders(6)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 6}">Trả hàng không thành công</button>
+
             </div>
             <!-- Order Cardsaaaaa -->
             <div class="row">
@@ -173,6 +176,118 @@
                         
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="huyhangModal" tabindex="-1" aria-labelledby="huyhangModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="huyhangModalLabel">
+                  hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form name="formHuy" novalidate>
+                    <div class="row">
+                        <!-- Trường Ngân hàng -->
+                        <div class="col">
+                            <label for="bank" class="form-label">Ngân hàng</label>
+                            <select 
+                                class="form-select" 
+                                aria-label="Ngân hàng" 
+                                ng-model="nganhang" 
+                                name="bank" 
+                                required>
+                                <option value="" selected disabled>Chọn ngân hàng</option>
+                                <option ng-repeat="bank in banks.data | orderBy:'shortName'" value="{{bank.shortName}}">
+                                    {{bank.name}} ({{bank.shortName}})
+                                </option>
+                            </select>
+                            <!-- Hiển thị lỗi nếu người dùng không chọn ngân hàng -->
+                            <span class="text-danger" 
+                                  ng-show="formHuy.bank.$touched && formHuy.bank.$error.required">
+                                Vui lòng chọn ngân hàng.
+                            </span>
+                        </div>
+                
+                        <!-- Trường Số tài khoản -->
+                        <div class="col">
+                            <label for="accountNumber" class="form-label">Số tài khoản/Số thẻ visa</label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                ng-model="stk" 
+                                name="accountNumber" 
+                                required >
+                            <!-- Hiển thị lỗi nếu người dùng không nhập đúng định dạng -->
+                            <span class="text-danger" 
+                                  ng-show="formHuy.accountNumber.$touched && formHuy.accountNumber.$error.required">
+                                Vui lòng nhập số tài khoản/số thẻ visa.
+                            </span>
+                        </div>
+                
+                        <!-- Trường Tên người hưởng thụ -->
+                        <div class="col">
+                            <label for="beneficiaryName" class="form-label">Tên người hưởng thụ</label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                ng-model="tennguoihuongthu" 
+                                name="beneficiaryName" 
+                                required>
+                            <!-- Hiển thị lỗi nếu người dùng không nhập tên -->
+                            <span class="text-danger" 
+                                  ng-show="formHuy.beneficiaryName.$touched && formHuy.beneficiaryName.$error.required">
+                                Vui lòng nhập tên người hưởng thụ.
+                            </span>
+                        </div>
+                    </div> 
+                
+                    <!-- Nút gửi biểu mẫu -->
+                    <div class="mt-3">
+                        <button type="submit" class="btn btn-primary">Gửi</button>
+                    </div>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal ghi chú hủy đơn hàng -->
+<div class="modal fade" id="modalGhiChuHuyDonHang" tabindex="-1" aria-labelledby="modalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" style="width: 717px;">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel">Ghi chú hủy đơn hàng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col">
+                        <label for="bank" class="form-label">Ngân hàng</label>
+                        <select class="form-select" aria-label="Ngân hàng" ng-model="nganhang" required>
+                            <option value="" selected disabled>Chọn ngân hàng</option>
+                            <option ng-repeat="bank in banks.data | orderBy:'shortName'" value="{{bank.shortName}}">
+                                {{bank.name}} ({{bank.shortName}})
+                            </option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <label for="accountNumber" class="form-label">Số tài khoản/Số thẻ visa</label>
+                        <input type="text" class="form-control" ng-model="stk" id="accountNumber" required>
+                    </div>
+                    <div class="col">
+                        <label for="beneficiaryName" class="form-label">Tên người hưởng thụ</label>
+                        <input type="text" class="form-control" ng-model="tennguoihuongthu" id="beneficiaryName" required>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary" ng-click="xacNhanHuy()">Xác nhận</button>
             </div>
         </div>
     </div>
