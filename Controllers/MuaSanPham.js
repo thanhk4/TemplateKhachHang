@@ -1020,13 +1020,6 @@ async function taoLinkThanhToan(idhd) {
 
     async function fetchVouchers() { 
         const idkh = GetByidKH();
-        const currentDate = new Date();
-        const formattedDate = currentDate.toLocaleDateString('vi-VN', {
-            timeZone: 'Asia/Ho_Chi_Minh',
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-        });
         try {
             // Bước 1: Lấy idRank từ API khách hàng
             const responseRank = await fetch(`https://localhost:7297/api/khachhang/${idkh}`);
@@ -1075,16 +1068,26 @@ async function taoLinkThanhToan(idhd) {
                 try {
                     const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/${id.iDgiamgia}`);
                     const data = await responseVoucher.json();
-                    const updatengaybatdau = formatDate(data.ngaybatdau)
-                    const updatengayketthuc = formatDate(data.ngayketthuc)
-                    if (data.trangthai != "Đang phát hành") {
-                        continue; // 
+                    const currentDate = new Date();
+                    // Format currentDate để giữ đối tượng Date thay vì chuỗi
+                    const formattedDate = new Date(
+                        currentDate.getFullYear(),
+                        currentDate.getMonth(),
+                        currentDate.getDate()
+                    );
+
+                    // Chuyển đổi updatengaybatdau và updatengayketthuc sang đối tượng Date
+                    const updatengaybatdauDate = new Date(data.ngaybatdau);
+                    const updatengayketthucDate = new Date(data.ngayketthuc);
+
+                    if (data.trangthai !== "Đang phát hành") {
+                        continue;
                     }
-                    if (updatengaybatdau > formattedDate) {
-                        continue; // 
+                    if (updatengaybatdauDate > formattedDate) {
+                        continue;
                     }
-                    if (updatengayketthuc < formattedDate) {
-                        continue; // 
+                    if (formattedDate > updatengayketthucDate) {
+                        continue;
                     }
                     vouchers.push(data);
                 } catch (error) {
