@@ -56,6 +56,8 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         "Đã hủy",
         "Trả hàng"
     ];
+    
+    // Fetch danh sách ngân hàng
     $http.get('https://api.viqr.net/list-banks/')
         .then(function (response) {
             $scope.banks = response.data; // Assign the API data to the scope.
@@ -63,38 +65,102 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         .catch(function (error) {
             console.log('Error fetching bank data:', error);
         });
-    $scope.xemChiTiet = function (id) {
-        $('#exampleModal').modal('hide');
-        $location.path(`/sanphamchitiet/${id}`);
-    };
-    $scope.huydonhang = function(id) {
-        $http.get('https://localhost:7297/api/Lichsuthanhtoan/list/' + id)
-            .then(function(response) {
-                if (response.data != null) {
-                    $('#exampleModal').modal('hide');
-                } else {
-                    Swal.fire({
-                        title: 'Bạn chắc chắn?',
-                        text: 'Bạn sẽ không thể hoàn tác hành động này!',
-                        icon: 'question',
-                        showCancelButton: true,
-                        confirmButtonText: 'Đồng ý',
-                        cancelButtonText: 'Hủy'
-                    }).then((result) => {
-                        if (result.isConfirmed) {
-                            $http.get('')
-                            Swal.fire('Đã xác nhận', 'Bạn đã xác nhận hành động!', 'success');
-                        } else {
-                            Swal.fire('Đã hủy', 'Hành động đã bị hủy!', 'info');
+
+    $scope.huydonhang = async function (id) {
+        try {
+            // Lấy dữ liệu lịch sử thanh toán
+            const lichSuThanhToanResponse = await $http.get('https://localhost:7297/api/Lichsuthanhtoan/list/' + id);
+            const lichSuThanhToanData = lichSuThanhToanResponse.data[0];
+            const hoaDonData = await CheckHoaDon(id);
+
+            let requireInput = false;
+
+            // Xác định yêu cầu nhập ghi chú
+            if (hoaDonData.trangthai === 1 && lichSuThanhToanData.trangthai === 1) {
+                requireInput = true;
+            } else if (hoaDonData.trangthai === 0 && lichSuThanhToanData.trangthai === 1) {
+                requireNote = true; // Yêu cầu ghi chú
+            }
+
+            if (requireInput) {
+                // Hiển thị modal để nhập thông tin ghi chú
+                $('#modalGhiChuHuyDonHang').modal('show');
+                $scope.currentHoaDon = hoaDonData; // Lưu dữ liệu hóa đơn hiện tại để xử lý sau
+            } else {
+                // Xác nhận hủy đơn hàng
+                Swal.fire({
+                    title: 'Bạn chắc chắn?',
+                    text: 'Bạn chắc chắn muốn hủy đơn hàng này?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy',
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        if (hoaDonData.trangthai === 1) {
+                            // Gọi API để hoàn trả số lượng sản phẩm
+                            const response = await $http.post(`https://localhost:7297/api/HoaDonChiTiet/ReturnProduct/${id}`);
+                            if (response.data.success) {
+                                // Sau khi hoàn trả sản phẩm thành công, cập nhật trạng thái hóa đơn
+                                hoaDonData.trangthai = 4; // Hủy đơn hàng
+                                await UpdateHoaDon(hoaDonData);
+                                Swal.fire('Thành công', 'Đơn hàng đã được hủy thành công!', 'success');
+                            } else {
+                                Swal.fire('Lỗi', response.data.message, 'error');
+                                return;
+                            }
                         }
-                    });                    
-                }
-            })
-            .catch(function(error) {
-                console.error(error);
-            });
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            Swal.fire('Lỗi', 'Đã xảy ra lỗi khi xử lý!', 'error');
+        }
     };
-    
+
+    // Xử lý xác nhận hủy trong modal
+    $scope.xacNhanHuy = async function () {
+        if (!$scope.nganhang || !$scope.stk || !$scope.tennguoihuongthu) {
+            Swal.fire('Lỗi', 'Vui lòng nhập đầy đủ thông tin!', 'error');
+            return;
+        }
+
+        try {
+            // Kết hợp dữ liệu nhập
+            const ghiChu = `${$scope.nganhang}, ${$scope.stk}, ${$scope.tennguoihuongthu}`;
+            $scope.currentHoaDon.trangthai = 4; // Hủy đơn hàng
+            $scope.currentHoaDon.ghichu = ghiChu;
+
+            // Cập nhật hóa đơn
+            await UpdateHoaDon($scope.currentHoaDon);
+
+            Swal.fire('Thành công', 'Đơn hàng đã được hủy thành công!', 'success');
+            $('#modalGhiChuHuyDonHang').modal('hide'); // Ẩn modal sau khi xử lý xong
+        } catch (error) {
+            console.error('Lỗi khi cập nhật hóa đơn:', error);
+            Swal.fire('Lỗi', 'Không thể cập nhật hóa đơn!', 'error');
+        }
+    };
+
+    // Hàm kiểm tra trạng thái hóa đơn
+    async function CheckHoaDon(id) {
+        const response = await $http.get('https://localhost:7297/api/HoaDon/' + id);
+        return response.data;
+    }
+
+    // Hàm cập nhật hóa đơn
+    async function UpdateHoaDon(hoaDonData) {
+        try {
+            const response = await $http.put(`https://localhost:7297/api/HoaDon/${hoaDonData.id}`, hoaDonData);
+            Swal.fire('Thành công', 'Hóa đơn đã được cập nhật!', 'success');
+            return response.data;
+        } catch (error) {
+            console.error('Lỗi khi cập nhật hóa đơn:', error);
+            Swal.fire('Lỗi', 'Không thể cập nhật hóa đơn!', 'error');
+        }
+    }
+
     
     // Lấy danh sách hóa đơn từ API
     $http.get('https://localhost:7297/api/Hoadon/hoa-don-theo-ma-kh-' + $scope.userInfo.id)
