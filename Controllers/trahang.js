@@ -243,7 +243,8 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
     
                 try {
                     const hoadondata = await CheckHoaDon()
-                    if (hoadondata.trangthaiStr != "Đơn hàng thành công") 
+                    console.log(hoadondata)
+                    if (hoadondata.trangthai != 3) 
                     {
                         Swal.fire('Trả hàng thất bại!', 'Hoá đơn này đã trả hàng, vui lòng kiểm tra lại', 'error');
                         return;
@@ -254,7 +255,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                     if (!returnOrder) return;  // Nếu không có kết quả trả về, dừng
     
                     // Thêm hình ảnh sau khi tạo đơn trả hàng
-                    const checkhinhanh = await hinhanh(dataanh, returnOrder);
+                    const checkhinhanh = await hinhanh(returnOrder, dataanh);
                     if (!checkhinhanh) return; 
     
                     // Thêm chi tiết đơn trả hàng
@@ -310,6 +311,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             donvitrangthai: 0,
             thoigiandathang: hoaDonData.thoigiandathang,
             diachiship: hoaDonData.diachiship,
+            ghichu : hoaDonData.ghichu,
             ngaygiaodukien: hoaDonData.ngaygiaodukien,
             ngaygiaothucte: hoaDonData.ngaygiaothucte,
             tongtiencantra: hoaDonData.tongtiencantra,

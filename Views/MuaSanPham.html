@@ -9,83 +9,98 @@
 </div>
 
 <div class="container">
-   <!-- Địa chỉ nhận hàng -->
-    <div class="border rounded p-3" style="background-color: rgb(233, 232, 232);">
-      <h5 class="fw-bold mb-2 text-danger" style="margin-left: 15px;">Địa Chỉ Nhận Hàng</h5>
+  <!-- Địa chỉ nhận hàng -->
+  <div class="border rounded p-3" style="background-color: rgb(233, 232, 232);">
+    <h5 class="fw-bold mb-2 text-danger" style="margin-left: 15px;">Địa Chỉ Nhận Hàng</h5>
+    <div class="d-flex justify-content-between align-items-center">
+      <div style="margin-left: 15px;">
+        <span id="hovaten" class="fw-bold">...</span> -
+        <span id="sdt">...</span><br>
+        <span id="diachi">...</span>
+        <span class="badge bg-primary-subtle text-success border border-success me-2">Mặc định</span>
+      </div>
+      <div>
+        <a data-bs-toggle="modal" class="btn btn-outline-secondary" data-bs-target="#exampleModal">Thay Đổi</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sản phẩm -->
+  <div class="border rounded p-3 my-3" style="background-color: rgb(233, 232, 232);">
+    <div class="d-flex justify-content-between align-items-center">
+      <div style="width: 50%;">
+        <span class="fw-bold" style="margin-left: 15px;">Sản Phẩm</span>
+      </div>
+      <div class="d-flex justify-content-between text-center" style="width: 50%;">
+        <span class="fw-bold" style="width: 50%;">Đơn Giá</span>
+        <span class="fw-bold" style="width: 15%;">Số Lượng</span>
+        <span class="fw-bold" style="width: 35%;">Số Tiền</span>
+      </div>
+    </div>
+
+    <div class="product-list"></div>
+  </div>
+  <div class="border rounded p-3 mb-4">
+    <h5 class="fw-bold">Phương Thức Thanh Toán</h5>
+    <div class="btn-group d-flex justify-content-center" role="group">
+      <input type="radio" class="btn-check" name="paymentMethod" id="cashOnDelivery" autocomplete="off" value="1"
+        checked>
+      <label class="btn btn-outline-primary" for="cashOnDelivery">Thanh toán khi nhận hàng</label>
+
+      <input type="radio" class="btn-check" name="paymentMethod" id="bankTransfer" autocomplete="off" value="2">
+      <label class="btn btn-outline-primary" for="bankTransfer">Chuyển khoản ngân hàng</label>
+      <form id="hidden-form" method="post"></form>
+    </div>
+  </div>
+  <!-- Tính toán và tổng tiền -->
+  <div class="container mt-3 border pt-3 rounded">
+    <!-- Voucher and Shopee Coin -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="d-flex align-items-center ms-auto">
+        <span class="fw-bold">Voucher</span>
+        <!-- Sử dụng div để hiển thị thông tin voucher và có giá trị trong data-* -->
+        <div id="voucherCodeDisplay" class="form-control mx-3" data-voucher-code="" placeholder="Nhập mã giảm giá">
+          Chưa chọn voucher
+        </div>
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addVoucherButton">
+          Chọn Voucher
+        </button>
+      </div>
+    </div>
+    <!-- Total Invoice Section -->
+    <div class="d-flex justify-content-between align-items-right mb-3">
+      <div class="fw-bold">Tổng sản phẩm</div>
+      <div id="tongSanPham">0 VND</div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div class="fw-bold">Số tiền giảm giá</div>
+      <div id="soTienGiamGia">0 VND</div>
+    </div>
+    <div class="mb-3">
       <div class="d-flex justify-content-between align-items-center">
-        <div style="margin-left: 15px;">
-          <span id="hovaten" class="fw-bold">...</span> -
-          <span id="sdt">...</span><br>
-          <span id="diachi">...</span>
-          <span class="badge bg-primary-subtle text-success border border-success me-2">Mặc định</span>
-        </div>
-        <div>
-          <a data-bs-toggle="modal" class="btn btn-outline-secondary" data-bs-target="#exampleModal">Thay Đổi</a>
+        <div class="fw-bold">Điểm sử dụng</div>
+        <div class="form-check d-flex align-items-center gap-3">
+          <span id="diemSuDungHienThi"></span>
+          <span id="diemsudung">0</span> <!-- Điểm sử dụng -->
+          <input 
+            class="form-check-input" 
+            type="checkbox" 
+            id="diemsudungcheckbox"
+            style="margin: auto;"
+          />
         </div>
       </div>
+    </div>     
+    <div class="d-flex justify-content-between align-items-center border-top pt-3 mb-3">
+      <div class="fw-bold fs-5">Tổng hóa đơn</div>
+      <div class="text-danger fw-bold fs-5" id="tongHoaDon">0 VND</div>
     </div>
-  
-    <!-- Sản phẩm -->
-    <div class="border rounded p-3 my-3" style="background-color: rgb(233, 232, 232);">
-        <div class="d-flex justify-content-between align-items-center">
-          <div style="width: 50%;">
-              <span class="fw-bold" style="margin-left: 15px;">Sản Phẩm</span>
-          </div>
-          <div class="d-flex justify-content-between text-center" style="width: 50%;">
-              <span class="fw-bold" style="width: 50%;">Đơn Giá</span>
-              <span class="fw-bold" style="width: 15%;">Số Lượng</span>
-              <span class="fw-bold" style="width: 35%;">Số Tiền</span>
-          </div>
-        </div>
-        
-        <div class="product-list"></div>
-    </div>
-    <div class="border rounded p-3 mb-4">
-      <h5 class="fw-bold">Phương Thức Thanh Toán</h5>
-      <div class="btn-group d-flex justify-content-center" role="group">
-          <input type="radio" class="btn-check" name="paymentMethod" id="cashOnDelivery" autocomplete="off" value="1" checked>
-          <label class="btn btn-outline-primary" for="cashOnDelivery">Thanh toán khi nhận hàng</label>
 
-          <input type="radio" class="btn-check" name="paymentMethod" id="bankTransfer" autocomplete="off" value="2">
-          <label class="btn btn-outline-primary" for="bankTransfer">Chuyển khoản ngân hàng</label>
-          <form id="hidden-form" method="post"></form>
-      </div>
+    <!-- Checkout Button -->
+    <div class="text-end">
+      <button class="btn btn-danger btn-lg" id="muaHangBtn">Mua Hàng</button>
     </div>
-    <!-- Tính toán và tổng tiền -->
-    <div class="container mt-3 border pt-3 rounded">
-        <!-- Voucher and Shopee Coin -->
-        <div class="d-flex justify-content-between align-items-center mb-3">
-          <div class="d-flex align-items-center ms-auto">
-              <span class="fw-bold">Voucher</span>
-              <!-- Sử dụng div để hiển thị thông tin voucher và có giá trị trong data-* -->
-              <div id="voucherCodeDisplay" class="form-control mx-3" data-voucher-code="" placeholder="Nhập mã giảm giá">
-                  Chưa chọn voucher
-              </div>
-              <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addVoucherButton">
-                  Chọn Voucher
-              </button>
-          </div>
-      </div>
-
-        <!-- Total Invoice Section -->
-        <div class="d-flex justify-content-between align-items-right mb-3">
-            <div class="fw-bold">Tổng sản phẩm</div>
-            <div id="tongSanPham">0 VND</div>
-        </div>
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <div class="fw-bold">Số tiền giảm giá</div>
-            <div id="soTienGiamGia">0 VND</div>
-        </div>
-        <div class="d-flex justify-content-between align-items-center border-top pt-3 mb-3">
-            <div class="fw-bold fs-5">Tổng hóa đơn</div>
-            <div class="text-danger fw-bold fs-5" id="tongHoaDon">0 VND</div>
-        </div>
-
-        <!-- Checkout Button -->
-        <div class="text-end">
-            <button class="btn btn-danger btn-lg" id="muaHangBtn">Mua Hàng</button>
-        </div>
-    </div>
+  </div>
 </div>
 <!-- Modal Địa Chỉ -->
 <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

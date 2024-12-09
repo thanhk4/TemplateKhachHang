@@ -80,105 +80,120 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     $scope.itemsPerPage = 6; // Số mục trên mỗi trang
     $scope.currentPage = 0; // Trang hiện tại
     $scope.filterStatus = -1; // Mặc định là tất cả trạng thái (-1)
-
-    // Trạng thái đơn hàngaaaa
+    // Trạng thái đơn hàngaaaaa
     $scope.orderStatuses = [
         "Chờ xác nhận",
-        "Đã xác nhận",
+        "Đang được giao",
         "Đang giao",
         "Thành công",
         "Đã hủy",
         "Trả hàng"
     ];
-    $scope.xemChiTiet = function (id) {
-        $('#exampleModal').modal('hide');
-        $location.path(`/sanphamchitiet/${id}`);
-    };
-    $scope.huydonhang = function(id) {
-        Swal.fire({
-            title: 'Xác nhận hủy đơn hàng',
-            text: "Bạn có chắc chắn muốn hủy đơn hàng này không?",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'Có, tôi chắc chắn!',
-            cancelButtonText: 'Hủy'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                // Người dùng đã xác nhận
-                $http.get('https://localhost:7297/api/Hoadon/' + id)
-                    .then(function(response) {
-                        $scope.dataGetById = {
-                            id: id,
-                            idnv: response.data.idnv,
-                            idkh: response.data.idkh,
-                            trangthaithanhtoan: response.data.trangthaithanhtoan,
-                            donvitrangthai: response.data.donvitrangthai,
-                            thoigiandathang: response.data.thoigiandathang,
-                            diachiship: response.data.diachiship,
-                            ngaygiaodukien: response.data.ngaygiaodukien,
-                            ngaygiaothucte: response.data.ngaygiaothucte,
-                            tongtiencantra: response.data.tongtiencantra,
-                            tongtiensanpham: response.data.tongtiensanpham,
-                            sdt: response.data.sdt,
-                            tonggiamgia: response.data.tonggiamgia,
-                            idgg: response.data.idgg,
-                            trangthai: response.data.trangthai
-                        };
-                        $scope.dataeidt = {
-                            idnv: $scope.dataGetById.idnv || 0,
-                            idkh: $scope.dataGetById.idkh,
-                            trangthaithanhtoan: $scope.dataGetById.trangthaithanhtoan,
-                            donvitrangthai: $scope.dataGetById.donvitrangthai,
-                            thoigiandathang: $scope.dataGetById.thoigiandathang,
-                            diachiship: $scope.dataGetById.diachiship,
-                            ngaygiaodukien: $scope.dataGetById.ngaygiaodukien,
-                            ngaygiaothucte: $scope.dataGetById.ngaygiaothucte || 0,
-                            tongtiencantra: $scope.dataGetById.tongtiencantra,
-                            tongtiensanpham: $scope.dataGetById.tongtiensanpham,
-                            sdt: $scope.dataGetById.sdt,
-                            tonggiamgia: $scope.dataGetById.tonggiamgia || 0,
-                            idgg: $scope.dataGetById.idgg || 0,
-                            trangthai: 4
-                        };
     
-                        $http.put('https://localhost:7297/api/Hoadon/' + id,  $scope.dataeidt)
-                            .then(function(response) {
-                                Swal.fire(
-                                    'Đã hủy!',
-                                    'Đơn hàng đã được hủy thành công.',
-                                    'success'
-                                ).then(() => {
-                                    location.reload(); // Tải lại toàn bộ trang
-                                });
-                                $scope.filterOrders(-1); // Hiển thị tất cả đơn hàng mặc định
-                            })
-                            .catch(function(error) {
-                                console.error("Lỗi khi hủy đơn hàng:", error);
-                                Swal.fire(
-                                    'Lỗi!',
-                                    'Đã xảy ra lỗi khi hủy đơn hàng. Vui lòng thử lại.',
-                                    'error'
-                                );
-                            });
-                    })
-                    .catch(function(error) {
-                        console.error("Lỗi khi lấy thông tin đơn hàng:", error);
-                        Swal.fire(
-                            'Lỗi!',
-                            'Không thể lấy thông tin đơn hàng. Vui lòng thử lại.',
-                            'error'
-                        );
-                    });
-            } else if (result.dismiss === Swal.DismissReason.cancel) {
-                // Người dùng chọn hủy xác nhận
-                Swal.fire(
-                    'Đã hủy',
-                    'Đơn hàng không bị thay đổi.',
-                    'info'
-                );
-            }
+    // Fetch danh sách ngân hàng
+    $http.get('https://api.viqr.net/list-banks/')
+        .then(function (response) {
+            $scope.banks = response.data; // Assign the API data to the scope.
+        })
+        .catch(function (error) {
+            console.log('Error fetching bank data:', error);
         });
+
+    $scope.huydonhang = async function (id) {
+        try {
+            // Lấy dữ liệu lịch sử thanh toán
+            const lichSuThanhToanResponse = await $http.get('https://localhost:7297/api/Lichsuthanhtoan/list/' + id);
+            const lichSuThanhToanData = lichSuThanhToanResponse.data[0];
+            const hoaDonData = await CheckHoaDon(id);
+
+            let requireInput = false;
+
+            // Xác định yêu cầu nhập ghi chú
+            if (hoaDonData.trangthai === 1 && lichSuThanhToanData.trangthai === 1) {
+                requireInput = true;
+            } else if (hoaDonData.trangthai === 0 && lichSuThanhToanData.trangthai === 1) {
+                requireNote = true; // Yêu cầu ghi chú
+            }
+
+            if (requireInput) {
+                // Hiển thị modal để nhập thông tin ghi chú
+                $('#modalGhiChuHuyDonHang').modal('show');
+                $scope.currentHoaDon = hoaDonData; // Lưu dữ liệu hóa đơn hiện tại để xử lý sau
+            } else {
+                // Xác nhận hủy đơn hàng
+                Swal.fire({
+                    title: 'Bạn chắc chắn?',
+                    text: 'Bạn chắc chắn muốn hủy đơn hàng này?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Đồng ý',
+                    cancelButtonText: 'Hủy',
+                }).then(async (result) => {
+                    if (result.isConfirmed) {
+                        if (hoaDonData.trangthai === 1) {
+                            // Gọi API để hoàn trả số lượng sản phẩm
+                            const response = await $http.post(`https://localhost:7297/api/HoaDonChiTiet/ReturnProduct/${id}`);
+                            if (response.data.success) {
+                                // Sau khi hoàn trả sản phẩm thành công, cập nhật trạng thái hóa đơn
+                                hoaDonData.trangthai = 4; // Hủy đơn hàng
+                                await UpdateHoaDon(hoaDonData);
+                                Swal.fire('Thành công', 'Đơn hàng đã được hủy thành công!', 'success');
+                            } else {
+                                Swal.fire('Lỗi', response.data.message, 'error');
+                                return;
+                            }
+                        }
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Lỗi:', error);
+            Swal.fire('Lỗi', 'Đã xảy ra lỗi khi xử lý!', 'error');
+        }
     };
+
+    // Xử lý xác nhận hủy trong modal
+    $scope.xacNhanHuy = async function () {
+        if (!$scope.nganhang || !$scope.stk || !$scope.tennguoihuongthu) {
+            Swal.fire('Lỗi', 'Vui lòng nhập đầy đủ thông tin!', 'error');
+            return;
+        }
+
+        try {
+            // Kết hợp dữ liệu nhập
+            const ghiChu = `${$scope.nganhang}, ${$scope.stk}, ${$scope.tennguoihuongthu}`;
+            $scope.currentHoaDon.trangthai = 4; // Hủy đơn hàng
+            $scope.currentHoaDon.ghichu = ghiChu;
+
+            // Cập nhật hóa đơn
+            await UpdateHoaDon($scope.currentHoaDon);
+
+            Swal.fire('Thành công', 'Đơn hàng đã được hủy thành công!', 'success');
+            $('#modalGhiChuHuyDonHang').modal('hide'); // Ẩn modal sau khi xử lý xong
+        } catch (error) {
+            console.error('Lỗi khi cập nhật hóa đơn:', error);
+            Swal.fire('Lỗi', 'Không thể cập nhật hóa đơn!', 'error');
+        }
+    };
+
+    // Hàm kiểm tra trạng thái hóa đơn
+    async function CheckHoaDon(id) {
+        const response = await $http.get('https://localhost:7297/api/HoaDon/' + id);
+        return response.data;
+    }
+
+    // Hàm cập nhật hóa đơn
+    async function UpdateHoaDon(hoaDonData) {
+        try {
+            const response = await $http.put(`https://localhost:7297/api/HoaDon/${hoaDonData.id}`, hoaDonData);
+            Swal.fire('Thành công', 'Hóa đơn đã được cập nhật!', 'success');
+            return response.data;
+        } catch (error) {
+            console.error('Lỗi khi cập nhật hóa đơn:', error);
+            Swal.fire('Lỗi', 'Không thể cập nhật hóa đơn!', 'error');
+        }
+    }
+
     
     // Lấy danh sách hóa đơn từ API
     $http.get('https://localhost:7297/api/Hoadon/hoa-don-theo-ma-kh-' + $scope.userInfo.id)

@@ -1,4 +1,5 @@
 app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, $scope, $location, $timeout) {
+    GetByidKH();
     const quantityInput = document.querySelector(".quantity-input");
     const priceElement = document.querySelector(".total-price");
     const sanPhamCTId = $routeParams.id;
@@ -121,7 +122,22 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
             if (document.getElementById("diachi")) {
                 document.getElementById("diachi").innerText = khachHangData.diachi || "Chưa cập nhật";
             }
-
+            if (document.getElementById("diemsudung")) {
+                // Lấy điểm sử dụng, đảm bảo giá trị không bị null
+                const diemsudung = parseInt(khachHangData.diemsudung || "0", 10);
+                document.getElementById("diemsudung").innerText = diemsudung;
+    
+                // Xử lý trạng thái checkbox
+                const diemsudungCheckbox = document.getElementById("diemsudungcheckbox");
+                if (diemsudung === 0) {
+                    diemsudungCheckbox.checked = false; // Bỏ chọn nếu chưa có điểm
+                    diemsudungCheckbox.disabled = true; // Vô hiệu hóa checkbox
+                    console.log("Điểm sử dụng = 0: Checkbox bị vô hiệu hóa.");
+                } else {
+                    diemsudungCheckbox.disabled = false; // Cho phép chọn nếu có điểm
+                    console.log(`Điểm sử dụng = ${diemsudung}: Checkbox được bật.`);
+                }
+            }    
             // Trả về dữ liệu khách hàng
             return khachHangData;
 
@@ -131,6 +147,46 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
             alert("Có lỗi xảy ra khi tải thông tin khách hàng. Vui lòng thử lại.");
         }
     }
+
+    // Biến lưu số điểm đã trừ
+    let diemTru = 0;
+
+    // Lắng nghe sự kiện thay đổi checkbox
+    document.getElementById('diemsudungcheckbox').addEventListener('change', function () {
+        const diemsudungElement = document.getElementById('diemsudung');
+        const tongHoaDonElement = document.getElementById('tongHoaDon');
+        const diemSuDungHienThiElement = document.getElementById('diemSuDungHienThi'); // Đối tượng hiển thị số điểm sử dụng bên cạnh hóa đơn
+
+        // Lấy giá trị điểm sử dụng và tổng hóa đơn
+        const diemsudung = parseInt(diemsudungElement.innerText.trim() || "0", 10);
+        let tongHoaDon = parseInt(tongHoaDonElement.innerText.replace(/[VND.,]/g, "") || "0", 10);
+
+        // Kiểm tra trạng thái checkbox
+        if (this.checked) {
+            // Nếu điểm sử dụng lớn hơn hoặc bằng tổng hóa đơn, chỉ trừ đủ số tiền trong hóa đơn
+            if (diemsudung >= tongHoaDon) {
+                diemTru = tongHoaDon;  // Lưu số tiền trừ vào biến diemTru
+                tongHoaDon = 0;         // Trừ hết số tiền
+            } else {
+                diemTru = diemsudung;  // Lưu số tiền trừ vào biến diemTru
+                tongHoaDon -= diemsudung;  // Trừ số điểm sử dụng vào tổng hóa đơn
+            }
+
+            // Cập nhật số điểm sử dụng hiển thị bên cạnh hóa đơn
+            diemSuDungHienThiElement.innerText = `Sử dụng: ${diemTru} điểm`;
+
+        } else {
+            // Nếu bỏ chọn, hoàn lại số tiền đã trừ
+            tongHoaDon += diemTru;  // Cộng lại số tiền đã trừ
+            diemTru = 0;  // Reset lại biến diemTru
+
+            // Ẩn số điểm sử dụng bên cạnh hóa đơn khi checkbox không được chọn
+            diemSuDungHienThiElement.innerText = '';
+        }
+
+        // Cập nhật tổng hóa đơn
+        tongHoaDonElement.innerText = `${tongHoaDon.toLocaleString()} VND`;
+    });
 
     // Hàm gọi API giảm giá chi tiết theo ID sản phẩm chi tiết
     async function fetchSaleChiTietBySPCTId(spctId) {
@@ -144,7 +200,6 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
             const response = await fetch(`https://localhost:7297/api/Salechitiet/SanPhamCT/${spctId}`);
             if (!response.ok) {
                 if (response.status === 404) {
-                    
                     return null; // Không tìm thấy, trả về null
                 }
                 throw new Error(`Lỗi API giảm giá: ${response.status}`);
@@ -258,6 +313,37 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
         updateTotals();
     }        
 
+    async function UpdateDiem(diemtru) {
+        try {
+            const userId = GetByidKH();
+            // Lấy thông tin khách hàng từ API
+            const datakhachang = await fetchkhachangById(); // Giả sử đây là async function
+            const capnhatdiem = datakhachang.diemsudung - diemtru
+    
+            // Gửi PUT request để cập nhật điểm cho khách hàng
+            const response = await fetch(`${apiKHUrl}/diem/${userId}?diemsudung=${capnhatdiem}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" }
+            });
+    
+            // Xử lý phản hồi từ API
+            if (!response.ok) {
+                const errorResult = await response.json();
+                Swal.fire("Lỗi", errorResult.message || "Cập nhật không thành công", "error");
+                return null;  // Dừng nếu có lỗi từ BE
+            }
+    
+            const result = await response.json();
+    
+            // Hiển thị thông báo thành công
+            Swal.fire("Thành công", result.message || "Cập nhật thành công", "success");
+            return result;
+    
+        } catch (error) {
+            console.error("Lỗi khi gọi API:", error);
+            Swal.fire("Lỗi", "Kết nối cập nhật điểm khách hàng thất bại.", "error");
+        }
+    }    
 
     function createThuocTinhSelects(thuocTinhList, id) {
         let thuocTinhSelects = '';
@@ -357,7 +443,10 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
         // Lấy dữ liệu từ localStorage
         const userInfoString = localStorage.getItem("userInfo");
         let userId = 0; // Giá trị mặc định nếu không có thông tin khách hàng
-
+        // Nếu không tìm thấy id khách hàng, chuyển hướng về trang đăng nhập và tải lại trang
+        if (userInfoString === null) {
+            $location.path(`/login`);
+        }
         // Kiểm tra nếu dữ liệu tồn tại
         if (userInfoString) {
             try {
@@ -406,17 +495,29 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
             trangthaithanhtoan: 0,
             donvitrangthai: 0,
             thoigiandathang: currentDate,
+            ghichu: "",
             diachiship: diachi,
             ngaygiaodukien: currentDate,
             ngaygiaothucte: currentDate,
             tongtiencantra: tongHoaDon,
             tongtiensanpham: tongSanPham, 
+            diemsudung: diemTru,
             sdt: sdt,
             tonggiamgia: soTienGiamGia,
-            trangthai: 0
+            trangthai: 0,
+            tiencoc: 0
         };
     
         try {
+            // Kiểm tra xem checkbox điểm có được chọn hay không
+            const diemsudungcheckbox = document.getElementById('diemsudungcheckbox');
+            if (diemsudungcheckbox.checked) {
+                const diemsudung = diemTru;
+                
+                // Nếu có sử dụng điểm, gọi hàm cập nhật điểm khách hàng
+                await UpdateDiem(diemsudung);
+            }
+
             if (paymentMethod === "1" && tongHoaDon >= 10000000) {
                 const confirm = await Swal.fire({
                     title: 'Yêu cầu đặt cọc',
@@ -428,6 +529,10 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
                 });
     
                 if (confirm.isConfirmed) {
+                    // Tính tiền cọc và cập nhật vào hoadonData
+                    const tienCoc = Math.floor(tongHoaDon * 0.3); // 30% tiền cọc
+                    hoadonData.tiencoc = tienCoc;
+    
                     const idhd = await taoHoaDon(hoadonData);
                     if (!idhd) return; // Dừng nếu tạo hóa đơn thất bại
     
@@ -1018,10 +1123,7 @@ async function taoLinkThanhToan(idhd) {
         fetchVouchers();
     });
 
-    async function fetchVouchers() {
-        const currentDateTime = new Date().toLocaleString('vi-VN', {
-            timeZone: 'Asia/Ho_Chi_Minh',
-        });        
+    async function fetchVouchers() { 
         const idkh = GetByidKH();
         try {
             // Bước 1: Lấy idRank từ API khách hàng
@@ -1070,23 +1172,29 @@ async function taoLinkThanhToan(idhd) {
     
                 try {
                     const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/${id.iDgiamgia}`);
-                    if (!responseVoucher.ok) {
-                        console.warn(`Lỗi khi lấy voucher với id: ${id.iDgiamgia}`);
-                        continue; // Bỏ qua id này nếu lỗi
+                    const data = await responseVoucher.json();
+                    const currentDate = new Date();
+                    // Format currentDate để giữ đối tượng Date thay vì chuỗi
+                    const formattedDate = new Date(
+                        currentDate.getFullYear(),
+                        currentDate.getMonth(),
+                        currentDate.getDate()
+                    );
+
+                    // Chuyển đổi updatengaybatdau và updatengayketthuc sang đối tượng Date
+                    const updatengaybatdauDate = new Date(data.ngaybatdau);
+                    const updatengayketthucDate = new Date(data.ngayketthuc);
+
+                    if (data.trangthai !== "Đang phát hành") {
+                        continue;
                     }
-                    const voucher = await responseVoucher.json();
-                    const updatengaybatdau = formatDate(voucher.ngaybatdau)
-                    const updatengayketthuc = formatDate(voucher.ngayketthuc)
-                    if (voucher.trangthai != "Đang phát hành" ) {
-                        continue; // 
+                    if (updatengaybatdauDate > formattedDate) {
+                        continue;
                     }
-                    if (updatengaybatdau > currentDateTime){
-                        continue; // 
+                    if (formattedDate > updatengayketthucDate) {
+                        continue;
                     }
-                    if (updatengayketthuc < currentDateTime){
-                        continue; // 
-                    }
-                    vouchers.push(voucher); // Thêm voucher hợp lệ vào danh sách
+                    vouchers.push(data);
                 } catch (error) {
                     console.warn(`Lỗi không xác định khi lấy voucher với id: ${id.iDgiamgia}`, error);
                 }
@@ -1217,7 +1325,6 @@ async function taoLinkThanhToan(idhd) {
                 fetch(`${discountApiUrl}/${selectedVoucherId}`)
                     .then(response => response.json())
                     .then(voucher => {
-                        // Nếu API trả về voucher hợp lệ
                         if (voucher && voucher.giatri) {
                             const voucherCodeInput = document.getElementById('voucherCodeDisplay');
 
@@ -1238,10 +1345,8 @@ async function taoLinkThanhToan(idhd) {
 
                             // Tính toán số tiền giảm tùy thuộc vào đơn vị của voucher
                             if (voucher.donvi === 'VND') {
-                                // Nếu đơn vị là VND, số tiền giảm là giá trị của voucher
                                 soTienGiam = voucher.giatri;
                             } else if (voucher.donvi === '%') {
-                                // Nếu đơn vị là %, tính số tiền giảm theo tỷ lệ phần trăm
                                 soTienGiam = tongSanPhamValue * (voucher.giatri / 100);
                             }
 
@@ -1254,7 +1359,27 @@ async function taoLinkThanhToan(idhd) {
 
                             // Gọi hàm updateTotals để tính lại tổng sản phẩm và hóa đơn
                             updateTotals();
-                            
+
+                            // Kiểm tra nếu tổng hóa đơn là 0
+                            if (tongHoaDonValue === 0) {
+                                const cashOnDeliveryRadio = document.getElementById("cashOnDelivery");
+                                const bankTransferRadio = document.getElementById("bankTransfer");
+                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
+
+                                // Chọn phương thức "Thanh toán khi nhận hàng"
+                                cashOnDeliveryRadio.checked = true;
+
+                                // Vô hiệu hóa và ẩn phương thức "Chuyển khoản ngân hàng"
+                                bankTransferRadio.disabled = true;
+                                bankTransferLabel.style.display = "none";
+                            } else {
+                                // Khôi phục trạng thái nếu tổng hóa đơn khác 0
+                                const bankTransferRadio = document.getElementById("bankTransfer");
+                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
+                                bankTransferRadio.disabled = false;
+                                bankTransferLabel.style.display = "inline-block";
+                            }
+
                             document.getElementById("btnRestoreVoucher").style.display = 'inline-block';
                             Swal.fire(
                                 'Xác Nhận Thành Công',
@@ -1326,8 +1451,33 @@ async function taoLinkThanhToan(idhd) {
             }
         });
     });    
-    
 
+        const tongHoaDonEl = document.getElementById("tongHoaDon");
+        const cashOnDeliveryRadio = document.getElementById("cashOnDelivery");
+        const bankTransferRadio = document.getElementById("bankTransfer");
+        const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
+  
+        // Hàm cập nhật trạng thái phương thức thanh toán
+        function updatePaymentMethod() {
+            const tongHoaDonValue = parseInt(tongHoaDonEl.textContent.replace(/[VND.]/g, ''));
+  
+            if (tongHoaDonValue === 0) {
+                cashOnDeliveryRadio.checked = true; // Chọn "Thanh toán khi nhận hàng"
+                bankTransferRadio.disabled = true; // Vô hiệu hóa "Chuyển khoản ngân hàng"
+                bankTransferLabel.style.display = "none"; // Ẩn nhãn
+            } else {
+                bankTransferRadio.disabled = false; // Bật lại "Chuyển khoản ngân hàng"
+                bankTransferLabel.style.display = "inline-block"; // Hiện lại nhãn
+            }
+        }
+  
+        // Theo dõi thay đổi nội dung của tổng hóa đơn
+        const observer = new MutationObserver(updatePaymentMethod);
+        observer.observe(tongHoaDonEl, { childList: true, subtree: true });
+  
+        // Khởi chạy khi tải trang
+        document.addEventListener("DOMContentLoaded", updatePaymentMethod);
+    
     loadAddressesByIdKH();
     fetchkhachangById();
     renderSanPham();
