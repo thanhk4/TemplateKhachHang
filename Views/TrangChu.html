@@ -1,18 +1,19 @@
-<div class="container mt-5" >
+<div class="container mt-5">
     <div class="rounded overflow-hidden" style="height: 300px; margin: auto;">
         <div id="carouselExample" class="carousel slide">
             <div class="carousel-inner">
                 <div class="carousel-item active">
-                    <img src="https://bizweb.dktcdn.net/100/320/146/themes/788807/assets/slider_1_image.png?1678244567902" class="d-block w-100" alt="Hình ảnh 1"
-                    style="max-height: 400px; max-width: 100%; object-fit: contain;">
+                    <img src="https://bizweb.dktcdn.net/100/320/146/themes/788807/assets/slider_1_image.png?1678244567902"
+                        class="d-block w-100" alt="Hình ảnh 1"
+                        style="max-height: 400px; max-width: 100%; object-fit: contain;">
                 </div>
                 <div class="carousel-item">
                     <img src="https://www.caoto.vn/images/slider-2.png" class="d-block w-100" alt="Hình ảnh 2"
-                    style="max-height: 400px; max-width: 100%; object-fit: contain;">
+                        style="max-height: 400px; max-width: 100%; object-fit: contain;">
                 </div>
                 <div class="carousel-item">
-                    <img src="https://intphcm.com/data/upload/poster-giay-nike.jpg" class="d-block w-100" alt="Hình ảnh 3"
-                    style="max-height: 400px; max-width: 100%; object-fit: contain;">
+                    <img src="https://intphcm.com/data/upload/poster-giay-nike.jpg" class="d-block w-100"
+                        alt="Hình ảnh 3" style="max-height: 400px; max-width: 100%; object-fit: contain;">
                 </div>
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
@@ -31,38 +32,48 @@
     <div class="container rounded overflow-hidden" style="height: 886px; margin: auto;">
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="fw-bold">Sale</h1>
-            <a href="#!sanPhamSale" class="text-reset" style="font-size: 16px; text-decoration: underline;">Xem thêm <i class="bi bi-chevron-right"></i></a>
+            <a href="#!sanPhamSale" class="text-reset" style="font-size: 16px; text-decoration: underline;">Xem thêm <i
+                    class="bi bi-chevron-right"></i></a>
         </div>
         <hr style="border: 0; border-top: 2px solid; margin-top: 5px; margin-bottom: 20px;">
         <div class="row mt-3 g-3">
             <div class="row mt-3 g-3">
                 <div class="col-lg-3 col-md-4 col-sm-6" ng-repeat="sanPham in SanPhamGiamGia">
-                    <a class="text-decoration-none text-reset"
-                    ng-click="sanPham.soluong > 0 && xemChiTiet(sanPham.id)"
-                    ng-class="{'disabled-link': sanPham.soluong === 0}">
-                    <div class="card product-card h-100">
-                        <img ng-if="sanPham.uRlHinhAnh" src="{{sanPham.uRlHinhAnh}}" alt="{{sanPham.tensp}}"
-                            class="card-img-top" style="height: 286px; width: 100%;">
-                        <span class="badge bg-danger position-absolute top-0 start-0 m-2">
-                            Số lượng: {{sanPham.soluong}}
-                        </span>
-                        <div class="card-body">
-                            <h5 class="card-title">{{sanPham.tensp}}</h5>
-                            <div class="d-flex align-items-center">
-                                <p class="card-text me-2" ng-if="sanPham.giaban !== sanPham.giasale"
-                                    style="color: gray; text-decoration: line-through; margin-bottom: 0;">
-                                    {{sanPham.giaban}}đ
-                                </p>
-                                <p class="card-text fw-bold" style="margin-bottom: 0;">{{sanPham.giasale}}đ</p>
-                                <span class="ms-auto">
-                                    <span ng-if="sanPham.soluong > 0">Chi tiết <i class="bi bi-chevron-right"></i></span>
-                                    <span ng-if="sanPham.soluong === 0" style="color: gray;">Hết hàng</span>
-                                </span>
+                    <a href="" class="text-decoration-none text-reset"
+                        ng-click="sanPham.soluong > 0 && xemChiTiet(sanPham.id)"
+                        ng-class="{'disabled-link': sanPham.soluong === 0}">
+                        <div class="card product-card h-100">
+                            <img ng-if="sanPham.uRlHinhAnh" src="{{sanPham.uRlHinhAnh}}" alt="{{sanPham.tensp}}"
+                                class="card-img-top" style="height: 286px; width: 100%;">
+
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-2"
+                                ng-if="sanPham.giaTriGiam >100 && sanPham.giaTriGiam>0 ">
+                                -{{sanPham.giaTriGiam}}đ
+                            </span>
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-2"
+                                ng-if=" sanPham.giaTriGiam <=100 && sanPham.giaTriGiam>0 ">
+                                -{{sanPham.giaTriGiam}}%
+                            </span>
+                            <div class="card-body">
+                                <h5 class="card-title">{{sanPham.tensp}}</h5>
+                                <div class="d-flex align-items-center">
+                                    <p class="card-text me-2"
+                                        style="color: gray; text-decoration: line-through; margin-bottom: 0;"
+                                        ng-if="sanPham.giaban != sanPham.giasale ">
+                                        {{sanPham.giaban}}đ
+                                    </p>
+                                    <p class="card-text fw-bold" style="margin-bottom: 0;"
+                                        ng-if="sanPham.giaban === sanPham.giasale || sanPham.giaban != sanPham.giasale ">
+                                        {{sanPham.giasale}}đ</p>
+                                    <span class="ms-auto">
+                                        <span ng-if="sanPham.soluong > 0">Chi tiết <i
+                                                class="bi bi-chevron-right"></i></span>
+                                        <span ng-if="sanPham.soluong === 0" style="color: gray;">Hết hàng</span>
+                                    </span>
+                                </div>
                             </div>
-                            
                         </div>
-                    </div>
-                </a>
+                    </a>
                 </div>
 
             </div>
@@ -74,43 +85,108 @@
     <div class="container rounded overflow-hidden" style="height: 886px; margin: auto;">
         <div class="d-flex justify-content-between align-items-center">
             <h1 class="fw-bold">Sản Phẩm Nổi Bật</h1>
-            <a href="#!danhsachsanpham" class="text-reset" style="font-size: 16px; text-decoration: underline;">Xem thêm <i class="bi bi-chevron-right"></i></a>
+            <div class="brand-list d-flex flex-wrap ms-auto">
+                <div ng-repeat="th in thuongHieus">
+                    <a  href="#!sanphamthuonghieu/{{th.id}}" class="text-decoration-none text-reset btn brand-item">{{th.tenthuonghieu}}</a>
+                  </div>
+
+                <a href="#!danhsachsanpham" class="text-decoration-none text-reset btn brand-item">Xem tất cả</a>
+            </div>
         </div>
+
         <hr style="border: 0; border-top: 2px solid; margin-top: 5px; margin-bottom: 20px;">
         <div class="row mt-3 g-3">
             <div class="row mt-3 g-3">
                 <div class="col-lg-3 col-md-4 col-sm-6" ng-repeat="sanPham in sanPhams">
-                    <a class="text-decoration-none text-reset"
-                    ng-click="sanPham.soluong > 0 && xemChiTiet(sanPham.id)"
-                    ng-class="{'disabled-link': sanPham.soluong === 0}">
-                    <div class="card product-card h-100">
-                        <img ng-if="sanPham.uRlHinhAnh" src="{{sanPham.uRlHinhAnh}}" alt="{{sanPham.tensp}}"
-                            class="card-img-top" style="height: 286px; width: 100%;">
-                        <span class="badge bg-danger position-absolute top-0 start-0 m-2">
-                            Số lượng: {{sanPham.soluong}}
-                        </span>
-                        <div class="card-body">
-                            <h5 class="card-title">{{sanPham.tensp}}</h5>
-                            <div class="d-flex align-items-center">
-                                <p class="card-text me-2" ng-if="sanPham.giaban !== sanPham.giasale"
-                                    style="color: gray; text-decoration: line-through; margin-bottom: 0;">
-                                    {{sanPham.giaban}}đ
-                                </p>
-                                <p class="card-text fw-bold" style="margin-bottom: 0;">{{sanPham.giasale}}đ</p>
-                                <span class="ms-auto">
-                                    <span ng-if="sanPham.soluong > 0">Chi tiết <i class="bi bi-chevron-right"></i></span>
-                                    <span ng-if="sanPham.soluong === 0" style="color: gray;">Hết hàng</span>
-                                </span>
+                    <a href="" class="text-decoration-none text-reset"
+                        ng-click="sanPham.soluong > 0 && xemChiTiet(sanPham.id)"
+                        ng-class="{'disabled-link': sanPham.soluong === 0}">
+                        <div class="card product-card h-100">
+                            <img ng-if="sanPham.uRlHinhAnh" src="{{sanPham.uRlHinhAnh}}" alt="{{sanPham.tensp}}"
+                                class="card-img-top" style="height: 286px; width: 100%;">
+
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-2"
+                                ng-if="sanPham.giaTriGiam >100 && sanPham.giaTriGiam>0 ">
+                                -{{sanPham.giaTriGiam}}đ
+                            </span>
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-2"
+                                ng-if=" sanPham.giaTriGiam <=100 && sanPham.giaTriGiam>0 ">
+                                -{{sanPham.giaTriGiam}}%
+                            </span>
+                            <div class="card-body">
+                                <h5 class="card-title">{{sanPham.tensp}}</h5>
+                                <div class="d-flex align-items-center">
+                                    <p class="card-text me-2"
+                                        style="color: gray; text-decoration: line-through; margin-bottom: 0;"
+                                        ng-if="sanPham.giaban != sanPham.giasale ">
+                                        {{sanPham.giaban}}đ
+                                    </p>
+                                    <p class="card-text fw-bold" style="margin-bottom: 0;"
+                                        ng-if="sanPham.giaban === sanPham.giasale || sanPham.giaban != sanPham.giasale ">
+                                        {{sanPham.giasale}}đ</p>
+                                    <span class="ms-auto">
+                                        <span ng-if="sanPham.soluong > 0">Chi tiết <i
+                                                class="bi bi-chevron-right"></i></span>
+                                        <span ng-if="sanPham.soluong === 0" style="color: gray;">Hết hàng</span>
+                                    </span>
+                                </div>
                             </div>
-                            
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="mt-5">
+    <div class="container rounded overflow-hidden" style="height: 886px; margin: auto;">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="fw-bold">Sản phẩm mới</h1>
+            <a href="#!danhsachsanpham" class="text-reset" style="font-size: 16px; text-decoration: underline;">Xem thêm <i
+                    class="bi bi-chevron-right"></i></a>
+        </div>
+        <hr style="border: 0; border-top: 2px solid; margin-top: 5px; margin-bottom: 20px;">
+        <div class="row mt-3 g-3">
+            <div class="row mt-3 g-3">
+                <div class="col-lg-3 col-md-4 col-sm-6" ng-repeat="sanPham in SanPhamThemMoi">
+                    <a href="" class="text-decoration-none text-reset"
+                        ng-click="sanPham.soluong > 0 && xemChiTiet(sanPham.id)"
+                        ng-class="{'disabled-link': sanPham.soluong === 0}">
+                        <div class="card product-card h-100">
+                            <img ng-if="sanPham.uRlHinhAnh" src="{{sanPham.uRlHinhAnh}}" alt="{{sanPham.tensp}}"
+                                class="card-img-top" style="height: 286px; width: 100%;">
+
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-2"
+                                ng-if="sanPham.giaTriGiam >100 && sanPham.giaTriGiam>0 ">
+                                -{{sanPham.giaTriGiam}}đ
+                            </span>
+                            <span class="badge bg-danger position-absolute top-0 start-0 m-2"
+                                ng-if=" sanPham.giaTriGiam <=100 && sanPham.giaTriGiam>0 ">
+                                -{{sanPham.giaTriGiam}}%
+                            </span>
+                            <div class="card-body">
+                                <h5 class="card-title">{{sanPham.tensp}}</h5>
+                                <div class="d-flex align-items-center">
+                                    <p class="card-text me-2"
+                                        style="color: gray; text-decoration: line-through; margin-bottom: 0;"
+                                        ng-if="sanPham.giaban != sanPham.giasale ">
+                                        {{sanPham.giaban}}đ
+                                    </p>
+                                    <p class="card-text fw-bold" style="margin-bottom: 0;"
+                                        ng-if="sanPham.giaban === sanPham.giasale || sanPham.giaban != sanPham.giasale ">
+                                        {{sanPham.giasale}}đ</p>
+                                    <span class="ms-auto">
+                                        <span ng-if="sanPham.soluong > 0">Chi tiết <i
+                                                class="bi bi-chevron-right"></i></span>
+                                        <span ng-if="sanPham.soluong === 0" style="color: gray;">Hết hàng</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
                 </div>
 
             </div>
         </div>
     </div>
 </div>
-
-

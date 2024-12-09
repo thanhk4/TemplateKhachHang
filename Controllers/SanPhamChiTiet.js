@@ -11,7 +11,6 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
     $scope.errorMessage = null;
     $scope.selectedValues = {};
     $scope.sanPhams = [];
-    $scope.selectedSPCTs = [];
 
     const sanPhamId = $routeParams.id;
 
@@ -180,39 +179,39 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
     $scope.GioHang = async function () {
         // Lấy danh sách các thuộc tính đã chọn
         const tenthuoctinhList = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
-
-        // Kiểm tra xem có thuộc tính nào được chọn không
-        if (tenthuoctinhList.length > 0) {
+    
+        // Kiểm tra xem tất cả các thuộc tính có được chọn chưa
+        if (tenthuoctinhList.length === Object.keys($scope.groupedThuocTinhs).length) {
             try {
                 // Chuyển mảng tenthuoctinhList thành chuỗi query string
                 const queryString = tenthuoctinhList.map(item => `tenthuoctinh=${encodeURIComponent(item)}`).join('&');
-
+    
                 // Gọi API để lấy danh sách SPCT theo thuộc tính
                 const idspctTTResponse = await fetch(`${apIDSPCTUrl}?${queryString}`);
                 if (!idspctTTResponse.ok) {
                     throw new Error('Lỗi khi gọi API GetSanPhamChiTietByThuocTinh');
                 }
                 const dataspcttt = await idspctTTResponse.json();
-
+    
                 // Kiểm tra kết quả của API thuộc tính
                 if (!dataspcttt || dataspcttt.length === 0) {
                     $scope.errorMessage = "Không có sản phẩm chi tiết nào phù hợp với thuộc tính đã chọn.";
                     console.log($scope.errorMessage);
                     return;
                 }
-
+    
                 // Gọi API để lấy danh sách SPCT theo sản phẩm
                 const idspctSPResponse = await fetch(`${apiIDSPtoIDSPCT}${sanPhamId}`);
                 if (!idspctSPResponse.ok) {
                     throw new Error('Lỗi khi gọi API GetSanPhamChiTietBySanPham');
                 }
                 const dataspctsp = await idspctSPResponse.json();
-
+    
                 // Lọc ra các sản phẩm chi tiết trùng khớp giữa hai API
                 const matchedSPCT = dataspcttt.filter(item => 
                     dataspctsp.some(sp => sp.id === item.idspct)
                 );
-
+    
                 if (matchedSPCT.length > 0) {
                     const firstSPCTId = matchedSPCT[0].idspct;
                     AddGHCT(firstSPCTId)
@@ -231,10 +230,12 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                 console.error("Lỗi khi tải sản phẩm chi tiết:", error);
             }
         } else {
-            $scope.errorMessage = "Vui lòng chọn ít nhất một thuộc tính.";
+            // Hiển thị thông báo nếu chưa chọn đủ tất cả các thuộc tính
+            $scope.errorMessage = "Vui lòng chọn tất cả các thuộc tính của sản phẩm.";
             console.log($scope.errorMessage);
         }
     };
+    
 
 $scope.updateValidThuocTinhs = function () {
     const selectedThuocTinhs = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
@@ -274,20 +275,23 @@ $scope.updateValidThuocTinhs = function () {
     
 };
 
-
 $scope.onThuocTinhChange = function () {
     // Lấy danh sách các thuộc tính đã chọn
     const selectedAttributes = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
 
-    // Cập nhật danh sách thuộc tính hợp lệ
-    $scope.updateValidThuocTinhs(); 
-    
-    // Cập nhật selectedSPCTs dựa trên thuộc tính đã chọn
-    $scope.selectedSPCTs = getSelectedSPCTs(selectedAttributes); // Lấy SPCT từ các thuộc tính đã chọn
-   // console.log("Các SPCT đã chọn:", $scope.selectedSPCTs);
+    // Kiểm tra xem tất cả các thuộc tính đã được chọn chưa
+    if (selectedAttributes.length === Object.keys($scope.groupedThuocTinhs).length) {
+        // Nếu tất cả các thuộc tính đã được chọn, cập nhật selectedSPCTs
+        $scope.selectedSPCTs = getSelectedSPCTs(selectedAttributes);
+        $scope.errorMessage = "";  // Xóa thông báo lỗi nếu tất cả thuộc tính đã chọn
+    } else {
+        // Nếu chưa chọn đủ, không cập nhật selectedSPCTs và hiển thị thông báo lỗi
+        $scope.selectedSPCTs = [];
+        $scope.errorMessage = "Vui lòng chọn tất cả các thuộc tính của sản phẩm.";
+    }
 };
 
-// Hàm giả lập lấy các SPCT đã chọn
+
 function getSelectedSPCTs(selectedAttributes) {
     return $scope.sanPham.sanphamchitiets.filter(spct => 
         selectedAttributes.every(attribute => 
@@ -296,52 +300,43 @@ function getSelectedSPCTs(selectedAttributes) {
     );
 }
 
+
 $scope.isFormValid = true;  // Biến để kiểm tra tính hợp lệ của form
 
 $scope.validateSelection = function () {
-    // Kiểm tra tất cả các nhóm thuộc tính
-    $scope.isFormValid = true;
-    for (const key in $scope.groupedThuocTinhs) {
-        const selected = Object.keys($scope.selectedValues).filter(value => $scope.selectedValues[value]);
-        if (selected.length === 0) {
-            $scope.isFormValid = false;
-            break;
-        }
-    }
-    // Kiểm tra và hiển thị thông báo lỗi
-    if (!$scope.isFormValid) {
+    // Kiểm tra xem tất cả các thuộc tính có được chọn chưa
+    const selectedAttributes = Object.keys($scope.selectedValues).filter(value => $scope.selectedValues[value]);
+    if (selectedAttributes.length !== Object.keys($scope.groupedThuocTinhs).length) {
+        $scope.isFormValid = false;
         $scope.errorMessage = "Vui lòng chọn tất cả các thuộc tính của sản phẩm.";
     } else {
+        $scope.isFormValid = true;
         $scope.errorMessage = "";
     }
 };
-
-
-$scope.isDisabled = function (key, value) {
-    // Nếu chưa có thuộc tính nào được chọn, không làm mờ
-    if (Object.keys($scope.selectedValues).length === 0) {
-        return false;
-    }
-
-    // Nếu thuộc tính chưa được chọn và không hợp lệ, làm mờ
-    return !$scope.validThuocTinhs[key] || !$scope.validThuocTinhs[key].includes(value);
-};
 $scope.initialize = function () {
-    // Nếu không có dữ liệu ban đầu, khởi tạo danh sách rỗng
-    $scope.selectedSPCTs = $scope.selectedSPCTs || [];
-
+    // Kiểm tra và khởi tạo nếu chưa có dữ liệu ban đầu
+    $scope.selectedValues = $scope.selectedValues || {}; // Khởi tạo nếu chưa có
+    $scope.groupedThuocTinhs = $scope.groupedThuocTinhs || {}; // Khởi tạo nếu chưa có
+     console.log( $scope.selectedValues, $scope.groupedThuocTinhs );
+     
     // Kiểm tra các điều kiện hợp lệ
     $scope.validateSelection();
 };
+
+
 $scope.initialize();
+
+
+
 
 
 $scope.MuaSanPham = async function () {
     // Lấy danh sách các thuộc tính đã chọn
     const tenthuoctinhList = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
     
-    // Kiểm tra xem có thuộc tính nào được chọn không
-    if (tenthuoctinhList.length > 0) {
+    // Kiểm tra xem tất cả các thuộc tính có được chọn chưa
+    if (tenthuoctinhList.length === Object.keys($scope.groupedThuocTinhs).length) {
         try {
             // Chuyển mảng tenthuoctinhList thành chuỗi query string
             const queryString = tenthuoctinhList.map(item => `tenthuoctinh=${encodeURIComponent(item)}`).join('&');
@@ -377,7 +372,7 @@ $scope.MuaSanPham = async function () {
                 const firstSPCTId = matchedSPCT[0].idspct;
                 console.log(`Chuyển sang trang mua sản phẩm với id: ${firstSPCTId}`);
                 $scope.$apply(() => {
-                    $location.path(`/muasanpham/${firstSPCTId}`);
+                    $location.path(`/muasanpham/${firstSPCTId}`); // Chuyển sang trang mua sản phẩm
                 });                
             } else {
                 $scope.errorMessage = "Không có sản phẩm chi tiết nào phù hợp giữa hai API.";
@@ -388,9 +383,11 @@ $scope.MuaSanPham = async function () {
             console.error("Lỗi khi tải sản phẩm chi tiết:", error);
         }
     } else {
-        $scope.errorMessage = "Vui lòng chọn ít nhất một thuộc tính.";
+        // Hiển thị thông báo nếu chưa chọn đủ tất cả các thuộc tính
+        $scope.errorMessage = "Vui lòng chọn tất cả các thuộc tính của sản phẩm.";
         console.log($scope.errorMessage);
     }
 };
+
 
 });

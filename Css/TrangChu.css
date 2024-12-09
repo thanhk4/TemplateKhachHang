@@ -28,3 +28,24 @@
 .carousel-item {
     transition: transform 0.5s ease, opacity 0.5s ease;
 }
+.brand-list {
+    gap: 8px;
+  }
+  
+  .brand-item {
+    padding: 5px 10px;
+    font-size: 14px;
+    color: #333;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+  
+  .brand-item:hover {
+    background-color: #dee3e6;
+    border-color: #dfe1e3;
+    color: #595b5e;
+  }
+  
