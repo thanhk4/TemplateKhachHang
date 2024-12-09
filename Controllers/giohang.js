@@ -1,4 +1,5 @@
 app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile, $location, $timeout) {
+    GetByidKH();
     // Thêm CSS
     const link = angular.element('<link rel="stylesheet" href="css/giohang.css">');
     $document.find('head').append(link);
@@ -19,6 +20,11 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
     function GetByidKH() {
         const userInfoString = localStorage.getItem("userInfo");
         let userId = 0;
+        // Nếu không tìm thấy id khách hàng, chuyển hướng về trang đăng nhập và tải lại trang
+        if (userInfoString === null) {
+            $location.path(`/login`);
+        }
+
         if (userInfoString) {
             try {
                 const userInfo = JSON.parse(userInfoString);

@@ -1,4 +1,5 @@
 app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParams, $scope, $location, $timeout) {
+    GetByidKH();
     const quantityInput = document.querySelector(".quantity-input");
     const priceElement = document.querySelector(".total-price");
     const sanPhamCTId = $routeParams.id;
@@ -103,6 +104,10 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         // Lấy dữ liệu từ localStorage
         const userInfoString = localStorage.getItem("userInfo");
         let userId = 0; // Giá trị mặc định nếu không có thông tin khách hàng
+        // Nếu không tìm thấy id khách hàng, chuyển hướng về trang đăng nhập và tải lại trang
+        if (userInfoString === null) {
+            $location.path(`/login`);
+        }
 
         // Kiểm tra nếu dữ liệu tồn tại
         if (userInfoString) {
@@ -158,7 +163,22 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             if (document.getElementById("diachi")) {
                 document.getElementById("diachi").innerText = khachHangData.diachi || "Chưa cập nhật";
             }
-
+            if (document.getElementById("diemsudung")) {
+                // Lấy điểm sử dụng, đảm bảo giá trị không bị null
+                const diemsudung = parseInt(khachHangData.diemsudung || "0", 10);
+                document.getElementById("diemsudung").innerText = diemsudung;
+    
+                // Xử lý trạng thái checkbox
+                const diemsudungCheckbox = document.getElementById("diemsudungcheckbox");
+                if (diemsudung === 0) {
+                    diemsudungCheckbox.checked = false; // Bỏ chọn nếu chưa có điểm
+                    diemsudungCheckbox.disabled = true; // Vô hiệu hóa checkbox
+                    console.log("Điểm sử dụng = 0: Checkbox bị vô hiệu hóa.");
+                } else {
+                    diemsudungCheckbox.disabled = false; // Cho phép chọn nếu có điểm
+                    console.log(`Điểm sử dụng = ${diemsudung}: Checkbox được bật.`);
+                }
+            }    
             // Trả về dữ liệu khách hàng
             return khachHangData;
 
@@ -168,6 +188,47 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             alert("Có lỗi xảy ra khi tải thông tin khách hàng. Vui lòng thử lại.");
         }
     }
+
+    // Biến lưu số điểm đã trừ
+    let diemTru = 0;
+
+    // Lắng nghe sự kiện thay đổi checkbox
+    document.getElementById('diemsudungcheckbox').addEventListener('change', function () {
+        const diemsudungElement = document.getElementById('diemsudung');
+        const tongHoaDonElement = document.getElementById('tongHoaDon');
+        const diemSuDungHienThiElement = document.getElementById('diemSuDungHienThi'); // Đối tượng hiển thị số điểm sử dụng bên cạnh hóa đơn
+
+        // Lấy giá trị điểm sử dụng và tổng hóa đơn
+        const diemsudung = parseInt(diemsudungElement.innerText.trim() || "0", 10);
+        let tongHoaDon = parseInt(tongHoaDonElement.innerText.replace(/[VND.,]/g, "") || "0", 10);
+
+        // Kiểm tra trạng thái checkbox
+        if (this.checked) {
+            // Nếu điểm sử dụng lớn hơn hoặc bằng tổng hóa đơn, chỉ trừ đủ số tiền trong hóa đơn
+            if (diemsudung >= tongHoaDon) {
+                diemTru = tongHoaDon;  // Lưu số tiền trừ vào biến diemTru
+                tongHoaDon = 0;         // Trừ hết số tiền
+            } else {
+                diemTru = diemsudung;  // Lưu số tiền trừ vào biến diemTru
+                tongHoaDon -= diemsudung;  // Trừ số điểm sử dụng vào tổng hóa đơn
+            }
+
+            // Cập nhật số điểm sử dụng hiển thị bên cạnh hóa đơn
+            diemSuDungHienThiElement.innerText = `Sử dụng: ${diemTru} điểm`;
+
+        } else {
+            // Nếu bỏ chọn, hoàn lại số tiền đã trừ
+            tongHoaDon += diemTru;  // Cộng lại số tiền đã trừ
+            diemTru = 0;  // Reset lại biến diemTru
+
+            // Ẩn số điểm sử dụng bên cạnh hóa đơn khi checkbox không được chọn
+            diemSuDungHienThiElement.innerText = '';
+        }
+
+        // Cập nhật tổng hóa đơn
+        tongHoaDonElement.innerText = `${tongHoaDon.toLocaleString()} VND`;
+    });
+
 
     // Hàm gọi API giảm giá chi tiết theo ID sản phẩm chi tiết
     async function fetchSaleChiTietBySPCTId(spctId) {
@@ -413,30 +474,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
     }
 
 
-    function GetByidKH() {
-        // Lấy dữ liệu từ localStorage
-        const userInfoString = localStorage.getItem("userInfo");
-        let userId = 0; // Giá trị mặc định nếu không có thông tin khách hàng
-
-        // Kiểm tra nếu dữ liệu tồn tại
-        if (userInfoString) {
-            try {
-                // Chuyển đổi chuỗi JSON thành đối tượng
-                const userInfo = JSON.parse(userInfoString);
-
-                // Kiểm tra và lấy giá trị id từ userInfo
-                userId = userInfo?.id || 0;
-            } catch (error) {
-                console.error("Lỗi khi phân tích dữ liệu userInfo:", error);
-            }
-        } else {
-            console.warn("Dữ liệu userInfo không tồn tại trong localStorage.");
-        }
-
-        // Trả về userId
-        return userId;
-    }
-
     async function deleteGioHangChiTiet(idghct) {
         try {
             const response = await fetch(`https://localhost:7297/api/Giohangchitiet/${idghct}`, {
@@ -518,10 +555,19 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             tongtiensanpham: tongSanPham,
             sdt: sdt,
             tonggiamgia: soTienGiamGia,
-            trangthai: 0
+            trangthai: 0,
+            tiencoc: 0
         };
 
         try {
+            // Kiểm tra xem checkbox điểm có được chọn hay không
+            const diemsudungcheckbox = document.getElementById('diemsudungcheckbox');
+            if (diemsudungcheckbox.checked) {
+                const diemsudung = diemTru;
+                
+                // Nếu có sử dụng điểm, gọi hàm cập nhật điểm khách hàng
+                await UpdateDiem(diemsudung);
+            }
             if (paymentMethod === "1" && tongHoaDon >= 10000000) {
                 const confirm = await Swal.fire({
                     title: 'Yêu cầu đặt cọc',
@@ -533,19 +579,21 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 });
 
                 if (confirm.isConfirmed) {
+                    // Tính tiền cọc và cập nhật vào hoadonData
+                    const tienCoc = Math.floor(tongHoaDon * 0.3); // 30% tiền cọc
+                    hoadonData.tiencoc = tienCoc;
+    
                     const idhd = await taoHoaDon(hoadonData);
                     if (!idhd) return; // Dừng nếu tạo hóa đơn thất bại
-
+    
                     const hoaDonChiTietResult = await themHoaDonChiTiet(idhd);
                     if (!hoaDonChiTietResult) return; // Dừng nếu thêm chi tiết hóa đơn thất bại
-
-                    deleteProduct ()
-
-                    const addPaymentHistoryResult = await addPaymentHistory(idhd);
-                    if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
-
+    
                     const thanhToanCocResult = await taoLinkThanhToanCoc(idhd);
                     if (!thanhToanCocResult) return; // Dừng nếu tạo link thanh toán cọc thất bại
+    
+                    const addPaymentHistoryResult = await addPaymentHistory(idhd);
+                    if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
                 }
             } else {
                 const idhd = await taoHoaDon(hoadonData);
@@ -676,6 +724,37 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             Swal.fire("Lỗi", "Kết nối thêm lịch sử thanh toán thất bại.", "error");
         }
     }
+    async function UpdateDiem(diemtru) {
+        try {
+            const userId = GetByidKH();
+            // Lấy thông tin khách hàng từ API
+            const datakhachang = await fetchkhachangById(); // Giả sử đây là async function
+            const capnhatdiem = datakhachang.diemsudung - diemtru
+    
+            // Gửi PUT request để cập nhật điểm cho khách hàng
+            const response = await fetch(`${apiKHUrl}/diem/${userId}?diemsudung=${capnhatdiem}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" }
+            });
+    
+            // Xử lý phản hồi từ API
+            if (!response.ok) {
+                const errorResult = await response.json();
+                Swal.fire("Lỗi", errorResult.message || "Cập nhật không thành công", "error");
+                return null;  // Dừng nếu có lỗi từ BE
+            }
+    
+            const result = await response.json();
+    
+            // Hiển thị thông báo thành công
+            Swal.fire("Thành công", result.message || "Cập nhật thành công", "success");
+            return result;
+    
+        } catch (error) {
+            console.error("Lỗi khi gọi API:", error);
+            Swal.fire("Lỗi", "Kết nối cập nhật điểm khách hàng thất bại.", "error");
+        }
+    }   
 
     // Hàm tạo link thanh toán cọc
     async function taoLinkThanhToanCoc(idhd) {
