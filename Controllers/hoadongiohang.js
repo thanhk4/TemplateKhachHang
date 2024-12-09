@@ -547,6 +547,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             trangthaithanhtoan: 0,
             donvitrangthai: 0,
             thoigiandathang: currentDate,
+            diemsudung: diemTru,
             ghichu: "",
             diachiship: diachi,
             ngaygiaodukien: currentDate,
