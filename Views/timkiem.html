@@ -43,7 +43,7 @@
       <div class="row product-grid">
         <!-- Product Cards -->
         <div ng-repeat="item in displayResults" class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4" style="height:350px;">
-          <div class="card shadow-sm product-card">
+          <a class="card shadow-sm product-card text-decoration-none" href="#!sanphamchitiet/{{item.id}}">
             <img ng-src="{{item.urlHinhanh}}" alt="{{item.tensp}}" class="card-img-top img-fluid rounded">
             <div class="card-body">
               <div ng-repeat="brand in dataThuonghieu">
@@ -51,7 +51,7 @@
               </div>
               <p class="text-muted">Giá sản phẩm: <span class="fw-bold">{{item.giaban | number}} VNĐ</span></p>
             </div>
-          </div>
+          </a>
         </div>
       </div>
       <div ng-if="displayResults.length === 0 && !errorMessage" class="text-center text-danger mt-3">
