@@ -20,6 +20,7 @@ app.controller('timkiemController', function ($scope, $routeParams, $http) {
     .then(function (response) {
       $scope.filteredResults = response.data;
       $scope.displayResults = [...$scope.filteredResults];
+      console.log($scope.filteredResults)
     })
     .catch(function (error) {
       $scope.errorMessage = 'Không thể tải dữ liệu từ server. Vui lòng thử lại!';
