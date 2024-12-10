@@ -452,4 +452,12 @@ $scope.submitRating = function () {
             });
         }
     };
+    $http.get('https://localhost:7297/api/Trahang/View-Hoa-Don-Tra-By-Idkh-'+$scope.userInfo.id)
+    .then(function(response){
+        $scope.ViewHoaDonTra = response.data
+        console.log(`View-Hoa-Don-Tra-By-Idkh-${$scope.userInfo.id}:\n${$scope.ViewHoaDonTra}`)
+    })
+    .catch(function(error){
+        console.error(error)
+    })
 });
