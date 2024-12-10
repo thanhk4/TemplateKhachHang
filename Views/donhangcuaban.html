@@ -38,10 +38,9 @@
                 <button ng-click="filterOrders(2)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 2}">Đang giao</button>
                 <button ng-click="filterOrders(3)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 3}">Thành công</button>
                 <button ng-click="filterOrders(4)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 4}">Đã hủy</button>
-                <button class="btn btn-outline-primary">Trả hàng/Hoàn tiền</button>
+                <button ng-click="filterOrders(5)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 5}">Trả hàng/Hoàn tiền</button>
             </div>
-            <!-- Order Cardsaaaaa -->
-            <div class="row">
+            <div class="row" ng-show="thediv<5">
                 <div class="col-md-6 mb-4" ng-repeat="x in paginatedOrders[currentPage]">
                     <div class="order-card p-4 shadow-sm rounded">
                         <p class="order-status text-end text-primary">{{ orderStatuses[x.trangthai] }}</p>
@@ -70,6 +69,44 @@
                     </div>
                 </div>
             </div>
+            <div class="row" ng-show="thediv==5">
+                <div class="col-md-6 mb-4" ng-repeat="x in ViewHoaDonTra">
+                    <div class="order-card p-4 shadow-sm rounded">
+                        <p class="order-status text-end text-primary" ng-if="x.trangthai==0">Đơn hàng chờ trả hàng </p>
+                        <p class="order-status text-end text-primary" ng-if="x.trangthai==1">Trả hàng không thành công</p>
+                        <p class="order-status text-end text-primary" ng-if="x.trangthai==2">Trả hàng thành công</p>
+                        <hr>
+                        <div>
+                            <div class="info-item" ng-if="x.trangthai==0">
+                                <span><i class="bi bi-clock"></i> Thời gian tạo hóa đơn:</span>
+                                <!-- Hiển thị ngày và giờ theo định dạng dd-MM-yyyy HH:mm -->
+                                <span>{{ x.ngaytrahangdukien | date:'dd-MM-yyyy' }}</span>
+                            </div>
+                            <div class="info-item" ng-if="x.trangthai>0">
+                                <span><i class="bi bi-clock"></i> Thời gian trả:</span>
+                                <!-- Hiển thị ngày và giờ theo định dạng dd-MM-yyyy HH:mm -->
+                                <span>{{ x.ngaytrahangdukien | date:'dd-MM-yyyy' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span><i class="bi bi-wallet"></i> Tổng tiền:</span>
+                                <span class="fw-bold text-success">{{ x.tongtienhoan | number }} VNĐ</span>
+                            </div>
+                            <div class="info-item">
+                                <span><i class="bi bi-123"></i> Số lượng:</span>
+                                <span>{{x.tongsoluong}}</span>
+                            </div>
+                            <div class="info-item">
+                                <span><i class="bi bi-cash-coin"></i> Phương thức hoàn tiền:</span>
+                                <span>{{x.phuongthuchoantien}}</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="text-end">
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#trahangModal" ng-click="hdtrahang(x.id)">Chi tiết hóa đơn</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
@@ -78,13 +115,26 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
+                            <div class=" row mb-3">
+                                <div class="col">
+                                    <p>Thời gian đặt: {{hoadonbyid.thoigiandathang | date:'dd-MM-yyyy' }}</p>
+                                    <p>Thời gian giao hàng: {{hoadonbyid.ngaygiaothucte | date:'dd-MM-yyyy' }}</p>
+                                    <p>Địa chỉ: {{hoadonbyid.diachiship}}</p>
+                                </div>
+                                <div class="col">
+                                    <p>Tổng tiền hàng: {{hoadonbyid.tongtiensanpham| number}} VNĐ</p>
+                                    <p>Giảm giá: {{hoadonbyid.tonggiamgia| number}} VNĐ</p>
+                                    <p>Thành tiền: {{hoadonbyid.tongtiencantra| number}} VNĐ</p>
+                                </div>
+                            </div>
+                            <hr class="mb-3">
                             <div class="row">
                                 <!-- Lặp qua từng sản phẩm trong hóa đơn -->
                                 <div class="col-md-6 p-3 mb-3 card p-3" ng-repeat="item in DataChitiet">
                                     <div class="row">
                                         <!-- Hình ảnh sản phẩmaa -->
                                         <div class="col-md-3 text-center">
-                                            <img ng-src="{{item.urlHinhanh}}" alt="{{item.tensp}}" class="img-fluid rounded shadow-sm">
+                                            <img src="{{item.urlHinhanh}}" alt="{{item.tensp}}" class="img-fluid rounded shadow-sm">
                                         </div>
                                         <div class="col-md-6">
                                             <h6 class="fw-bold">{{item.tensp}}</h6>
@@ -125,6 +175,57 @@
                     </div>
                 </div>
             </div>
+            <!-- Order Cardsaaaaa -->
+            <div class="modal fade" id="trahangModal" tabindex="-1" aria-labelledby="trahangModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="trahangModalLabel">Chi tiết trả hàng</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class=" row mb-3">
+                            <div class="col">
+                                <p>Tổng tiền hoàn: {{datatrahang.sotienhoan}}</p>
+                            </div>
+                        </div>
+                        <hr class="mb-3">
+                        <div class="row">
+                            <!-- Lặp qua từng sản phẩm trong hóa đơn -->
+                            <div class="col-md-6 p-3 mb-3 card p-3" ng-repeat="item in trahangct">
+                                <div class="row">
+                                    <!-- Hình ảnh sản phẩmaa -->
+                                    <div class="col-md-3 text-center">
+                                        <img ng-src="{{item.urlHinhanh}}" alt="{{item.tensp}}" class="img-fluid rounded shadow-sm">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold">{{item.tensp}}</h6>
+                                        <!-- Hiển thị thuộc tính sản phẩm -->
+                                        <div ng-repeat="thuocTinh in item.thuocTinhSelects" 
+                                            class="badge bg-primary text-white text-center d-inline-block me-2"
+                                            id="select-ttspct-{{thuocTinh.id}}" 
+                                            style="pointer-events: none;">
+                                            {{thuocTinh.tenThuocTinh}}
+                                        </div>
+                                        <p class="text-muted">Số lượng: <span class="fw-bold">{{item.soluong}}</span></p>
+                                    </div>
+                                    <!-- Tổng tiền sản phẩm -->
+                                    <div class="col-md-3 text-end align-self-center">
+                                        <h6 class="text-danger">Tổng tiền hoàn:</h6>
+                                        <p class="fw-bold text-danger">{{item.tongtienhoan | number}} VNĐ</p>
+                                    </div>
+                                    <hr>
+                                    <div class="text-end">
+                                        <a class="btn btn-danger" ng-click="xemChiTiet(item.idsp)">Mua lại</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--gianhf-->
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             <!-- Paaaaagination -->
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
