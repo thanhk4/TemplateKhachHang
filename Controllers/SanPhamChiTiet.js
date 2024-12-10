@@ -37,7 +37,7 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                 
 
                 if ($scope.sanPham.idthuonghieu !== null) {
-                    LoadSanPhamTuongTu($scope.sanPham.idThuongHieu);
+                    LoadSanPhamTuongTu($scope.sanPham.idThuongHieu, sanPhamId);
                 } else {
                     console.warn("Không tìm thấy idThuongHieu trong sản phẩm.");
                 }
@@ -48,21 +48,27 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
             });
     }
 
-    function LoadSanPhamTuongTu(idThuongHieu) {
+    function LoadSanPhamTuongTu(idThuongHieu, idSanPhamHienTai) {
         if (!idThuongHieu) {
             console.warn("idThuongHieu không tồn tại.");
             return;
         }
         SanPhamService.getSanPhamByThuongHieu(idThuongHieu)
             .then(function (data) {
-                $scope.sanPhams = randomizeProducts(data, 4);;
+                // Lọc bỏ sản phẩm hiện tại khỏi danh sách
+                const filteredProducts = data.filter(function (product) {
+                    return product.id !== idSanPhamHienTai; // Loại bỏ sản phẩm hiện tại
+                });
+                
+                // Lấy danh sách sản phẩm tương tự ngẫu nhiên
+                $scope.sanPhams = randomizeProducts(filteredProducts, 4);
                 console.log("Danh sách sản phẩm tương tự:", $scope.sanPhams);
             })
             .catch(function (error) {
                 $scope.errorMessage = "Không thể tải danh sách sản phẩm. Vui lòng thử lại sau.";
                 console.error("Lỗi khi tải sản phẩm tương tự:", error);
             });
-    }
+    }    
     function randomizeProducts(products, maxItems) {
         if (products.length > maxItems) {
             const shuffled = products.sort(() => 0.5 - Math.random()); 
@@ -251,8 +257,11 @@ $scope.updateValidThuocTinhs = function () {
         selectedThuocTinhs.every(selected =>
             spct.thuocTinhs.some(thuocTinh => thuocTinh.tenthuoctinhchitiet === selected)
         )
+        
     );
-
+  
+    console.log("Các sản phẩm chi tiết khớp:", matchingSPCTs);
+    
     // Xác định các thuộc tính hợp lệ từ các sản phẩm chi tiết phù hợp
     const validThuocTinhs = {};
     matchingSPCTs.forEach(spct => {
@@ -276,32 +285,33 @@ $scope.updateValidThuocTinhs = function () {
 };
 
 $scope.onThuocTinhChange = function () {
+    $scope.quantity = 1;
     // Lấy danh sách các thuộc tính đã chọn
     const selectedAttributes = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
 
     // Kiểm tra xem tất cả các thuộc tính đã được chọn chưa
     if (selectedAttributes.length === Object.keys($scope.groupedThuocTinhs).length) {
-        // Nếu tất cả các thuộc tính đã được chọn, cập nhật selectedSPCTs
-        $scope.selectedSPCTs = getSelectedSPCTs(selectedAttributes);
-        $scope.errorMessage = "";  // Xóa thông báo lỗi nếu tất cả thuộc tính đã chọn
+        // Nếu tất cả các thuộc tính đã được chọn, lọc sản phẩm chi tiết tương ứng
+        $scope.selectedSPCTs = $scope.sanPham.sanphamchitiets.filter(spct =>
+            selectedAttributes.every(attribute =>
+                spct.thuocTinhs.some(thuocTinh => thuocTinh.tenthuoctinhchitiet === attribute)
+            )
+        );
+        $scope.errorMessage = ""; // Xóa thông báo lỗi
     } else {
-        // Nếu chưa chọn đủ, không cập nhật selectedSPCTs và hiển thị thông báo lỗi
+        // Nếu chưa chọn đủ thuộc tính
         $scope.selectedSPCTs = [];
         $scope.errorMessage = "Vui lòng chọn tất cả các thuộc tính của sản phẩm.";
     }
+    console.log("Các thuộc tính đã chọn:", selectedAttributes);
+    console.log("Các sản phẩm chi tiết đã chọn:", $scope.selectedSPCTs);
+    
 };
 
 
-function getSelectedSPCTs(selectedAttributes) {
-    return $scope.sanPham.sanphamchitiets.filter(spct => 
-        selectedAttributes.every(attribute => 
-            spct.thuocTinhs.some(thuocTinh => thuocTinh.tenthuoctinhchitiet === attribute)
-        )
-    );
-}
-
 
 $scope.isFormValid = true;  // Biến để kiểm tra tính hợp lệ của form
+
 
 $scope.validateSelection = function () {
     // Kiểm tra xem tất cả các thuộc tính có được chọn chưa
@@ -315,6 +325,8 @@ $scope.validateSelection = function () {
     }
 };
 $scope.initialize = function () {
+
+    $scope.quantity = 1;
     // Kiểm tra và khởi tạo nếu chưa có dữ liệu ban đầu
     $scope.selectedValues = $scope.selectedValues || {}; // Khởi tạo nếu chưa có
     $scope.groupedThuocTinhs = $scope.groupedThuocTinhs || {}; // Khởi tạo nếu chưa có
@@ -326,6 +338,38 @@ $scope.initialize = function () {
 
 
 $scope.initialize();
+$scope.isDisabled = function (tenthuoctinh, tenthuoctinhchitiet) {
+    // Nếu chưa có thuộc tính hợp lệ hoặc đã chọn tất cả các thuộc tính, không vô hiệu hóa bất kỳ giá trị nào
+    if (!$scope.validThuocTinhs || Object.keys($scope.selectedValues).length === Object.keys($scope.groupedThuocTinhs).length) {
+        return false;
+    }
+
+    // Kiểm tra xem thuộc tính cụ thể có nằm trong danh sách thuộc tính hợp lệ không
+    const validValues = $scope.validThuocTinhs[tenthuoctinh];
+    if (!validValues) {
+        return true; // Không có giá trị hợp lệ cho thuộc tính này, vô hiệu hóa
+    }
+
+    // Nếu thuộc tính chi tiết không nằm trong danh sách hợp lệ, vô hiệu hóa
+    return !validValues.includes(tenthuoctinhchitiet);
+};
+$scope.isDisabled = function (key, value) {
+    const selectedAttributes = Object.keys($scope.selectedValues).filter(k => $scope.selectedValues[k]);
+
+    // Không disable nếu chưa chọn thuộc tính nào
+    if (selectedAttributes.length === 0) return false;
+
+    // Kiểm tra nếu giá trị không khớp với SPCT phù hợp
+    const matchingSPCTs = $scope.sanPham.sanphamchitiets.filter(spct =>
+        selectedAttributes.every(selected =>
+            spct.thuocTinhs.some(thuocTinh => thuocTinh.tenthuoctinhchitiet === selected)
+        )
+    );
+
+    return !matchingSPCTs.some(spct =>
+        spct.thuocTinhs.some(thuocTinh => thuocTinh.tenthuoctinhchitiet === value)
+    );
+};
 
 
 

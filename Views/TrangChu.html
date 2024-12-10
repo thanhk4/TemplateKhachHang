@@ -48,11 +48,11 @@
 
                             <span class="badge bg-danger position-absolute top-0 start-0 m-2"
                                 ng-if="sanPham.giaTriGiam >100 && sanPham.giaTriGiam>0 ">
-                                -{{sanPham.giaTriGiam}}đ
+                                -{{sanPham.giaTriGiam| number : 0}}VNĐ
                             </span>
                             <span class="badge bg-danger position-absolute top-0 start-0 m-2"
                                 ng-if=" sanPham.giaTriGiam <=100 && sanPham.giaTriGiam>0 ">
-                                -{{sanPham.giaTriGiam}}%
+                                -{{sanPham.giaTriGiam| number : 0}}%
                             </span>
                             <div class="card-body">
                                 <h5 class="card-title">{{sanPham.tensp}}</h5>
@@ -60,11 +60,11 @@
                                     <p class="card-text me-2"
                                         style="color: gray; text-decoration: line-through; margin-bottom: 0;"
                                         ng-if="sanPham.giaban != sanPham.giasale ">
-                                        {{sanPham.giaban}}đ
+                                        {{sanPham.giaban| number : 0}}VNĐ
                                     </p>
                                     <p class="card-text fw-bold" style="margin-bottom: 0;"
                                         ng-if="sanPham.giaban === sanPham.giasale || sanPham.giaban != sanPham.giasale ">
-                                        {{sanPham.giasale}}đ</p>
+                                        {{sanPham.giasale| number : 0}}VNĐ</p>
                                     <span class="ms-auto">
                                         <span ng-if="sanPham.soluong > 0">Chi tiết <i
                                                 class="bi bi-chevron-right"></i></span>
@@ -107,11 +107,11 @@
 
                             <span class="badge bg-danger position-absolute top-0 start-0 m-2"
                                 ng-if="sanPham.giaTriGiam >100 && sanPham.giaTriGiam>0 ">
-                                -{{sanPham.giaTriGiam}}đ
+                                -{{sanPham.giaTriGiam| number : 0}}VNĐ
                             </span>
                             <span class="badge bg-danger position-absolute top-0 start-0 m-2"
                                 ng-if=" sanPham.giaTriGiam <=100 && sanPham.giaTriGiam>0 ">
-                                -{{sanPham.giaTriGiam}}%
+                                -{{sanPham.giaTriGiam| number : 0}}%
                             </span>
                             <div class="card-body">
                                 <h5 class="card-title">{{sanPham.tensp}}</h5>
@@ -119,11 +119,11 @@
                                     <p class="card-text me-2"
                                         style="color: gray; text-decoration: line-through; margin-bottom: 0;"
                                         ng-if="sanPham.giaban != sanPham.giasale ">
-                                        {{sanPham.giaban}}đ
+                                        {{sanPham.giaban| number : 0}}VNĐ
                                     </p>
                                     <p class="card-text fw-bold" style="margin-bottom: 0;"
                                         ng-if="sanPham.giaban === sanPham.giasale || sanPham.giaban != sanPham.giasale ">
-                                        {{sanPham.giasale}}đ</p>
+                                        {{sanPham.giasale| number : 0}}VNĐ</p>
                                     <span class="ms-auto">
                                         <span ng-if="sanPham.soluong > 0">Chi tiết <i
                                                 class="bi bi-chevron-right"></i></span>

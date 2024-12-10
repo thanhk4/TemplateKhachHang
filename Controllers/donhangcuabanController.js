@@ -354,7 +354,39 @@ $scope.previewImage = function (files) {
         reader.readAsDataURL(file);
     }
 };
+let datahinhanhbase64 = ""; // Biến toàn cục để lưu dữ liệu Base64
 
+    function convertImageToBase64(inputElement, callback) {
+        if (inputElement.files && inputElement.files[0]) {
+            const file = inputElement.files[0];
+            const reader = new FileReader();
+
+            reader.onload = function (e) {
+                // Kết quả Base64 đầy đủ
+                const base64Data = e.target.result; 
+                callback(base64Data); // Truyền dữ liệu qua callback
+            };
+
+            reader.onerror = function (error) {
+                console.error("Có lỗi xảy ra khi đọc file: ", error);
+            };
+
+            // Đọc file dưới dạng Data URL (base64)
+            reader.readAsDataURL(file);
+        } else {
+            console.error("Không có file nào được chọn.");
+        }
+    }
+
+    // Hàm xử lý Base64 và gán vào biến toàn cục
+    function handleBase64Data(base64Data) {
+        datahinhanhbase64 = base64Data; // Gán Base64 vào biến toàn cục
+    }
+
+    // Sử dụng
+    document.getElementById('imageUpload').addEventListener('change', function () {
+        convertImageToBase64(this, handleBase64Data);
+    });
 // Submit Rating
 $scope.submitRating = function () {
     if (!$scope.reviewText || !$scope.reviewText.trim()) {
@@ -380,7 +412,7 @@ $scope.submitRating = function () {
         ).then(response => {
             alert("Đánh giá đã được cập nhật!");
             $scope.selectedProduct.existingReview.noidungdanhgia = formData.reviewText;
-            $scope.selectedProduct.existingReview.imageBase64 = formData.imageBase64;
+            $scope.selectedProduct.existingReview.imageBase64 = datahinhanhbase64;
         }).catch(error => {
             console.error("Lỗi khi cập nhật đánh giá:", error);
         });
@@ -396,7 +428,7 @@ $scope.submitRating = function () {
             $scope.selectedProduct.existingReview = {
                 id: response.data.id,
                 noidungdanhgia: formData.reviewText,
-                imageBase64: formData.imageBase64
+                imageBase64: datahinhanhbase64
             };
         }).catch(error => {
             console.error("Lỗi khi thêm đánh giá:", error);
