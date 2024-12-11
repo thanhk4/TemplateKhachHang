@@ -51,16 +51,40 @@ app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $loca
     }
 
     // Hàm cập nhật dữ liệu vào các phần tử HTML
-    function updateDataToHTML(khachHangData) {
+    async function updateDataToHTML(khachHangData) {
         const defaultText = "Chưa cập nhật";
+        const datarank = await fetchRank(khachHangData.idrank)
         // Cập nhật các giá trị cho các trường input
         document.getElementById("hovaten").innerText = khachHangData.ten || defaultText;
         document.getElementById("sdt").innerText = khachHangData.sdt || defaultText;
         document.getElementById("diachi").innerText = khachHangData.diachi || defaultText;
         document.getElementById("ngaysinh").innerText = formatDate(khachHangData.ngaysinh) || defaultText;
         document.getElementById("email").innerText = khachHangData.email || defaultText;
-        document.getElementById("rank").innerText = khachHangData.rank?.tenrank || defaultText;
+        document.getElementById("rank").innerText = datarank.tenRank || defaultText;
         document.getElementById("diemsudung").innerText = khachHangData.diemsudung || "0";
+    }
+
+    // Hàm gọi API để lấy sản phẩm chi tiết theo idspct
+    async function fetchRank(idrank) {
+        try {
+            // Kiểm tra nếu idspct có giá trị hợp lệ
+            if (!idrank) {
+                console.error("idrank không hợp lệ");
+                return null;
+            }
+
+            // Gọi API với idspct
+            const response = await fetch(`https://localhost:7297/api/Rank/${idrank}`);
+
+            if (!response.ok) {
+                throw new Error(`Lỗi API: ${response.status}`);
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error("Lỗi khi Rank:", error);
+            return null; // Trả về null nếu có lỗi
+        }
     }
 
     // Hàm cập nhật dữ liệu vào các trường input khi mở modal
