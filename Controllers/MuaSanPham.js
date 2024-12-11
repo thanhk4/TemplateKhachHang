@@ -1137,7 +1137,8 @@ async function taoLinkThanhToan(idhd) {
             // Bước 2: Lấy danh sách id giảm giá từ API giamgia_rank
             const responseDiscountIds = await fetch(`https://localhost:7297/api/giamgia_rank/rank/${idRank}`);
             if (!responseDiscountIds.ok) {
-                throw new Error(`Lỗi khi lấy danh sách idGiamGia: ${responseDiscountIds.status}`);
+                document.getElementById('voucher-list').innerHTML = '<p>Rank chưa có voucher.</p>';
+                return; // Thoát sớm nếu không có dữ liệu
             }
             const discountIds = await responseDiscountIds.json(); // Giả định trả về [1, 2, 3, ...]
     

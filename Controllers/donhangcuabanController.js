@@ -356,37 +356,47 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         const myModal = new bootstrap.Modal(document.getElementById('ratingModal'), { keyboard: false });
         myModal.show();
     };
-    $scope.datahinhanhbase64 = ""; // Biến lưu dữ liệu Base64 trong $scope
+    
+    let datahinhanhbase64 = ""; // Biến toàn cục để lưu dữ liệu Base64
 
-    // Hàm chuyển đổi ảnh sang Base64
-    $scope.convertImageToBase64 = function (inputElement) {
+    function convertImageToBase64(inputElement, callback) {
         if (inputElement.files && inputElement.files[0]) {
             const file = inputElement.files[0];
             const reader = new FileReader();
 
             reader.onload = function (e) {
-                $scope.$apply(function () {
-                    $scope.datahinhanhbase64 = e.target.result; // Lưu Base64 vào $scope
-                    $scope.imagePreview = e.target.result; // Dùng để hiển thị preview (nếu cần)
-                });
+                // Kết quả Base64 đầy đủ
+                const base64Data = e.target.result; 
+                callback(base64Data); // Truyền dữ liệu qua callback
             };
 
             reader.onerror = function (error) {
                 console.error("Có lỗi xảy ra khi đọc file: ", error);
             };
 
+            // Đọc file dưới dạng Data URL (base64)
             reader.readAsDataURL(file);
         } else {
             console.error("Không có file nào được chọn.");
         }
-    };
+    }
+
+    // Hàm xử lý Base64 và gán vào biến toàn cục
+    function handleBase64Data(base64Data) {
+        datahinhanhbase64 = base64Data; // Gán Base64 vào biến toàn cục
+    }
+
+    // Sử dụng
+    document.getElementById('imageUpload').addEventListener('change', function () {
+        convertImageToBase64(this, handleBase64Data);
+    });    
 
     $scope.submitRating = function () {
         const formData = {
             reviewText: $scope.reviewText,
             customerId: $scope.userInfo.id,
             orderDetailId: $scope.selectedProduct.id,
-            imageBase64: $scope.datahinhanhbase64 // Sử dụng Base64 ảnh
+            imageBase64: datahinhanhbase64 // Sử dụng Base64 ảnh
         };
 
         if ($scope.selectedProduct.existingReview) {
