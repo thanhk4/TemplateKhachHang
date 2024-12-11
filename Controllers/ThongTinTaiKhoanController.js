@@ -37,7 +37,13 @@ app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $loca
 
             const khachHangData = await response.json();
             if (!khachHangData) throw new Error("Dữ liệu khách hàng không hợp lệ.");
-
+            if (khachHangData.idrank) {
+                const rankResponse = await fetch(`https://localhost:7297/api/Rank/${khachHangData.idrank}`);
+                if (rankResponse.ok) {
+                    const rankData = await rankResponse.json();
+                    khachHangData.rank = rankData;
+                }
+            }
             return khachHangData;
         } catch (error) {
             console.error("Lỗi khi lấy thông tin khách hàng:", error);
@@ -53,6 +59,8 @@ app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $loca
         document.getElementById("diachi").innerText = khachHangData.diachi || defaultText;
         document.getElementById("ngaysinh").innerText = formatDate(khachHangData.ngaysinh) || defaultText;
         document.getElementById("email").innerText = khachHangData.email || defaultText;
+        document.getElementById("rank").innerText = khachHangData.rank?.tenrank || defaultText;
+        document.getElementById("diemsudung").innerText = khachHangData.diemsudung || "0";
     }
 
     // Hàm cập nhật dữ liệu vào các trường input khi mở modal
