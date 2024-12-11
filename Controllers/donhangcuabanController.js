@@ -19,8 +19,6 @@ app.service('OrderHistoryService', function ($http) {
     this.getRatingByOrderDetailId = function (orderDetailId) {
         return $http.get('https://localhost:7297/api/Danhgias/byIDhdct/' + orderDetailId);
     };
-    // Tạo đánh giá mới
-    // Tạo đánh giá mới
 // Tạo đánh giá mới
 this.createRating = function (reviewText, customerId, orderDetailId, imageBase64) {
     const data = {
@@ -48,20 +46,7 @@ this.updateRating = function (ratingId, reviewText, customerId, orderDetailId, i
     return $http.put('https://localhost:7297/api/Danhgias/' + ratingId, data);
 };
 
-
-    // Sửa đánh giá
-    this.updateRating = function (ratingId, reviewText, customerId, orderDetailId) {
-        var data = {
-            id: ratingId,
-            idkh: customerId,
-            trangthai: 0,  // Trạng thái vẫn là 0 khi sửa
-            noidungdanhgia: reviewText,
-            ngaydanhgia: new Date().toISOString(),
-            idhdct: orderDetailId,
-            urlHinhanh: "string"
-        };
-        return $http.put('https://localhost:7297/api/Danhgias/' + ratingId, data);
-    };
+   
     // Xóa đánh giá
     this.deleteRating = function (ratingId) {
         return $http.delete('https://localhost:7297/api/Danhgias/' + ratingId);
@@ -288,7 +273,13 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
 
                         // Lấy đánh giá sản phẩm
                         const ratingResponse = await OrderHistoryService.getRatingByOrderDetailId(element.id);
+
                         element.existingReview = ratingResponse.data;
+                        if (element.existingReview && element.existingReview.urlHinhanh) {
+                            element.existingReview.imageSrc = `data:image/*;base64,${element.existingReview.urlHinhanh}`;
+                        }
+
+
                     } catch (error) {
                         console.error("Lỗi khi tải đánh giá hoặc thuộc tính:", error);
                     }
@@ -340,101 +331,71 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         myModal.show();
     };
     
-   // Preview Image and Convert to Base64
-$scope.previewImage = function (files) {
-    const file = files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            $scope.$apply(() => {
-                $scope.imagePreview = e.target.result; // URL Base64
-                $scope.imageBase64 = e.target.result.split(',')[1]; // Chỉ lấy phần Base64
-            });
-        };
-        reader.readAsDataURL(file);
-    }
-};
-let datahinhanhbase64 = ""; // Biến toàn cục để lưu dữ liệu Base64
+    $scope.datahinhanhbase64 = ""; // Biến lưu dữ liệu Base64 trong $scope
 
-    function convertImageToBase64(inputElement, callback) {
+    // Hàm chuyển đổi ảnh sang Base64
+    $scope.convertImageToBase64 = function (inputElement) {
         if (inputElement.files && inputElement.files[0]) {
             const file = inputElement.files[0];
             const reader = new FileReader();
-
+    
             reader.onload = function (e) {
-                // Kết quả Base64 đầy đủ
-                const base64Data = e.target.result; 
-                callback(base64Data); // Truyền dữ liệu qua callback
+                $scope.$apply(function () {
+                    $scope.datahinhanhbase64 = e.target.result; // Lưu Base64 vào $scope
+                    $scope.imagePreview = e.target.result; // Dùng để hiển thị preview (nếu cần)
+                });
             };
-
+    
             reader.onerror = function (error) {
                 console.error("Có lỗi xảy ra khi đọc file: ", error);
             };
-
-            // Đọc file dưới dạng Data URL (base64)
+    
             reader.readAsDataURL(file);
         } else {
             console.error("Không có file nào được chọn.");
         }
-    }
-
-    // Hàm xử lý Base64 và gán vào biến toàn cục
-    function handleBase64Data(base64Data) {
-        datahinhanhbase64 = base64Data; // Gán Base64 vào biến toàn cục
-    }
-
-    // Sử dụng
-    document.getElementById('imageUpload').addEventListener('change', function () {
-        convertImageToBase64(this, handleBase64Data);
-    });
-// Submit Rating
-$scope.submitRating = function () {
-    if (!$scope.reviewText || !$scope.reviewText.trim()) {
-        alert("Vui lòng nhập nhận xét.");
-        return;
-    }
-
-    const formData = {
-        reviewText: $scope.reviewText,
-        customerId: $scope.userInfo.id,
-        orderDetailId: $scope.selectedProduct.id,
-        imageBase64: $scope.imageBase64 // Gửi ảnh dưới dạng Base64
     };
-
-    if ($scope.selectedProduct.existingReview) {
-        // Update Rating
-        OrderHistoryService.updateRating(
-            $scope.selectedProduct.existingReview.id,
-            formData.reviewText,
-            formData.customerId,
-            formData.orderDetailId,
-            formData.imageBase64
-        ).then(response => {
-            alert("Đánh giá đã được cập nhật!");
-            $scope.selectedProduct.existingReview.noidungdanhgia = formData.reviewText;
-            $scope.selectedProduct.existingReview.imageBase64 = datahinhanhbase64;
-        }).catch(error => {
-            console.error("Lỗi khi cập nhật đánh giá:", error);
-        });
-    } else {
-        // Create Rating
-        OrderHistoryService.createRating(
-            formData.reviewText,
-            formData.customerId,
-            formData.orderDetailId,
-            formData.imageBase64
-        ).then(response => {
-            alert("Đánh giá đã được thêm!");
-            $scope.selectedProduct.existingReview = {
-                id: response.data.id,
-                noidungdanhgia: formData.reviewText,
-                imageBase64: datahinhanhbase64
-            };
-        }).catch(error => {
-            console.error("Lỗi khi thêm đánh giá:", error);
-        });
-    }
-};
+    
+    
+    
+    $scope.submitRating = function () {
+        const formData = {
+            reviewText: $scope.reviewText,
+            customerId: $scope.userInfo.id,
+            orderDetailId: $scope.selectedProduct.id,
+            imageBase64: $scope.datahinhanhbase64 // Sử dụng Base64 ảnh
+        };
+    
+        if ($scope.selectedProduct.existingReview) {
+            OrderHistoryService.updateRating(
+                $scope.selectedProduct.existingReview.id,
+                formData.reviewText,
+                formData.customerId,
+                formData.orderDetailId,
+                formData.imageBase64
+            ).then(response => {
+                alert("Đánh giá đã được cập nhật!");
+                const modal = bootstrap.Modal.getInstance(document.getElementById('ratingModal'));
+                modal.hide();
+            }).catch(error => {
+                console.error("Lỗi khi cập nhật đánh giá:", error);
+            });
+        } else {
+            OrderHistoryService.createRating(
+                formData.reviewText,
+                formData.customerId,
+                formData.orderDetailId,
+                formData.imageBase64
+            ).then(response => {
+                alert("Đánh giá đã được thêm!");
+                const modal = bootstrap.Modal.getInstance(document.getElementById('ratingModal'));
+                modal.hide();
+            }).catch(error => {
+                console.error("Lỗi khi thêm đánh giá:", error);
+            });
+        }
+    };
+    
 
     $scope.deleteRating = function (product) {
         if (!product.existingReview) {

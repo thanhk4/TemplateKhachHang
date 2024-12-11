@@ -48,4 +48,8 @@
     border-color: #dfe1e3;
     color: #595b5e;
   }
-  
+  .disabled-link {
+    pointer-events: none; /* Vô hiệu hóa click */
+    opacity: 0.6; /* Làm mờ giao diện */
+    cursor: not-allowed;
+}
