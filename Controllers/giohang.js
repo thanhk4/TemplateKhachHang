@@ -234,7 +234,7 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
             const datagiohang = await datagiohanglist.json();
 
             // Gửi yêu cầu PUT để cập nhật số lượng sản phẩm
-            const response = await fetch(`https://localhost:7297/api/Giohangchitiet/${idgh}`, {
+            const response = await fetch(`https://localhost:7297/api/Giohangchitiet/sanpham/${idgh}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
