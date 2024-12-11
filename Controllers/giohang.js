@@ -744,7 +744,7 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
                     $location.path(`/hoadongiohang/${selectedIds.join(',')}`); // Chuyển hướng với danh sách ID hợp lệ
                 });
                 $scope.isLoading = false; // Kết thúc tải (nếu cần)
-            }, 3000);
+            }, 1000);
     
         } catch (error) {
             console.error("Lỗi khi kiểm tra số lượng sản phẩm:", error);
