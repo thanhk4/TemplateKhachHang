@@ -13,8 +13,7 @@
                 <a href="#!thongtintaikhoan" class="list-group-item list-group-item-action">
                     <i class="bi bi-person me-2"></i> Thông tin tài khoản
                 </a>
-                <a href="#!donhangcuaban" class="list-group-item list-group-item-action active"
-                    style="background-color: #0d6efd !important; border-color: #0d6efd;">
+                <a href="#!donhangcuaban" class="list-group-item list-group-item-action active"style="background-color: #0d6efd !important; border-color: #0d6efd;">
                     <i class="bi bi-box me-2"></i> Đơn hàng của bạn
                 </a>
                 <a href="#!diachicuaban" class="list-group-item list-group-item-action">
@@ -33,27 +32,15 @@
         <div class="col-md-9 p-4">
             <!-- Filter uttons -->
             <div class="mb-4 d-flex justify-content-center gap-2">
-                <button ng-click="filterOrders(-1)" class="btn btn-outline-primary"
-                    ng-class="{active: filterStatus === -1}">Tất cả</button>
-                <button ng-click="filterOrders(0)" class="btn btn-outline-primary"
-                    ng-class="{active: filterStatus === 0}">Chờ xác nhận</button>
-                <button ng-click="filterOrders(1)" class="btn btn-outline-primary"
-                    ng-class="{active: filterStatus === 1}">Đã xác nhận</button>
-                <button ng-click="filterOrders(2)" class="btn btn-outline-primary"
-                    ng-class="{active: filterStatus === 2}">Đang giao</button>
-                <button ng-click="filterOrders(3)" class="btn btn-outline-primary"
-                    ng-class="{active: filterStatus === 3}">Thành công</button>
-                <button ng-click="filterOrders(4)" class="btn btn-outline-primary"
-                    ng-class="{active: filterStatus === 4}">Đã hủy</button>
-                <button ng-click="filterOrders(7)" class="btn btn-outline-primary"
-                    ng-class="{active: filterStatus === 7}">Chờ trả hàng</button>
-                <button ng-click="filterOrders(5)" class="btn btn-outline-primary"
-                    ng-class="{active: filterStatus === 5}">Trả hàng thành công</button>
-                <button ng-click="filterOrders(6)" class="btn btn-outline-primary"
-                    ng-class="{active: filterStatus === 6}">Trả hàng không thành công</button>
+                <button ng-click="filterOrders(-1)" class="btn btn-outline-primary" ng-class="{active: filterStatus === -1}">Tất cả</button>
+                <button ng-click="filterOrders(0)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 0}">Chờ xác nhận</button>
+                <button ng-click="filterOrders(1)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 1}">Đã xác nhận</button>
+                <button ng-click="filterOrders(2)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 2}">Đang giao</button>
+                <button ng-click="filterOrders(3)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 3}">Thành công</button>
+                <button ng-click="filterOrders(4)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 4}">Đã hủy</button>
+                <button ng-click="filterOrders(5)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 5}">Trả hàng/Hoàn tiền</button>
             </div>
-            <!-- Order Cardsaaaaa -->
-            <div class="row">
+            <div class="row" ng-show="thediv<5">
                 <div class="col-md-6 mb-4" ng-repeat="x in paginatedOrders[currentPage]">
                     <div class="order-card p-4 shadow-sm rounded">
                         <p class="order-status text-end text-primary">{{ orderStatuses[x.trangthai] }}</p>
@@ -75,18 +62,52 @@
                         </div>
                         <hr>
                         <div class="text-end">
-                            <button class="btn btn-outline-primary" ng-if="x.trangthai==0||x.trangthai==1"
-                                ng-click="huydonhang(x.id)">Hủy đơn hàng</button>
-                            <a class="btn btn-outline-secondary" ng-if="x.trangthai == 3" ng-click="trahang(x.id)">Trả
-                                hàng</a>
-                            <button class="btn btn-outline-primary" data-bs-toggle="modal"
-                                data-bs-target="#exampleModal" ng-click="chitiethd(x.id)">Chi tiết hóa đơn</button>
+                            <button class="btn btn-outline-primary" ng-if="x.trangthai==0||x.trangthai==1" ng-click="huydonhang(x.id)">Hủy đơn hàng</button>
+                            <a class="btn btn-outline-secondary" ng-if="x.trangthai == 3" ng-click="trahang(x.id)">Trả hàng</a>
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" ng-click="chitiethd(x.id)">Chi tiết hóa đơn</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
-                aria-hidden="true">
+            <div class="row" ng-show="thediv==5">
+                <div class="col-md-6 mb-4" ng-repeat="x in ViewHoaDonTra">
+                    <div class="order-card p-4 shadow-sm rounded">
+                        <p class="order-status text-end text-primary" ng-if="x.trangthai==0">Đơn hàng chờ trả hàng </p>
+                        <p class="order-status text-end text-primary" ng-if="x.trangthai==1">Trả hàng không thành công</p>
+                        <p class="order-status text-end text-primary" ng-if="x.trangthai==2">Trả hàng thành công</p>
+                        <hr>
+                        <div>
+                            <div class="info-item" ng-if="x.trangthai==0">
+                                <span><i class="bi bi-clock"></i> Thời gian tạo hóa đơn:</span>
+                                <!-- Hiển thị ngày và giờ theo định dạng dd-MM-yyyy HH:mm -->
+                                <span>{{ x.ngaytrahangdukien | date:'dd-MM-yyyy' }}</span>
+                            </div>
+                            <div class="info-item" ng-if="x.trangthai>0">
+                                <span><i class="bi bi-clock"></i> Thời gian trả:</span>
+                                <!-- Hiển thị ngày và giờ theo định dạng dd-MM-yyyy HH:mm -->
+                                <span>{{ x.ngaytrahangdukien | date:'dd-MM-yyyy' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span><i class="bi bi-wallet"></i> Tổng tiền:</span>
+                                <span class="fw-bold text-success">{{ x.tongtienhoan | number }} VNĐ</span>
+                            </div>
+                            <div class="info-item">
+                                <span><i class="bi bi-123"></i> Số lượng:</span>
+                                <span>{{x.tongsoluong}}</span>
+                            </div>
+                            <div class="info-item">
+                                <span><i class="bi bi-cash-coin"></i> Phương thức hoàn tiền:</span>
+                                <span>{{x.phuongthuchoantien}}</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="text-end">
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#trahangModal" ng-click="hdtrahang(x.id)">Chi tiết hóa đơn</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog modal-xl">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -94,51 +115,54 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
+                            <div class=" row mb-3">
+                                <div class="col">
+                                    <p>Thời gian đặt: {{hoadonbyid.thoigiandathang | date:'dd-MM-yyyy' }}</p>
+                                    <p>Thời gian giao hàng: {{hoadonbyid.ngaygiaothucte | date:'dd-MM-yyyy' }}</p>
+                                    <p>Địa chỉ: {{hoadonbyid.diachiship}}</p>
+                                </div>
+                                <div class="col">
+                                    <p>Tổng tiền hàng: {{hoadonbyid.tongtiensanpham| number}} VNĐ</p>
+                                    <p>Giảm giá: {{hoadonbyid.tonggiamgia| number}} VNĐ</p>
+                                    <p>Thành tiền: {{hoadonbyid.tongtiencantra| number}} VNĐ</p>
+                                </div>
+                            </div>
+                            <hr class="mb-3">
                             <div class="row">
                                 <!-- Lặp qua từng sản phẩm trong hóa đơn -->
                                 <div class="col-md-6 p-3 mb-3 card p-3" ng-repeat="item in DataChitiet">
                                     <div class="row">
                                         <!-- Hình ảnh sản phẩmaa -->
                                         <div class="col-md-3 text-center">
-                                            <img ng-src="{{item.urlHinhanh}}" alt="{{item.tensp}}"
-                                                class="img-fluid rounded shadow-sm">
+                                            <img src="{{item.urlHinhanh}}" alt="{{item.tensp}}" class="img-fluid rounded shadow-sm">
                                         </div>
                                         <div class="col-md-6">
                                             <h6 class="fw-bold">{{item.tensp}}</h6>
                                             <!-- Hiển thị thuộc tính sản phẩm -->
-                                            <div ng-repeat="thuocTinh in item.thuocTinhSelects"
+                                            <div ng-repeat="thuocTinh in item.thuocTinhSelects" 
                                                 class="badge bg-primary text-white text-center d-inline-block me-2"
-                                                id="select-ttspct-{{thuocTinh.id}}" style="pointer-events: none;">
+                                                id="select-ttspct-{{thuocTinh.id}}" 
+                                                style="pointer-events: none;">
                                                 {{thuocTinh.tenThuocTinh}}
                                             </div>
-                                            <p class="text-muted">Số lượng: <span
-                                                    class="fw-bold">{{item.soluong}}</span></p>
-                                            <p class="text-muted">Giá sản phẩm: <span class="fw-bold">{{item.giasp |
-                                                    number}} VNĐ</span></p>
-                                            <p ng-if="item.giamgia > 0" class="text-success">Giảm giá: {{item.giamgia |
-                                                number}} VNĐ</p>
+                                            <p class="text-muted">Số lượng: <span class="fw-bold">{{item.soluong}}</span></p>
+                                            <p class="text-muted">Giá sản phẩm: <span class="fw-bold">{{item.giasp | number}} VNĐ</span></p>
+                                            <p ng-if="item.giamgia > 0" class="text-success">Giảm giá: {{item.giamgia | number}} VNĐ</p>
                                         </div>
                                         <!-- Tổng tiền sản phẩm -->
                                         <div class="col-md-3 text-end align-self-center">
                                             <h6 class="text-danger">Thành tiền:</h6>
-                                            <p class="fw-bold text-danger">{{(item.giasp * item.soluong - item.giamgia)
-                                                | number}} VNĐ</p>
+                                            <p class="fw-bold text-danger">{{(item.giasp * item.soluong - item.giamgia) | number}} VNĐ</p>
                                         </div>
                                         <hr ng-if="item.trangthaihd!=0">
                                         <div class="text-end" ng-if="item.trangthaihd!=0">
-                                            <a class="btn btn-danger" ng-click="xemChiTiet(item.idsp)"
-                                                ng-if="item.trangthaihd==3||item.trangthaihd==4||item.trangthaihd==5">Mua
-                                                lại</a>
+                                            <a class="btn btn-danger" ng-click="xemChiTiet(item.idsp)" ng-if="item.trangthaihd==3||item.trangthaihd==4||item.trangthaihd==5">Mua lại</a>
                                             <div>
-                                                <button class="btn btn-outline-primary mt-3"
-                                                    ng-if="!item.existingReview && item.trangthaihd==3"
-                                                    ng-click="openRatingModal(item)">Thêm đánh giá</button>
+                                                <button class="btn btn-outline-primary mt-3" ng-if="!item.existingReview && item.trangthaihd==3"  ng-click="openRatingModal(item)">Thêm đánh giá</button>
                                             </div>
                                             <div ng-if="item.existingReview" class="mt-3">
-                                                <button class="btn btn-outline-info" ng-if="item.trangthaihd==3"
-                                                    ng-click="openRatingModal(item)">Sửa đánh giá</button>
-                                                <button class="btn btn-outline-danger" ng-if="item.trangthaihd==3"
-                                                    ng-click="deleteRating(item)">
+                                                <button class="btn btn-outline-info" ng-if="item.trangthaihd==3" ng-click="openRatingModal(item)">Sửa đánh giá</button>
+                                                <button class="btn btn-outline-danger" ng-if="item.trangthaihd==3" ng-click="deleteRating(item)">
                                                     Xóa đánh giá
                                                 </button>
                                             </div>
@@ -151,14 +175,64 @@
                     </div>
                 </div>
             </div>
+            <!-- Order Cardsaaaaa -->
+            <div class="modal fade" id="trahangModal" tabindex="-1" aria-labelledby="trahangModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-xl">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="trahangModalLabel">Chi tiết trả hàng</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class=" row mb-3">
+                            <div class="col">
+                                <p>Tổng tiền hoàn: {{datatrahang.sotienhoan}}</p>
+                            </div>
+                        </div>
+                        <hr class="mb-3">
+                        <div class="row">
+                            <!-- Lặp qua từng sản phẩm trong hóa đơn -->
+                            <div class="col-md-6 p-3 mb-3 card p-3" ng-repeat="item in trahangct">
+                                <div class="row">
+                                    <!-- Hình ảnh sản phẩmaa -->
+                                    <div class="col-md-3 text-center">
+                                        <img ng-src="{{item.urlHinhanh}}" alt="{{item.tensp}}" class="img-fluid rounded shadow-sm">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <h6 class="fw-bold">{{item.tensp}}</h6>
+                                        <!-- Hiển thị thuộc tính sản phẩm -->
+                                        <div ng-repeat="thuocTinh in item.thuocTinhSelects" 
+                                            class="badge bg-primary text-white text-center d-inline-block me-2"
+                                            id="select-ttspct-{{thuocTinh.id}}" 
+                                            style="pointer-events: none;">
+                                            {{thuocTinh.tenThuocTinh}}
+                                        </div>
+                                        <p class="text-muted">Số lượng: <span class="fw-bold">{{item.soluong}}</span></p>
+                                    </div>
+                                    <!-- Tổng tiền sản phẩm -->
+                                    <div class="col-md-3 text-end align-self-center">
+                                        <h6 class="text-danger">Tổng tiền hoàn:</h6>
+                                        <p class="fw-bold text-danger">{{item.tongtienhoan | number}} VNĐ</p>
+                                    </div>
+                                    <hr>
+                                    <div class="text-end">
+                                        <a class="btn btn-danger" ng-click="xemChiTiet(item.idsp)">Mua lại</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--gianhf-->
+                        </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
             <!-- Paaaaagination -->
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
                     <li class="page-item" ng-class="{disabled: currentPage === 0}">
                         <a class="page-link" ng-click="goToPage(currentPage - 1)">Trước</a>
                     </li>
-                    <li class="page-item" ng-repeat="page in paginatedOrders"
-                        ng-class="{active: $index === currentPage}">
+                    <li class="page-item" ng-repeat="page in paginatedOrders" ng-class="{active: $index === currentPage}">
                         <a class="page-link" ng-click="goToPage($index)">{{$index + 1}}</a>
                     </li>
                     <li class="page-item" ng-class="{disabled: currentPage === paginatedOrders.length - 1}">
@@ -167,8 +241,7 @@
                 </ul>
             </nav>
 
-            <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel"
-                aria-hidden="true">
+            <div class="modal fade" id="ratingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -179,27 +252,26 @@
                             <form ng-submit="submitRating(rating, reviewText)">
                                 <div class="mb-3">
                                     <label for="reviewText" class="form-label">Nhận xét</label>
-                                    <textarea class="form-control" id="reviewText" ng-model="reviewText" rows="3"
-                                        required></textarea>
+                                    <textarea class="form-control" id="reviewText" ng-model="reviewText" rows="3" required></textarea>
                                 </div>
-                                <div class="mb-3" ng-if="existingReview && existingReview.imageSrc">
-                                    <label class="form-label">Hình ảnh đã lưu</label>
-                                    <img ng-src="{{existingReview.imageSrc}}" alt="Saved Image" class="img-thumbnail" style="max-width: 100%; height: auto;">
-                                </div>
-
+                        
                                 <!-- Image upload section -->
                                 <div class="mb-3">
                                     <label for="imageUpload" class="form-label">Chọn ảnh</label>
-                                    <input type="file" class="form-control" id="imageUpload" ng-model="imageFile"
-                                        file-model="imageFile" accept="image/*" ng-change="previewImage()" />
+                                    <input type="file" class="form-control" id="imageUpload" ng-model="imageFile" file-model="imageFile" accept="image/*" ng-change="previewImage()" />
                                 </div>
-
+                        
+                                <!-- Preview the selected image -->
+                                <div ng-if="imagePreview">
+                                    <label class="form-label">Hình ảnh đã chọn</label>
+                                    <img ng-src="{{imagePreview}}" alt="Image Preview" class="img-thumbnail" style="max-width: 100%; height: auto;">
+                                </div>
+                        
                                 <button type="submit" class="btn btn-primary">Gửi đánh giá</button>
-                                <button type="button" class="btn btn-danger" ng-if="existingReview"
-                                    ng-click="deleteRating()">Xóa đánh giá</button>
+                                <button type="button" class="btn btn-danger" ng-if="existingReview" ng-click="deleteRating()">Xóa đánh giá</button>
                             </form>
                         </div>
-
+                        
                     </div>
                 </div>
             </div>
@@ -219,48 +291,63 @@
                         <!-- Trường Ngân hàng -->
                         <div class="col">
                             <label for="bank" class="form-label">Ngân hàng</label>
-                            <select class="form-select" aria-label="Ngân hàng" ng-model="nganhang" name="bank" required>
+                            <select 
+                                class="form-select" 
+                                aria-label="Ngân hàng" 
+                                ng-model="nganhang" 
+                                name="bank" 
+                                required>
                                 <option value="" selected disabled>Chọn ngân hàng</option>
                                 <option ng-repeat="bank in banks.data | orderBy:'shortName'" value="{{bank.shortName}}">
                                     {{bank.name}} ({{bank.shortName}})
                                 </option>
                             </select>
                             <!-- Hiển thị lỗi nếu người dùng không chọn ngân hàng -->
-                            <span class="text-danger" ng-show="formHuy.bank.$touched && formHuy.bank.$error.required">
+                            <span class="text-danger" 
+                                  ng-show="formHuy.bank.$touched && formHuy.bank.$error.required">
                                 Vui lòng chọn ngân hàng.
                             </span>
                         </div>
-
+                
                         <!-- Trường Số tài khoản -->
                         <div class="col">
                             <label for="accountNumber" class="form-label">Số tài khoản/Số thẻ visa</label>
-                            <input type="text" class="form-control" ng-model="stk" name="accountNumber" required>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                ng-model="stk" 
+                                name="accountNumber" 
+                                required >
                             <!-- Hiển thị lỗi nếu người dùng không nhập đúng định dạng -->
-                            <span class="text-danger"
-                                ng-show="formHuy.accountNumber.$touched && formHuy.accountNumber.$error.required">
+                            <span class="text-danger" 
+                                  ng-show="formHuy.accountNumber.$touched && formHuy.accountNumber.$error.required">
                                 Vui lòng nhập số tài khoản/số thẻ visa.
                             </span>
                         </div>
-
+                
                         <!-- Trường Tên người hưởng thụ -->
                         <div class="col">
                             <label for="beneficiaryName" class="form-label">Tên người hưởng thụ</label>
-                            <input type="text" class="form-control" ng-model="tennguoihuongthu" name="beneficiaryName"
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                ng-model="tennguoihuongthu" 
+                                name="beneficiaryName" 
                                 required>
                             <!-- Hiển thị lỗi nếu người dùng không nhập tên -->
-                            <span class="text-danger"
-                                ng-show="formHuy.beneficiaryName.$touched && formHuy.beneficiaryName.$error.required">
+                            <span class="text-danger" 
+                                  ng-show="formHuy.beneficiaryName.$touched && formHuy.beneficiaryName.$error.required">
                                 Vui lòng nhập tên người hưởng thụ.
                             </span>
                         </div>
-                    </div>
-
+                    </div> 
+                
                     <!-- Nút gửi biểu mẫu -->
                     <div class="mt-3">
                         <button type="submit" class="btn btn-primary">Gửi</button>
                     </div>
                 </form>
-
+                
             </div>
         </div>
     </div>
@@ -291,8 +378,7 @@
                     </div>
                     <div class="col">
                         <label for="beneficiaryName" class="form-label">Tên người hưởng thụ</label>
-                        <input type="text" class="form-control" ng-model="tennguoihuongthu" id="beneficiaryName"
-                            required>
+                        <input type="text" class="form-control" ng-model="tennguoihuongthu" id="beneficiaryName" required>
                     </div>
                 </div>
             </div>
@@ -307,74 +393,76 @@
 
 <style>
     body {
-        background-color: #f8f9fa;
-    }
+    background-color: #f8f9fa;
+}
 
-    .order-card {
-        background-color: #ffffff;
-        border-radius: 10px;
-        border: 1px solid #e9ecef;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+.order-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
-    .order-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
-    }
+.order-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
 
-    .order-status {
-        font-size: 1rem;
-        font-weight: 600;
-        color: #0d6efd;
-    }
+.order-status {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #0d6efd;
+}
 
-    .info-item {
-        display: flex;
-        justify-content: space-between;
-        font-size: 0.9rem;
-        margin-bottom: 0.5rem;
-    }
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
 
-    .info-item span:last-child {
-        font-weight: bold;
-    }
+.info-item span:last-child {
+    font-weight: bold;
+}
 
-    .pagination .page-link {
-        width: 60px;
-        height: 40px;
-        margin: 10px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #0d6efd;
-        transition: all 0.3s ease;
-    }
+.pagination .page-link {
+    width: 60px;
+    height: 40px;
+    margin: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #0d6efd;
+    transition: all 0.3s ease;
+}
 
-    .pagination .page-link:hover {
-        background-color: #0d6efd;
-        color: white;
-    }
+.pagination .page-link:hover {
+    background-color: #0d6efd;
+    color: white;
+}
 
-    .pagination .active .page-link {
-        background-color: #0d6efd;
-        color: white;
-        border: none;
-    }
+.pagination .active .page-link {
+    background-color: #0d6efd;
+    color: white;
+    border: none;
+}
 
-    .list-group-item {
-        font-size: 0.95rem;
-        transition: all 0.3s ease;
-    }
+.list-group-item {
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
 
-    .list-group-item:hover {
-        background-color: #e9ecef;
-        color: #0d6efd;
-    }
+.list-group-item:hover {
+    background-color: #e9ecef;
+    color: #0d6efd;
+}
 
-    .list-group-item.active {
-        background-color: #0d6efd;
-        color: white;
-        border-color: #0d6efd;
-    }
+.list-group-item.active {
+    background-color: #0d6efd;
+    color: white;
+    border-color: #0d6efd;
+}
+
+
 </style>

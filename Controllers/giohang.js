@@ -183,22 +183,121 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
             return null; 
         }
     }
+    
+    // Hàm tạo phần tử select cho thuốc tính
+    function createThuocTinhSelects(thuocTinhList, idgh, firstIdspct) {
+        // Khởi tạo chuỗi chứa phần tử <select>
+        let thuocTinhSelects = `
+            <select id="${idgh}" class="form-select" aria-label="Select ThuocTinh" style="width: auto;">
+        `;
+        
+        // Tách nhóm chứa firstIdspct lên đầu danh sách
+        const firstGroup = thuocTinhList.find(list => list.some(tt => tt.idspct === firstIdspct));
+        const remainingGroups = thuocTinhList.filter(list => !list.some(tt => tt.idspct === firstIdspct));
 
+        // Nếu nhóm có firstIdspct tồn tại, đưa nó lên đầu danh sách
+        if (firstGroup) {
+            thuocTinhSelects += createOptionForGroup(firstGroup, true);
+        }
 
-    function createThuocTinhSelects(thuocTinhList, id) {
-        let thuocTinhSelects = '';
-        thuocTinhList.forEach(tt => {
-            thuocTinhSelects += `
-                <div 
-                    class="badge bg-primary text-white text-center d-inline-block me-2" 
-                    id="select-ttspct-${tt.idtt}" 
-                    style="pointer-events: none;">
-                    ${tt.tenthuoctinhchitiet}
-                </div>
-            `;
+        // Tạo option cho các nhóm còn lại
+        remainingGroups.forEach(group => {
+            thuocTinhSelects += createOptionForGroup(group, false);
         });
+
+        // Đóng thẻ <select>
+        thuocTinhSelects += '</select>';
+        
+        // Trả về chuỗi chứa phần tử <select> với các <option>
         return thuocTinhSelects;
     }
+
+    // Hàm tạo option cho một nhóm
+    function createOptionForGroup(group, isFirstGroup) {
+        let options = '';
+        const ids = [...new Set(group.map(tt => tt.idspct))].join();
+        const tenthuoctinh = group.map(tt => tt.tenthuoctinhchitiet).join(', '); // Nối tất cả tenthuoctinhchitiet thành chuỗi
+
+        // Nếu là nhóm có firstIdspct, thêm thuộc tính selected vào option đầu tiên
+        let isSelected = isFirstGroup ? 'selected' : '';
+
+        options += `<option value="${ids}" ${isSelected}>${tenthuoctinh}</option>`;
+        
+        return options;
+    }
+
+
+    // Hàm cập nhật giỏ hàng và thay đổi option
+    async function updateCartDetail(productId, idgh) {
+        try {
+            const datagiohanglist = await fetch(`https://localhost:7297/api/Giohangchitiet/${idgh}`);
+            const datagiohang = await datagiohanglist.json();
+
+            // Gửi yêu cầu PUT để cập nhật số lượng sản phẩm
+            const response = await fetch(`https://localhost:7297/api/Giohangchitiet/${idgh}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    id: datagiohang.id,
+                    idgh: datagiohang.idgh,
+                    idspct: productId,
+                    soluong: 1,
+                }),
+            });
+            
+            // Kiểm tra phản hồi từ API
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Lỗi API: ${response.status}. Nội dung: ${errorText}`);
+            }
+
+            alert("Cập nhật thành công");
+            renderGioHang();
+        } catch (error) {
+            console.error("Cập nhật giỏ hàng thất bại", error);
+            alert("Cập nhật giỏ hàng thất bại. Vui lòng thử lại sau.");
+
+            // Quay về option đầu tiên trong trường hợp thất bại
+            const selectElement = document.querySelector(`#${id}`);
+            if (selectElement) {
+                // Đặt lại giá trị select về option đầu tiên
+                selectElement.selectedIndex = 0;
+            }
+        }
+    }
+
+    // Bắt sự kiện change cho tất cả các <select> với class "form-select" và aria-label="Select ThuocTinh"
+    document.addEventListener('change', function(event) {
+        // Kiểm tra xem phần tử thay đổi có phải là <select> với class "form-select" và aria-label="Select ThuocTinh"
+        if (event.target.classList.contains('form-select') && event.target.getAttribute('aria-label') === 'Select ThuocTinh') {
+            const selectedValue = event.target.value;
+            
+            if (selectedValue) {
+                // Lấy idspct từ selectedValue nếu có nhiều giá trị, hoặc lấy trực tiếp
+                const productId = selectedValue.split(',')[0];  // Lấy idspct đầu tiên
+
+                // Lấy giá trị idgh từ thuộc tính id của phần tử select
+                const idgh = event.target.id; // Lấy id từ thuộc tính id của phần tử select
+
+                // Gửi request cập nhật giỏ hàng với giá trị idspct và idgh
+                updateCartDetail(productId, idgh);
+            }
+        }
+    });
+    
+    async function fetchSanPhamChiTietByIdSP(idsp) {
+        try {
+            const response = await fetch(`${apiUrls.sanPhamChiTiet}/sanpham/${idsp}`);
+            if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
+            return await response.json();
+        } catch (error) {
+            console.error("Lỗi khi lấy sản phẩm chi tiết theo idsp:", error);
+            return [];
+        }
+    }
+
     async function renderGioHang() {
         const idkh = GetByidKH();
         const productList = document.querySelector(".product-list");
@@ -223,9 +322,10 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
                 const sanPhamChiTiet = await fetchSanPhamChitiet(item.idspct);
                 console.log(sanPhamChiTiet); // Kiểm tra giá trị trả về từ API
                 if (sanPhamChiTiet && sanPhamChiTiet.length > 0) {
-                    // Thêm thông tin số lượng từ idghct vào mỗi sản phẩm
+                    // Thêm thông tin số lượng từ idghct vào mỗi sản phẩm và gắn thêm idgh vào sản phẩm
                     sanPhamChiTiet.forEach(sp => {
-                        sp.soluong = item.soluong; // Gắn số lượng tương ứng
+                        sp.soluonggiohang = item.soluong; // Gắn số lượng tương ứng
+                        sp.idgh = item.id; // Gắn idgh vào từng sản phẩm chi tiết
                     });
                     sanPhamChitiets = [...sanPhamChitiets, ...sanPhamChiTiet];
                 }
@@ -233,13 +333,13 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
                 console.error(`Lỗi khi xử lý sản phẩm chi tiết với idspct: ${item.idspct}`, error);
             }
         }
-
+    
         // Hàm xử lý cập nhật giá giảm
         function calculateDiscountPrice(giaHienTai, giatrigiam, donVi) {
             if (donVi === 0) {
                 return giaHienTai - giatrigiam; // Giảm giá theo giá trị trực tiếp
             } else if (donVi === 1) {
-                return giaHienTai * (1- giatrigiam / 100);
+                return giaHienTai * (1 - giatrigiam / 100);
             }
             return giaHienTai; // Nếu không xác định, giữ nguyên giá
         }
@@ -250,11 +350,11 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
     
         // Duyệt qua tất cả sản phẩm chi tiết (spct) để render thông tin sản phẩm
         for (const sanPham of sanPhamChitiets) {
-            const { id, idsp, giathoidiemhientai, trangthai, soluong } = sanPham;
+            const { id, idsp, giathoidiemhientai, trangthai, soluong, soluonggiohang} = sanPham;
     
-            if (trangthai !== 0 || soluong < 1) {
-                continue; // Bỏ qua sản phẩm không thỏa mãn điều kiện
-            }
+            // Kiểm tra số lượng sản phẩm và trạng thái
+            const isOutOfStock = soluong < 1;
+            const isDisabled = (trangthai === 1 || isOutOfStock); 
     
             const sanPhamData = await fetchSanPhamById(idsp);
             if (!sanPhamData) continue;
@@ -267,24 +367,31 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
                 giaGiam = calculateDiscountPrice(giathoidiemhientai, giatrigiam, donvi);
             }
     
-            const thuocTinhList = await fetchThuocTinhSPCT(id);
+            const listidspctbyidsp = await fetchSanPhamChiTietByIdSP(idsp);
+    
+            const thuocTinhList = [];
+            for(const idspct of listidspctbyidsp) {
+                const thuocTinh = await fetchThuocTinhSPCT(idspct.id);
+                thuocTinhList.push(thuocTinh);
+            }
+    
             if (!thuocTinhList || thuocTinhList.length === 0) {
                 console.log(`Không có thuộc tính cho sản phẩm chi tiết với ID: ${id}`);
                 continue;
             }
     
-            let thuocTinhSelects = createThuocTinhSelects(thuocTinhList, id);
+            let thuocTinhSelects = createThuocTinhSelects(thuocTinhList, sanPham.idgh, id);
     
             danhSachSanPham.push({
                 id: id,
                 idsp: idsp,
                 tensp: sanPhamData.tensp,
                 giathoidiemhientai: giathoidiemhientai,
-                soluong: soluong,
+                soluong: soluonggiohang,
                 giamgia: giaGiam || 0,
             });
     
-            // Tạo HTML
+            // Tạo HTML cho sản phẩm
             const productItem = document.createElement("div");
             productItem.className = "product-item d-flex align-items-center py-2 border-bottom";
     
@@ -293,14 +400,24 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
                 <span class="text-danger fw-bold ms-2">${Number(giaGiam).toLocaleString('vi-VN')} VND</span>`
                 : `<span class="text-danger fw-bold">${Number(giathoidiemhientai).toLocaleString('vi-VN')} VND</span>`;
     
-            productItem.innerHTML = `
+            // Nếu hết hàng hoặc trạng thái = 1, thêm badge và disable sản phẩm
+            let disableClass = isDisabled ? 'disabled' : '';
+            let outOfStockBadge = isDisabled ? 
+                `<div class="badge bg-primary text-white text-center d-inline-block me-2" style="pointer-events: none; margin-left: 20px;"> Sản phẩm đã hết hàng </div>` 
+                : '';
+    
+                productItem.innerHTML = `
                 <div class="d-flex align-items-center" style="width: 5%; ">
-                    <input type="checkbox" class="product-checkbox" id="checkbox${id}" data-id="${id}" style="margin: auto;">
+                    <input type="checkbox" class="product-checkbox" id="checkbox${id}" data-id="${id}" style="margin: auto;" ${disableClass}>
                 </div>
                 <div class="d-flex align-items-center" style="width: 45%;">
                     <img src="${sanPhamData.urlHinhanh}" alt="Product Image" style="width: 80px; height: auto;">
                     <div class="ms-3" style="flex: 1;">
-                        <p class="mb-1 fw-bold">${sanPhamData.tensp}</p>
+                        <!-- Dùng d-flex để chứa cả tên sản phẩm và badge -->
+                        <div class="d-flex align-items-center">
+                            <p class="mb-1 fw-bold">${sanPhamData.tensp}</p>
+                            ${outOfStockBadge}
+                        </div>
                         <span class="text-muted">Phân Loại Hàng:</span>
                         ${thuocTinhSelects}
                     </div>
@@ -311,17 +428,15 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
                     </div>
                     
                     <div class="input-group input-group-custom"  style="width: 20%;">
-                            <button class="btn btn-outline-secondary quantity-btn" type="button"
-                                ng-click="changeQuantity($event, false, ${sanPham.id})">-</button>
-                            <span class="text-black fw-bold quantity-display" style="margin: auto;">${sanPham.soluong}</span>
-                            <button class="btn btn-outline-secondary quantity-btn" type="button"
-                                ng-click="changeQuantity($event, true, ${sanPham.id})">+</button>        
+                        <button class="btn btn-outline-secondary quantity-btn" type="button" ng-click="changeQuantity($event, false, ${sanPham.id})" ${disableClass}>-</button>
+                        <span class="text-black fw-bold quantity-display" style="margin: auto;">${sanPham.soluonggiohang}</span>
+                        <button class="btn btn-outline-secondary quantity-btn" type="button" ng-click="changeQuantity($event, true, ${sanPham.id})" ${disableClass}>+</button>        
                     </div>
                     <div class="text-center text-danger fw-bold total-price" style="width: 30%;"></div>
                     
                     <button class="btn btn-danger delete-btn" ng-click="deleteProduct(${sanPham.id})" style="width: 15%;">Xóa</button>
                 </div>
-            `;
+            `;            
            
             const compiledElement = $compile(productItem)($scope);
             productList.appendChild(compiledElement[0]);
@@ -333,6 +448,8 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
         initializeTotalPrices();
         updateTotals();
     }
+    
+    
 
         // Hàm xóa chi tiết giỏ hàng
     async function deleteGioHangChiTiet(idghct) {
@@ -635,7 +752,6 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
         }
     };
            
-
     // Gọi render khi khởi tạo controller
     renderGioHang();
     

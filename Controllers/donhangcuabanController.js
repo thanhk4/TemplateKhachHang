@@ -71,8 +71,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         "Đang được giao",
         "Đang giao",
         "Thành công",
-        "Đã hủy",
-        "Trả hàng"
+        "Đã hủy"
     ];
     
     // Fetch danh sách ngân hàng
@@ -189,14 +188,27 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         .catch(function (error) {
             console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
         });
-
+    $scope.thediv=-1
     // Lọc đơn hàng theo trạng thái
     $scope.filterOrders = function (status) {
         $scope.filterStatus = status;
         if (status === -1) {
             $scope.filteredOrders = $scope.DataHoaDonMua;
-        } else {
+            $scope.thediv= status
+        } else if(status<5) {
             $scope.filteredOrders = $scope.DataHoaDonMua.filter(order => order.trangthai === status);
+            $scope.thediv= status
+        }
+        else if(status==5){
+            $scope.thediv= status
+            $http.get('https://localhost:7297/api/Trahang/View-Hoa-Don-Tra-By-Idkh-'+$scope.userInfo.id)
+            .then(function(response){
+                $scope.ViewHoaDonTra = response.data
+                console.log($scope.ViewHoaDonTra)
+            })
+            .catch(function(error){
+                console.error(error)
+            })
         }
         $scope.paginateOrders(); // Tạo lại phân trang sau khi lọc
     };
@@ -251,7 +263,14 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         $location.path('/trahang/' + id);
     };
     
-    
+    $http.get('https://localhost:7297/api/Phuongthucthanhtoan')
+    .then(async function (response) {
+        $scope.Phuongthucthanhtoan = response.data;
+        console.log($scope.Phuongthucthanhtoan);
+    })
+    .catch(function (error) {
+        console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
+    });
     //vvfgg
     $scope.chitiethd = function (id) {
         // Kiểm tra xem id có hợp lệ không
@@ -259,7 +278,14 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             console.error("ID không hợp lệ:", id);
             return;
         }
-    
+        $http.get('https://localhost:7297/api/Hoadon/' + id)
+            .then(async function (response) {
+                $scope.hoadonbyid = response.data;
+                console.log($scope.hoadonbyid);
+            })
+            .catch(function (error) {
+                console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
+            });
         $http.get('https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
             .then(async function (response) {
                 $scope.DataChitiet = response.data;
@@ -414,4 +440,22 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             });
         }
     };
+    $scope.hdtrahang = async function(id){
+        $http.get('https://localhost:7297/api/Trahang/'+id)
+        .then(function(response){
+            $scope.datatrahang = response.data
+            console.log($scope.datatrahang)
+        })
+        .catch(function(error){
+            console.error(error)
+        })
+        $http.get('https://localhost:7297/api/Trahangchitiet/View-Hoadonct-Theo-Idth-'+id)
+        .then(function(response){
+            $scope.trahangct = response.data
+            console.log($scope.trahangct)
+        })
+        .catch(function(error){
+            console.error(error)
+        })
+    }
 });
