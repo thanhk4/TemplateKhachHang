@@ -16,21 +16,24 @@
             <div class="col-md-5">
                 <h3>{{sanPham.tensp}}</h3>
                 <div ng-if="selectedSPCTs && selectedSPCTs.length > 0" class="product-price">
-                    <h5 class="current-price text-danger" ng-if=" selectedSPCTs[0].giathoidiemhientai !== selectedSPCTs[0].giaSaleSanPhamChiTiet">
-                        {{selectedSPCTs[0].giaSaleSanPhamChiTiet | currency:'' : 0}}VNĐ
-                    </h5>
+                 
                     <span class="original-price text-muted"  ng-if=" selectedSPCTs[0].giathoidiemhientai !== selectedSPCTs[0].giaSaleSanPhamChiTiet">
                         <s>{{selectedSPCTs[0].giathoidiemhientai | currency:'' : 0}}VNĐ</s>
                     </span>
-                    <h5 class="current-price text-danger" ng-if=" selectedSPCTs[0].giathoidiemhientai === selectedSPCTs[0].giaSaleSanPhamChiTiet">
-                        {{selectedSPCTs[0].giaSaleSanPhamChiTiet | currency:'' : 0}}VNĐ
-                    </h5>
+                   
                     <span class="discount-badge text-danger" ng-if="selectedSPCTs[0].sales[0].donvi === 1">
                         -{{((1 - selectedSPCTs[0].giaSaleSanPhamChiTiet / selectedSPCTs[0].giathoidiemhientai) * 100) | number : 0}}%
                     </span>
                     <span class="discount-badge text-danger" ng-if="selectedSPCTs[0].sales[0].donvi === 0">
                         -{{selectedSPCTs[0].giathoidiemhientai - selectedSPCTs[0].giaSaleSanPhamChiTiet | number : 0}}VNĐ
                     </span>
+                    <h5 class="current-price text-danger" ng-if=" selectedSPCTs[0].giathoidiemhientai === selectedSPCTs[0].giaSaleSanPhamChiTiet">
+                        {{selectedSPCTs[0].giaSaleSanPhamChiTiet | currency:'' : 0}}VNĐ
+                    </h5>
+                    <h5 class="current-price text-danger" ng-if=" selectedSPCTs[0].giathoidiemhientai !== selectedSPCTs[0].giaSaleSanPhamChiTiet">
+                        {{selectedSPCTs[0].giaSaleSanPhamChiTiet | currency:'' : 0}}VNĐ
+                    </h5>
+
                     <p class="mt-3">{{selectedSPCTs[0].mota}}</p>
                 </div>
                 
@@ -126,15 +129,15 @@
                         <div ng-if="danhGias.length > 0">
                             <div class="danh-gia-item" ng-repeat="danhGia in danhGias">
                                 <div class="header">
-                                    <strong>Khách hàng:</strong> {{ danhGia.idkh || "Ẩn danh" }}
-                                    <span class="date">{{ danhGia.ngaydanhgia | date:'dd/MM/yyyy' }}</span>
+                                    <strong>Khách hàng:</strong> {{ danhGia.tenKhachHang  || "Ẩn danh" }}
+                                    
+                                   
                                 </div>
                                 <div class="content">
+                                    <strong>Ngày đánh giá: </strong><span class="date">{{ danhGia.ngaydanhgia | date:'dd/MM/yyyy' }}</span>
                                     <p><strong>Nội dung:</strong> {{ danhGia.noidungdanhgia }}</p>
                                 </div>
                                 <div class="footer">
-                                    <strong>Trạng thái:</strong>
-                                    
                                     <div ng-if="danhGia.urlHinhanh" >
                                         <img ng-src="{{ danhGia.urlHinhanh }}" alt="Hình ảnh đánh giá" style="width: 300px;"/>
                                     </div>

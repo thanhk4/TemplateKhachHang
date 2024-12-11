@@ -45,31 +45,28 @@ app.controller("TrangChuCtrl", function ($scope, $document, $rootScope, SanPhamS
                 console.error("Lỗi khi tải sản phẩm:", error);
             });
     }
-    function loadSanPhamMoi() {
-      SanPhamService.getAllSanPham()
-      .then(function (data) {
-        // Lọc các sản phẩm mới thêm (ngày thêm lớn hơn hoặc bằng ngày hiện tại)
-        const currentDate = new Date(); // Ngày hiện tại
-        $scope.SanPhamThemMoi = data.filter(function (sanPham) {
-            const ngayThem = new Date(sanPham.NgayThemSanPham); // Chuyển NgayThemSanPham thành kiểu Date
-            return ngayThem >= currentDate; // So sánh ngày
+  function loadSanPhamMoi() {
+    SanPhamService.getAllSanPham()
+    .then(function (data) {
+        // Sắp xếp sản phẩm theo ngày (giả sử thuộc tính là `createdDate`)
+        $scope.SanPhamThemMoi = data.sort(function (a, b) {
+            // Chuyển đổi ngày sang dạng số (timestamp) để so sánh
+            return new Date(b.ngayThemSanPham) - new Date(a.ngayThemSanPham); // Giảm dần
+            // return new Date(a.createdDate) - new Date(b.createdDate); // Tăng dần
         });
 
-        // Sắp xếp các sản phẩm theo NgayThemSanPham từ mới nhất đến cũ nhất
-        $scope.sanPhams.sort(function (a, b) {
-            const ngayThemA = new Date(a.NgayThemSanPham);
-            const ngayThemB = new Date(b.NgayThemSanPham);
-            return ngayThemB - ngayThemA; // Sắp xếp theo ngày giảm dần
-        });
-
-        console.log("Danh sách sản phẩm mới thêm, sắp xếp theo ngày:", $scope.sanPhams);
+        console.log("Danh sách sản phẩm (sắp xếp):", $scope.SanPhamThemMoi);
     })
     .catch(function (error) {
         $scope.errorMessage = "Không thể tải danh sách sản phẩm. Vui lòng thử lại sau.";
         console.error("Lỗi khi tải sản phẩm:", error);
     });
-  }
-  loadSanPhamMoi();
+}
+loadSanPhamMoi();
+
+  
+  
+  
       // Hàm gọi API chi tiết sản phẩm khi click vào sản phẩ
 
     // Gọi hàm load dữ liệu khi controller khởi chạy

@@ -69,6 +69,15 @@ this.searchSanPham = function (filterParams) {
             throw error;
         });
 };
+
+this.getKhachHangById = function (id) {
+    return $http.get(baseUrl + "Khachhang/" + id)
+    .then(response => response.data)
+    .catch(error => {
+        console.error("Lỗi khi gọi API:", error);
+        throw error;
+    });
+}
 });
 
 
@@ -120,13 +129,29 @@ app.controller("DanhSachSanPhamCtrl", function ($scope, $document, SanPhamServic
                 $scope.sanPhams = data;
                 $scope.filteredProduct = data;
                 $scope.paginateOrders();
-                console.log("Danh sách sản phẩm đã được cập nhật tự động.");
+                $scope.sortOrder = true; 
+                $scope.paginateOrders();
+                console.log("Danh sách sản phẩm đã được cập nhật tự động.", data);
             })
             .catch(function (error) {
                 $scope.errorMessage = "Không thể tải danh sách sản phẩm. Vui lòng thử lại sau.";
                 console.error("Lỗi khi tải sản phẩm:", error);
             });
     }
+
+    $scope.sortByName = function () {
+        $scope.sortOrder = !$scope.sortOrder; // Đổi chiều sắp xếp
+        $scope.filteredProduct.sort(function (a, b) {
+            // So sánh tensp và đảo ngược nếu cần thiết
+            if ($scope.sortOrder) {
+                return a.tensp.localeCompare(b.tensp); // Từ A đến Z
+            } else {
+                return b.tensp.localeCompare(a.tensp); // Từ Z đến A
+            }
+        });
+        console.log("Danh sách sản phẩm đã được sắp xếp:", $scope.filteredProduct);
+    };
+
     function searchSanPhams() {
         const params = {
             idThuongHieu: $scope.searchParams.idThuongHieu,

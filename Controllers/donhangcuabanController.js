@@ -356,7 +356,6 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         const myModal = new bootstrap.Modal(document.getElementById('ratingModal'), { keyboard: false });
         myModal.show();
     };
-    
     $scope.datahinhanhbase64 = ""; // Biến lưu dữ liệu Base64 trong $scope
 
     // Hàm chuyển đổi ảnh sang Base64
@@ -364,26 +363,24 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         if (inputElement.files && inputElement.files[0]) {
             const file = inputElement.files[0];
             const reader = new FileReader();
-    
+
             reader.onload = function (e) {
                 $scope.$apply(function () {
                     $scope.datahinhanhbase64 = e.target.result; // Lưu Base64 vào $scope
                     $scope.imagePreview = e.target.result; // Dùng để hiển thị preview (nếu cần)
                 });
             };
-    
+
             reader.onerror = function (error) {
                 console.error("Có lỗi xảy ra khi đọc file: ", error);
             };
-    
+
             reader.readAsDataURL(file);
         } else {
             console.error("Không có file nào được chọn.");
         }
     };
-    
-    
-    
+
     $scope.submitRating = function () {
         const formData = {
             reviewText: $scope.reviewText,
@@ -391,7 +388,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             orderDetailId: $scope.selectedProduct.id,
             imageBase64: $scope.datahinhanhbase64 // Sử dụng Base64 ảnh
         };
-    
+
         if ($scope.selectedProduct.existingReview) {
             OrderHistoryService.updateRating(
                 $scope.selectedProduct.existingReview.id,
@@ -421,7 +418,6 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             });
         }
     };
-    
 
     $scope.deleteRating = function (product) {
         if (!product.existingReview) {
