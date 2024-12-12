@@ -168,10 +168,17 @@
                         </select>
                         <span class="text-danger" ng-if="form.tinhtrang.$touched && form.tinhtrang.$error.required">Không được bỏ trống</span>
                     </div>
-                    <div class="mb-3">
-                        <label for="fileUpload" class="form-label">Tải lên hình ảnh</label>
-                        <input id="fileUpload" type="file" accept="image/*" multiple class="form-control" ng-model="hinhanh" name="hinhanh" readonly>
-                        <span class="text-danger" ng-if="form.hinhanh.$touched && form.hinhanh.$error.required">Không được bỏ trống</span>
+                    <div class="mb-3 row">
+                        <div class="col">
+                            <label for="fileUpload" class="form-label">Tải lên hình ảnh</label>
+                            <input id="fileUpload" type="file" accept="image/*" multiple class="form-control" ng-model="hinhanh" name="hinhanh" readonly>
+                            <span class="text-danger" ng-if="form.hinhanh.$touched && form.hinhanh.$error.required">Không được bỏ trống</span>
+                        </div>
+                        <div class="col">
+                            <label for="fileUpload" class="form-label">Tải lên hình ảnh</label>
+                            <input id="fileUpload" type="file" accept="image/*" multiple class="form-control" ng-model="hinhanh2" name="hinhanh" readonly>
+                            <span class="text-danger" ng-if="form.hinhanh.$touched && form.hinhanh.$error.required">Không được bỏ trống</span>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Ghi chú</label>
