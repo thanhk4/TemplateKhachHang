@@ -1,4 +1,4 @@
-app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $location) {
+app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $location, $timeout) {
     // Kiểm tra đăng nhập
     if (!$rootScope.isLoggedIn) {
         $location.path('/login');
@@ -49,6 +49,7 @@ app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $loca
             console.error("Lỗi khi lấy thông tin khách hàng:", error);
         }
     }
+    let chart = null;
 
     // Hàm cập nhật dữ liệu vào các phần tử HTML
     async function updateDataToHTML(khachHangData) {
@@ -60,10 +61,64 @@ app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $loca
         document.getElementById("diachi").innerText = khachHangData.diachi || defaultText;
         document.getElementById("ngaysinh").innerText = formatDate(khachHangData.ngaysinh) || defaultText;
         document.getElementById("email").innerText = khachHangData.email || defaultText;
-        document.getElementById("rank").innerText = datarank.tenRank || defaultText;
         document.getElementById("diemsudung").innerText = khachHangData.diemsudung || "0";
+        if (datarank && typeof khachHangData.diemsudung !== 'undefined') {
+            createOrUpdateChart(khachHangData.tichdiem, datarank.maxMoney || 100, datarank.tenRank);
+        }
+    }
+   
+
+function createOrUpdateChart(currentPoints, totalPoints, rankName) {
+    const ctx = document.getElementById('rankChart').getContext('2d');
+    
+    if (chart) {
+        chart.destroy(); // Hủy biểu đồ cũ nếu tồn tại
     }
 
+    chart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Điểm đã tích', 'Điểm cần tích'],
+            datasets: [{
+                data: [currentPoints, totalPoints - currentPoints],
+                backgroundColor: ['#0d6efd', '#e9ecef'],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            cutout: '70%',
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom',
+                    labels: {
+                        padding: 20,
+                        boxWidth: 15,
+                        font: {
+                            size: 14
+                        }
+                    }
+                },
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.label}: ${context.raw} điểm`;
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Cập nhật text ở giữa biểu đồ
+    document.getElementById('rankText').textContent = rankName;
+    document.getElementById('rankText').style.fontSize = '24px';
+    document.getElementById('pointsText').textContent = `${currentPoints}/${totalPoints} điểm`;
+    document.getElementById('pointsText').style.fontSize = '18px';
+}
     // Hàm gọi API để lấy sản phẩm chi tiết theo idspct
     async function fetchRank(idrank) {
         try {
@@ -225,3 +280,4 @@ app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $loca
     // Gọi API khi controller khởi tạo
     fetchAndUpdateData();
 });
+

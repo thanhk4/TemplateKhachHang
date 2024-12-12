@@ -50,7 +50,8 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
             // Bước 2: Lấy danh sách id giảm giá từ API giamgia_rank
             const responseDiscountIds = await fetch(`https://localhost:7297/api/giamgia_rank/rank/${idRank}`);
             if (!responseDiscountIds.ok) {
-                throw new Error(`Lỗi khi lấy danh sách idGiamGia: ${responseDiscountIds.status}`);
+                document.getElementById('active-voucher-list').innerHTML = '<p>Rank chưa có voucher.</p>';
+                return; // Thoát sớm nếu không có dữ liệu
             }
             const discountIds = await responseDiscountIds.json();
     
@@ -110,7 +111,7 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
             displayVouchers(historyVouchers, 'history-voucher-list', 'history-voucher-notice');
         } catch (error) {
             console.error('Lỗi khi lấy danh sách voucher:', error);
-            Swal.fire("Lỗi", "Đã xảy ra lỗi khi tải danh sách voucher.", "error");
+            
         }
     }
     

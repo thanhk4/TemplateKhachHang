@@ -62,12 +62,20 @@
                   <div style="text-align: center;">  <button type="submit" data-bs-toggle="modal" data-bs-target="#editModal" id="btnChangeAcc" class="btn btn-primary"> Sửa</button></div> 
                   <hr>
                   <div class="row mb-3 py-2 border-bottom">
-                    <div class="col-md-3 text-muted">Rank:</div>
-                    <div class="col-md-9" id="rank">Chưa cập nhật</div>
-                </div>
-                <div class="row mb-3 py-2 border-bottom">
                     <div class="col-md-3 text-muted">Điểm sử dụng:</div>
                     <div class="col-md-9" id="diemsudung">0</div>
+                </div>
+                <div class="text-muted">Rank:</div>
+                  <div class="col-md-6" style="display: flex;justify-content: center;" >
+                    <div class="col-md-9" id="rank"></div>
+                    
+                    <div style="position: relative; width: 300px; height: 300px; margin: auto;">
+                        <canvas id="rankChart"></canvas>
+                        <div id="chartCenter" style="position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                            <div id="rankText" style="font-size: 24px; font-weight: bold;"></div>
+                            <div id="pointsText" style="font-size: 18px;"></div>
+                        </div>
+                    </div>
                 </div>
                 </div>
             </div>
@@ -155,3 +163,25 @@
         border-color: #f1f1f1 !important;
     }
 </style>
+<script>
+    const canvas = document.getElementById('rankChart');
+    const ctx = canvas.getContext('2d');
+    const rankText = document.getElementById('rankText');
+    const pointsText = document.getElementById('pointsText');
+    
+    const rank = 1;
+    const points = 1000;
+    
+    rankText.textContent = `Rank: ${rank}`;
+    pointsText.textContent = `Points: ${points}`;
+    
+    // Draw a simple circle
+    ctx.beginPath();
+    ctx.arc(150, 150, 100, 0, 2 * Math.PI);
+    ctx.fillStyle = 'lightblue';
+    ctx.fill();
+    ctx.strokeStyle = 'blue';
+    ctx.stroke();
+    
+    
+    </script>
