@@ -6,7 +6,7 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
         link.remove();
     });
 
-
+    sessionStorage.setItem('quantity', 1);
     $scope.sanPham = null;
     $scope.errorMessage = null;
     $scope.selectedValues = {};
