@@ -27,15 +27,15 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             $scope.errorMessage = "Không thể tải thông tin hóa đơn. Vui lòng thử lại sau.";
         });
 
-    $http.get(`https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-${idhd}`)
+    $http.get(`https://localhost:7297/api/HoaDonChiTiet/Check-so-luong:${idhd}`)
         .then(function (response) {
             // Lưu thông tin hóa đơn vào scope
             $scope.datahdct = response.data;
-
-            // Khởi tạo số lượng và tổng số tiền hoàn cho mỗi sản phẩm
-            if ($scope.datahdct.length > 0) {
-                $scope.quantity = $scope.datahdct[0].soluong || 1; // Số lượng mặc định là 1 nếu không có dữ liệu
-            }
+                // Khởi tạo số lượng và tổng số tiền hoàn cho mỗi sản phẩm
+                if ($scope.datahdct.length > 0) {
+                     $scope.quantity = $scope.datahdct[0].soluong || 1; // Số lượng mặc định là 1 nếu không có dữ liệu
+                }
+            
         })
         .catch(function (error) {
             console.error("Lỗi khi lấy thông tin hóa đơn:", error);
@@ -159,7 +159,6 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
     $scope.submit = async function () {
         const dataanh = datahinhanhbase64;
         const sotienhoan = parseInt(document.getElementById("tongsotienhoan").textContent.replace(" VND", "").replace(/\,/g, "")) || 0;
-        
         // Kiểm tra lý do trả hàng
         if (!$scope.lydotrahang) {
             Swal.fire('Lỗi!', 'Vui lòng chọn lý do trả hàng.', 'error');
@@ -261,8 +260,6 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                     // Thêm chi tiết đơn trả hàng
                     const checktrahangchitiet = await trahangchitiet(returnOrder, $scope.selectedProducts);
                     if (!checktrahangchitiet) return; 
-
-                    UpdateHoaDon(hoadondata);
     
                     Swal.fire("Thành Công", "Đặt Hàng Thành Công.", "success");
                     $scope.$apply(() => {
@@ -300,47 +297,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
         }
     }
 
-    // Hàm cập nhật thông tin hóa đơn thông qua API
-    async function UpdateHoaDon(hoaDonData) {
-        const updatedData = {
-            id: 0,
-            idnv: 0,
-            idkh: $scope.userInfo.id,
-            idgg: hoaDonData.idgg,
-            trangthaithanhtoan: 0,
-            donvitrangthai: 0,
-            thoigiandathang: hoaDonData.thoigiandathang,
-            diachiship: hoaDonData.diachiship,
-            ghichu : hoaDonData.ghichu,
-            ngaygiaodukien: hoaDonData.ngaygiaodukien,
-            ngaygiaothucte: hoaDonData.ngaygiaothucte,
-            tongtiencantra: hoaDonData.tongtiencantra,
-            tongtiensanpham: hoaDonData.tongtiensanpham,
-            sdt: hoaDonData.sdt,
-            tonggiamgia: hoaDonData.tonggiamgia,
-            trangthai: 4
-        };
-        try {
-            const response = await fetch(`https://localhost:7297/api/Hoadon/${idhd}`, {
-                method: 'PUT', // Hoặc PATCH nếu bạn chỉ cập nhật một phần dữ liệu
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(updatedData)
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(errorData.message || `Lỗi API: ${response.status}`);
-            }
-
-            const result = await response.json();
-            Swal.fire("Thành công", "Hóa đơn đã được cập nhật thành công!", "success");
-            return result;
-        } catch (error) {
-            console.error("Lỗi khi cập nhật hóa đơn:", error);
-            Swal.fire("Lỗi", "Không thể cập nhật hóa đơn!", "error");
-            return null;
-        }
-    }
+    
     
     // Hàm tạo hóa đơn
     async function hinhanh(idth, dataanh ) {
@@ -348,7 +305,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             idth: idth,
             hinhanh: dataanh
         };
-    
+    //
         try {
             const response = await fetch('https://localhost:7297/api/Hinhanh', {
                 method: 'POST',

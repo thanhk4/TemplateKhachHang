@@ -186,7 +186,16 @@
                     <div class="modal-body">
                         <div class=" row mb-3">
                             <div class="col">
-                                <p>Tổng tiền hoàn: {{datatrahang.sotienhoan}}</p>
+                                <p ng-if="datatrahang.trangthai==0">Ngày tạo hóa đơn: {{datatrahang.ngaytrahangdukien | date:'dd-MM-yyyy'}}</p>
+                                <p ng-if="datatrahang.trangthai==1||datatrahang.trangthai==2">Ngày giao: {{datatrahang.ngaytrahangthucte | date:'dd-MM-yyyy'}}</p>
+                                <p>Tổng tiền hoàn: {{datatrahang.sotienhoan | number}} VNĐ</p>
+                                <p>Phương thức hoàn tiền: {{datatrahang.phuongthuchoantien}}</p>
+                            </div>
+                            <div class="col">
+                                <p>Lý do trả hàng: {{datatrahang.lydotrahang}}</p>
+                                <p ng-if="datatrahang.trangthai==0">Trạng thái đơn hàng: Đơn hàng chờ trả hàng</p>
+                                <p ng-if="datatrahang.trangthai==1">Trạng thái đơn hàng: Trả hàng không thành công</p>
+                                <p ng-if="datatrahang.trangthai==2">Trạng thái đơn hàng: Trả hàng thành công</p>
                             </div>
                         </div>
                         <hr class="mb-3">
@@ -216,7 +225,7 @@
                                     </div>
                                     <hr>
                                     <div class="text-end">
-                                        <a class="btn btn-danger" ng-click="xemChiTiet(item.idsp)">Mua lại</a>
+                                        <a class="btn btn-danger" ng-click="xemChiTietth(item.idsp)">Mua lại</a>
                                     </div>
                                 </div>
                             </div>

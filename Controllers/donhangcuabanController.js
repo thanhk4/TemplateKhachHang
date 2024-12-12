@@ -177,8 +177,14 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             Swal.fire('Lỗi', 'Không thể cập nhật hóa đơn!', 'error');
         }
     }
-
-    
+    $scope.xemChiTietth=function(id){
+        $('#trahangModal').modal('hide');
+        $location.path('/sanphamchitiet/'+id)
+    }
+    $scope.xemChiTiet=function(id){
+        $('#exampleModal').modal('hide');
+        $location.path('/sanphamchitiet/'+id)
+    }
     // Lấy danh sách hóa đơn từ API
     $http.get('https://localhost:7297/api/Hoadon/hoa-don-theo-ma-kh-' + $scope.userInfo.id)
         .then(function (response) {
