@@ -1,4 +1,4 @@
-app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $location) {
+app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $location, $timeout) {
     // Kiểm tra đăng nhập
     if (!$rootScope.isLoggedIn) {
         $location.path('/login');
@@ -49,6 +49,7 @@ app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $loca
             console.error("Lỗi khi lấy thông tin khách hàng:", error);
         }
     }
+    let chart = null;
 
     // Hàm cập nhật dữ liệu vào các phần tử HTML
     async function updateDataToHTML(khachHangData) {
@@ -62,8 +63,73 @@ app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $loca
         document.getElementById("email").innerText = khachHangData.email || defaultText;
         document.getElementById("rank").innerText = datarank.tenRank || defaultText;
         document.getElementById("diemsudung").innerText = khachHangData.diemsudung || "0";
+       if (datarank && typeof khachHangData.diemsudung !== 'undefined') {
+            createOrUpdateChart(khachHangData.tichdiem, datarank.maxMoney || 100);
+        }
     }
+    function createOrUpdateChart(currentPoints, totalPoints) {
+        // Use $timeout to ensure DOM is ready
+        $timeout(function() {
+            const canvas = document.getElementById('rankChart');
+            if (!canvas) {
+                console.error('Canvas element not found');
+                return;
+            }
 
+            const ctx = canvas.getContext('2d');
+            
+            if (chart) {
+                chart.destroy(); // Destroy existing chart if it exists
+            }
+
+            chart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    datasets: [{
+                        data: [currentPoints, totalPoints - currentPoints],
+                        backgroundColor: ['#0d6efd', '#e9ecef'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    cutout: '70%',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                    }
+                }
+            });
+
+            // Add center text
+            Chart.plugins.register({
+                afterDraw: function(chart) {
+                    if (!chart.canvas) return; // Check if canvas exists
+                    
+                    const width = chart.chart.width,
+                          height = chart.chart.height,
+                          ctx = chart.chart.ctx;
+
+                    ctx.restore();
+                    const fontSize = (height / 114).toFixed(2);
+                    ctx.font = fontSize + "em sans-serif";
+                    ctx.textBaseline = "middle";
+
+                    const text = Math.round((currentPoints / totalPoints) * 100) + "%",
+                          textX = Math.round((width - ctx.measureText(text).width) / 2),
+                          textY = height / 2;
+
+                    ctx.fillText(text, textX, textY);
+                    ctx.save();
+                }
+            });
+        });
+    }
     // Hàm gọi API để lấy sản phẩm chi tiết theo idspct
     async function fetchRank(idrank) {
         try {
