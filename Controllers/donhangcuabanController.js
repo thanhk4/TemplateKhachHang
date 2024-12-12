@@ -93,10 +93,10 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             let requireInput = false;
 
             // Xác định yêu cầu nhập ghi chú
-            if (hoaDonData.trangthai === 1 && lichSuThanhToanData.trangthai === 1) {
+            if (hoaDonData.trangthai === 1 && lichSuThanhToanData.trangthai === 2) {
                 requireInput = true;
-            } else if (hoaDonData.trangthai === 0 && lichSuThanhToanData.trangthai === 1) {
-                requireNote = true; // Yêu cầu ghi chú
+            } else if (hoaDonData.trangthai === 0 && lichSuThanhToanData.trangthai === 2) {
+                requireInput = true; // Yêu cầu ghi chú
             }
 
             if (requireInput) {
@@ -114,19 +114,16 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
                     cancelButtonText: 'Hủy',
                 }).then(async (result) => {
                     if (result.isConfirmed) {
-                        if (hoaDonData.trangthai === 1) {
-                            // Gọi API để hoàn trả số lượng sản phẩm
-                            const response = await $http.post(`https://localhost:7297/api/HoaDonChiTiet/ReturnProduct/${id}`);
-                            if (response.data.success) {
-                                // Sau khi hoàn trả sản phẩm thành công, cập nhật trạng thái hóa đơn
-                                hoaDonData.trangthai = 4; // Hủy đơn hàng
-                                await UpdateHoaDon(hoaDonData);
-                                Swal.fire('Thành công', 'Đơn hàng đã được hủy thành công!', 'success');
-                            } else {
-                                Swal.fire('Lỗi', response.data.message, 'error');
-                                return;
-                            }
-                        }
+                        hoaDonData.trangthai = 4; // Hủy đơn hàng
+                        await HuyUpdateHoaDon(hoaDonData);
+                        Swal.fire('Thành công', 'Đơn hàng đã được hủy thành công!', 'success')
+                        .then((result) => {
+                          // Kiểm tra nếu người dùng nhấn OK (hoặc nhấn vào nút xác nhận)
+                          if (result.isConfirmed) {
+                            // Sau khi nhấn OK, sẽ thực hiện reload trang
+                            location.reload();
+                          }
+                        });                      
                     }
                 });
             }
@@ -150,7 +147,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             $scope.currentHoaDon.ghichu = ghiChu;
 
             // Cập nhật hóa đơn
-            await UpdateHoaDon($scope.currentHoaDon);
+            await UpdateHoaDonghichu($scope.currentHoaDon);
 
             Swal.fire('Thành công', 'Đơn hàng đã được hủy thành công!', 'success');
             $('#modalGhiChuHuyDonHang').modal('hide'); // Ẩn modal sau khi xử lý xong
@@ -167,9 +164,9 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     }
 
     // Hàm cập nhật hóa đơn
-    async function UpdateHoaDon(hoaDonData) {
+    async function HuyUpdateHoaDon(hoaDonData) {
         try {
-            const response = await $http.put(`https://localhost:7297/api/HoaDon/${hoaDonData.id}`, hoaDonData);
+            const response = await $http.put(`https://localhost:7297/api/HoaDon/trangthai/${hoaDonData.id}?trangthai=${hoaDonData.trangthai}`);
             Swal.fire('Thành công', 'Hóa đơn đã được cập nhật!', 'success');
             return response.data;
         } catch (error) {
@@ -185,6 +182,51 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         $('#exampleModal').modal('hide');
         $location.path('/sanphamchitiet/'+id)
     }
+
+    // Hàm cập nhật thông tin hóa đơn thông qua API
+    async function UpdateHoaDonghichu(hoaDonData) {
+        const updatedData = {
+            id: 0,
+            idnv: 0,
+            idkh: $scope.userInfo.id,
+            idgg: hoaDonData.idgg,
+            trangthaithanhtoan: 0,
+            donvitrangthai: 0,
+            thoigiandathang: hoaDonData.thoigiandathang,
+            diachiship: hoaDonData.diachiship,
+            ghichu : hoaDonData.ghichu,
+            diemsudung :  hoaDonData.diemsudung,
+            ngaygiaodukien: hoaDonData.ngaygiaodukien,
+            ngaygiaothucte: hoaDonData.ngaygiaothucte,
+            tongtiencantra: hoaDonData.tongtiencantra,
+            tongtiensanpham: hoaDonData.tongtiensanpham,
+            tiencoc: hoaDonData.tiencoc,
+            sdt: hoaDonData.sdt,
+            tonggiamgia: hoaDonData.tonggiamgia,
+            trangthai: 4
+        };
+        try {
+            const response = await fetch(`https://localhost:7297/api/Hoadon/${idhd}`, {
+                method: 'PUT', // Hoặc PATCH nếu bạn chỉ cập nhật một phần dữ liệu
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || `Lỗi API: ${response.status}`);
+            }
+
+            const result = await response.json();
+            Swal.fire("Thành công", "Hóa đơn đã được cập nhật thành công!", "success");
+            return result;
+        } catch (error) {
+            console.error("Lỗi khi cập nhật hóa đơn:", error);
+            Swal.fire("Lỗi", "Không thể cập nhật hóa đơn!", "error");
+            return null;
+        }
+    }
+
     // Lấy danh sách hóa đơn từ API
     $http.get('https://localhost:7297/api/Hoadon/hoa-don-theo-ma-kh-' + $scope.userInfo.id)
         .then(function (response) {
