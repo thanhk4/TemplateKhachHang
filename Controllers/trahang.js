@@ -31,11 +31,11 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
         .then(function (response) {
             // Lưu thông tin hóa đơn vào scope
             $scope.datahdct = response.data;
-                // Khởi tạo số lượng và tổng số tiền hoàn cho mỗi sản phẩm
-                if ($scope.datahdct.length > 0) {
-                     $scope.quantity = $scope.datahdct[0].soluong || 1; // Số lượng mặc định là 1 nếu không có dữ liệu
-                }
-            
+            // Khởi tạo số lượng và tổng số tiền hoàn cho mỗi sản phẩm
+            if ($scope.datahdct.length > 0) {
+                $scope.quantity = $scope.datahdct[0].soluong || 1; // Số lượng mặc định là 1 nếu không có dữ liệu
+            }
+
         })
         .catch(function (error) {
             console.error("Lỗi khi lấy thông tin hóa đơn:", error);
@@ -50,17 +50,17 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
     $scope.changeQuantity = function (delta, productId) {
         const product = $scope.datahdct.find(item => item.id === productId);
         const quantityDisplayElement = document.getElementById(`quantity-display-${productId}`);
-    
+
         if (product && quantityDisplayElement) {
             let currentQuantity = parseInt(quantityDisplayElement.textContent, 10);
             let newQuantity = currentQuantity + delta;
-    
+
             if (newQuantity >= 1 && newQuantity <= product.soluong) {
                 quantityDisplayElement.textContent = newQuantity;
-    
+
                 // Cập nhật số lượng trong sessionStorage
                 sessionStorage.setItem(`quantity_${productId}`, newQuantity);
-    
+
                 // Cập nhật số lượng trong selectedProducts nếu sản phẩm đã được chọn
                 const selectedProduct = $scope.selectedProducts.find(item => item.productId === productId);
                 if (selectedProduct) {
@@ -70,21 +70,21 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             }
         }
     };
-       
+
 
     $scope.updateTotalAmount = function () {
         $scope.tongSoTienHoan = 0;
-    
+
         // Duyệt qua danh sách sản phẩm được chọn
         angular.forEach($scope.selectedProducts, function (item) {
             const product = $scope.datahdct.find(product => product.id === item.productId);
-    
+
             if (product) {
                 // Tính tổng dựa trên giá sản phẩm và số lượng đã lưu
                 $scope.tongSoTienHoan += (product.giasp * item.quantity);
             }
         });
-    
+
         // Định dạng và hiển thị tổng số tiền hoàn
         const formattedTienHoan = `${$scope.tongSoTienHoan.toLocaleString('en-US')} VNĐ`;
         document.getElementById('tongsotienhoan').textContent = formattedTienHoan;
@@ -95,7 +95,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
 
     $scope.toggleSelection = function (productId) {
         const index = $scope.selectedProducts.findIndex(item => item.productId === productId);
-    
+
         if (index > -1) {
             // Nếu sản phẩm đã tồn tại trong mảng, xóa nó (bỏ chọn)
             $scope.selectedProducts.splice(index, 1);
@@ -107,8 +107,8 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
         }
         // Cập nhật lại tổng số tiền hoàn
         $scope.updateTotalAmount();
-    };    
-    
+    };
+
     // Khởi tạo số lượng hiện tại từ sessionStorage hoặc giá trị mặc định
     $scope.datahdct.forEach(product => {
         product.soluongHienTai = parseInt(sessionStorage.getItem(`quantity_${product.id}`)) || 1; // Mặc định là 1
@@ -122,25 +122,34 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             console.log('Error fetching bank data:', error);
         });
 
-    let datahinhanhbase64 = ""; // Biến toàn cục để lưu dữ liệu Base64
+    let datahinhanhbase64 = []; // Biến toàn cục để lưu trữ nhiều ảnh Base64
 
+    // Hàm chuyển đổi hình ảnh sang Base64
     function convertImageToBase64(inputElement, callback) {
-        if (inputElement.files && inputElement.files[0]) {
-            const file = inputElement.files[0];
-            const reader = new FileReader();
+        if (inputElement.files && inputElement.files.length > 0) {
+            if (datahinhanhbase64.length + inputElement.files.length > 5) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Lỗi!',
+                    text: 'Bạn chỉ có thể tải lên tối đa 5 ảnh.',
+                });
+                return; // Nếu số ảnh vượt quá 5, ngừng xử lý
+            }
 
-            reader.onload = function (e) {
-                // Kết quả Base64 đầy đủ
-                const base64Data = e.target.result; 
-                callback(base64Data); // Truyền dữ liệu qua callback
-            };
+            Array.from(inputElement.files).forEach(file => {
+                const reader = new FileReader();
 
-            reader.onerror = function (error) {
-                console.error("Có lỗi xảy ra khi đọc file: ", error);
-            };
+                reader.onload = function (e) {
+                    const base64Data = e.target.result; // Kết quả Base64 đầy đủ
+                    callback(base64Data); // Truyền dữ liệu qua callback
+                };
 
-            // Đọc file dưới dạng Data URL (base64)
-            reader.readAsDataURL(file);
+                reader.onerror = function (error) {
+                    console.error("Có lỗi xảy ra khi đọc file: ", error);
+                };
+
+                reader.readAsDataURL(file); // Đọc file dưới dạng Data URL (base64)
+            });
         } else {
             console.error("Không có file nào được chọn.");
         }
@@ -148,15 +157,63 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
 
     // Hàm xử lý Base64 và gán vào biến toàn cục
     function handleBase64Data(base64Data) {
-        datahinhanhbase64 = base64Data; // Gán Base64 vào biến toàn cục
+        datahinhanhbase64.push(base64Data); // Thêm Base64 vào mảng
+        console.log(datahinhanhbase64)
+        displayImages(); // Hiển thị lại các hình ảnh đã tải lên
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: 'Ảnh đã được thêm thành công.',
+        });
+        document.getElementById('fileUpload').value = ''; // Làm mới input sau khi thêm ảnh
+    }
+
+    // Hàm hiển thị các hình ảnh dưới dạng Base64
+    function displayImages() {
+        const imageContainer = document.getElementById('imageContainer');
+        imageContainer.innerHTML = ''; // Xóa danh sách hình ảnh hiện tại
+
+        datahinhanhbase64.forEach((base64Data, index) => {
+            // Tạo phần tử img và nút x
+            const imageDiv = document.createElement('div');
+            imageDiv.classList.add('image-item');
+            imageDiv.innerHTML = `
+                <img src="${base64Data}" alt="Image ${index + 1}">
+                <button class="close-btn" data-index="${index}">&times;</button>
+                <span class="image-number">${index + 1}</span>
+            `;
+            imageContainer.appendChild(imageDiv);
+        });
+
+        // Thêm sự kiện cho các nút đóng
+        const closeButtons = document.querySelectorAll('.close-btn');
+        closeButtons.forEach((button) => {
+            button.addEventListener('click', function () {
+                const index = this.getAttribute('data-index'); // Lấy chỉ số từ data-index
+                removeImage(index); // Gọi hàm removeImage để xóa hình ảnh
+            });
+        });
+    }
+
+    // Hàm xóa hình ảnh khỏi mảng và hiển thị lại
+    function removeImage(index) {
+        datahinhanhbase64.splice(index, 1); // Xóa hình ảnh khỏi mảng
+        displayImages(); // Hiển thị lại các hình ảnh sau khi xóa
+        Swal.fire({
+            icon: 'success',
+            title: 'Thành công!',
+            text: 'Ảnh đã được xóa thành công.',
+        });
     }
 
     // Sử dụng
     document.getElementById('fileUpload').addEventListener('change', function () {
         convertImageToBase64(this, handleBase64Data);
-    });    
+    });
 
-    $scope.submit = async function () {
+
+
+    document.getElementById("submit").addEventListener("click", function () {
         const dataanh = datahinhanhbase64;
         const sotienhoan = parseInt(document.getElementById("tongsotienhoan").textContent.replace(" VND", "").replace(/\,/g, "")) || 0;
         // Kiểm tra lý do trả hàng
@@ -164,19 +221,19 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             Swal.fire('Lỗi!', 'Vui lòng chọn lý do trả hàng.', 'error');
             return;
         }
-    
+
         // Kiểm tra danh sách sản phẩm
         if (!$scope.selectedProducts || $scope.selectedProducts.length === 0) {
             Swal.fire('Lỗi!', 'Vui lòng chọn ít nhất một sản phẩm trong hóa đơn.', 'error');
             return;
         }
-    
+
         // Kiểm tra phương thức hoàn tiền
         if (!$scope.phuongthuchoantien) {
             Swal.fire('Lỗi!', 'Vui lòng chọn phương thức hoàn tiền.', 'error');
             return;
         }
-    
+
         // Kiểm tra thông tin ngân hàng khi phương thức hoàn tiền yêu cầu
         if (
             ($scope.phuongthuchoantien === 'Ngân hàng' || $scope.phuongthuchoantien === 'Thẻ thanh toán') &&
@@ -185,25 +242,19 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             Swal.fire('Lỗi!', 'Vui lòng điền đầy đủ thông tin Ngân hàng, Số tài khoản và Tên người hưởng thụ.', 'error');
             return;
         }
-    
+
         // Kiểm tra tình trạng
         if (!$scope.tinhtrang) {
             Swal.fire('Lỗi!', 'Vui lòng chọn tình trạng sản phẩm.', 'error');
             return;
         }
-    
+
         // Kiểm tra hình ảnh hoặc video
-        if (!dataanh) {
+        if (dataanh.length == 0) {
             Swal.fire('Lỗi!', 'Vui lòng tải lên ít nhất một hình ảnh hoặc video.', 'error');
             return;
         }
-    
-        // Kiểm tra ghi chú
-        if (!$scope.ghichu) {
-            Swal.fire('Lỗi!', 'Vui lòng điền ghi chú.', 'error');
-            return;
-        }
-    
+
         const currentDate = new Date();
         const vietnamTimezoneOffset = 0; // Múi giờ Việt Nam là UTC+7
 
@@ -222,10 +273,10 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             cancelButtonText: 'Hủy bỏ'
         }).then(async (result) => {
             if (result.isConfirmed) {
-                const chuthich = 
-                ($scope.phuongthuchoantien === 'Ngân hàng' || $scope.phuongthuchoantien === 'Thẻ thanh toán') 
-                ? `Ngân hàng: ${$scope.nganhang} - STK: ${$scope.stk} - Tên người hưởng thụ: ${$scope.tennguoihuongthu}`
-                : "";
+                const chuthich = "";
+                ($scope.phuongthuchoantien === 'Ngân hàng' || $scope.phuongthuchoantien === 'Thẻ thanh toán')
+                    ? `Ngân hàng: ${$scope.nganhang} - STK: ${$scope.stk} - Tên người hưởng thụ: ${$scope.tennguoihuongthu}`
+                    : "";
                 // Gửi thông tin nếu tất cả điều kiện hợp lệ
                 const datatrahang = {
                     tenkhachhang: $scope.userInfo.ten,
@@ -239,12 +290,11 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                     ngaytrahangthucte: null,
                     chuthich: chuthich
                 };
-    
+
                 try {
                     const hoadondata = await CheckHoaDon()
                     console.log(hoadondata)
-                    if (hoadondata.trangthai != 3) 
-                    {
+                    if (hoadondata.trangthai != 3) {
                         Swal.fire('Trả hàng thất bại!', 'Hoá đơn này đã trả hàng, vui lòng kiểm tra lại', 'error');
                         return;
                     };
@@ -252,16 +302,16 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                     // Gửi thông tin trả hàng
                     const returnOrder = await trahang(datatrahang);
                     if (!returnOrder) return;  // Nếu không có kết quả trả về, dừng
-    
+
                     // Thêm hình ảnh sau khi tạo đơn trả hàng
                     const checkhinhanh = await hinhanh(returnOrder, dataanh);
-                    if (!checkhinhanh) return; 
-    
+                    if (!checkhinhanh) return;
+
                     // Thêm chi tiết đơn trả hàng
                     const checktrahangchitiet = await trahangchitiet(returnOrder, $scope.selectedProducts);
-                    if (!checktrahangchitiet) return; 
-    
-                    Swal.fire("Thành Công", "Đặt Hàng Thành Công.", "success");
+                    if (!checktrahangchitiet) return;
+                    await UpdateHoaDon();
+                    Swal.fire("Thành Công", "Tạo Đơn Trả Hàng Thành Công.", "success");
                     $scope.$apply(() => {
                         $location.path(`/donhangcuaban`);
                     });
@@ -273,7 +323,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                 Swal.fire('Đã hủy!', 'Bạn đã hủy gửi thông tin.', 'error');
             }
         });
-    };
+    });
 
     // Hàm lấy thông tin khách hàng từ API và cập nhật vào HTML
     async function CheckHoaDon() {
@@ -297,35 +347,49 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
         }
     }
 
-    
-    
+    // Hàm cập nhật thông tin hóa đơn thông qua API
+    async function UpdateHoaDon() {
+        const response = await $http.put(`https://localhost:7297/api/HoaDon/trangthaitrahang/${idhd}?trangthai=${7}`);
+        return null;
+    }
+
     // Hàm tạo hóa đơn
-    async function hinhanh(idth, dataanh ) {
+    async function hinhanh(idth, dataanh) {
         const data = {
             idth: idth,
-            hinhanh: dataanh
+            hinhanh: []  // Tạo mảng để chứa các ảnh thêm vào
         };
-    //
-        try {
-            const response = await fetch('https://localhost:7297/api/Hinhanh', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            const result = await response.json();
-    
-            // Kiểm tra nếu BE trả thông báo lỗi
-            if (result.error) {
-                Swal.fire("Lỗi", result.error, "error");
-                return null;  // Dừng nếu có lỗi từ BE
+
+        // Lặp qua tất cả ảnh trong dataanh và gửi từng ảnh một
+        for (let i = 0; i < dataanh.length; i++) {
+            const image = dataanh[i];  // Lấy từng ảnh trong mảng
+            data.hinhanh = image;  // Gán chỉ 1 ảnh vào mảng hinhanh trong mỗi lần gọi API
+
+            try {
+                const response = await fetch('https://localhost:7297/api/Hinhanh', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                // Kiểm tra nếu BE trả thông báo lỗi
+                if (result.error) {
+                    Swal.fire("Lỗi", result.error, "error");
+                    return null;  // Dừng nếu có lỗi từ BE
+                }
+            } catch (error) {
+                console.error("Lỗi kết nối API khi thêm hình ảnh:", error);
+                Swal.fire("Lỗi", `Kết nối thêm ảnh ${i + 1} thất bại.`, "error");
+                return null;  // Dừng vòng lặp nếu có lỗi
             }
-            return result;
-        } catch (error) {
-            console.error("Lỗi kết nối API khi thêm hình ảnh:", error);
-            Swal.fire("Lỗi", "Kết nối thêm hình ảnh thất bại.", "error");
         }
+
+        return "Thêm tất cả ảnh thành công!";
     }
-    
+
+
     // Hàm tạo hóa đơn
     async function trahang(data) {
         try {
@@ -348,7 +412,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             Swal.fire("Lỗi", "Kết nối tạo đơn trả hàng thất bại.", "error");
         }
     }
-    
+
     // Hàm tạo chi tiết hóa đơn
     async function trahangchitiet(idth, selectedProducts) {
         for (const product of selectedProducts) {
@@ -361,7 +425,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                 hinhthucxuly: $scope.hinhthucxuly || "",
                 Idhdct: product.productId
             };
-    
+
             try {
                 const response = await fetch('https://localhost:7297/api/Trahangchitiet', {
                     method: 'POST',
@@ -369,7 +433,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                     body: JSON.stringify(data)
                 });
                 const result = await response.json();
-    
+
                 if (result.error) {
                     Swal.fire("Lỗi", result.error, "error");
                     return null;
@@ -380,7 +444,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             }
         }
         return true;
-    }    
+    }
 
     $scope.$watch('phuongthuchoantien', function (newValue, oldValue) {
         // Kiểm tra khi phuongthuchoantien thay đổi và nếu thuộc tính cần hiển thị
