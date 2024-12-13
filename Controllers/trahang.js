@@ -349,7 +349,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
 
     // Hàm cập nhật thông tin hóa đơn thông qua API
     async function UpdateHoaDon() {
-        const response = await $http.put(`https://localhost:7297/api/HoaDon/trangthaitrahang/${idhd}?trangthai=${7}`);
+        const response = await $http.put(`https://localhost:7297/api/HoaDon/trangthaitrahang/${idhd}?trangthai=${5}`);
         return null;
     }
 

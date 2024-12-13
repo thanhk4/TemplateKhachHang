@@ -71,7 +71,8 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         "Đang được giao",
         "Đang giao",
         "Thành công",
-        "Đã hủy"
+        "Đã hủy",
+        "Thành công"
     ];
     
     // Fetch danh sách ngân hàng
@@ -132,6 +133,48 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             Swal.fire('Lỗi', 'Đã xảy ra lỗi khi xử lý!', 'error');
         }
     };
+
+    $scope.danhandonhang = async function (id) {
+        const hoaDonData = await CheckHoaDon(id);
+        try {
+            // Hiển thị hộp thoại xác nhận
+            const result = await Swal.fire({
+                title: 'Xác Nhận?',
+                text: 'Bạn chắc chắn đã nhận đơn hàng rồi?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy',
+            });
+    
+            if (result.isConfirmed) {
+                // Kiểm tra nếu hoaDonData đã được khởi tạo
+                if (!hoaDonData) {
+                    console.error('hoaDonData không tồn tại.');
+                    return Swal.fire('Lỗi', 'Dữ liệu hoá đơn không hợp lệ!', 'error');
+                }
+    
+                // Cập nhật trạng thái hoá đơn
+                hoaDonData.trangthai = 3; // Đã nhận đơn hàng
+                await HuyUpdateHoaDon(hoaDonData);
+    
+                // Thông báo thành công
+                const successResult = await Swal.fire(
+                    'Thành công',
+                    'Xác nhận hoá đơn đã nhận đơn hàng!',
+                    'success'
+                );
+    
+                // Reload trang nếu người dùng nhấn OK
+                if (successResult.isConfirmed) {
+                    location.reload();
+                }
+            }
+        } catch (error) {
+            console.error('Có lỗi xảy ra:', error);
+            Swal.fire('Lỗi', 'Đã xảy ra lỗi trong quá trình xử lý!', 'error');
+        }
+    };    
 
     // Xử lý xác nhận hủy trong modal
     $scope.xacNhanHuy = async function () {
@@ -243,22 +286,29 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         if (status === -1) {
             $scope.filteredOrders = $scope.DataHoaDonMua;
             $scope.thediv= status
+            $scope.paginateOrders();
+            
+        }  else if(status==3) {
+            $scope.filteredOrders = $scope.DataHoaDonMua.filter(order => order.trangthai == 3||order.trangthai==5);
+            $scope.thediv= status
+            $scope.paginateOrders();
         } else if(status<5) {
             $scope.filteredOrders = $scope.DataHoaDonMua.filter(order => order.trangthai === status);
             $scope.thediv= status
+            $scope.paginateOrders();
         }
         else if(status==5){
             $scope.thediv= status
             $http.get('https://localhost:7297/api/Trahang/View-Hoa-Don-Tra-By-Idkh-'+$scope.userInfo.id)
             .then(function(response){
-                $scope.ViewHoaDonTra = response.data
-                console.log($scope.ViewHoaDonTra)
+                $scope.filteredOrders = response.data
+                console.log($scope.filteredOrders)
+                $scope.paginateOrders();
             })
             .catch(function(error){
                 console.error(error)
             })
-        }
-        $scope.paginateOrders(); // Tạo lại phân trang sau khi lọc
+        } // Tạo lại phân trang sau khi lọc
     };
 
     // Chia danh sách đơn hàng thành các trang
