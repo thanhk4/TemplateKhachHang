@@ -22,19 +22,17 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
 
     function formatDate(dateString) {
         const date = new Date(dateString);
-        return date.toLocaleString('vi-VN', { 
-            year: 'numeric', 
-            month: '2-digit', 
-            day: '2-digit',
-            hour: '2-digit', 
-            minute: '2-digit', 
-            second: '2-digit',
-            hour12: false,
-            timeZone: 'Asia/Ho_Chi_Minh'
-        });
+    
+        // Lấy các thành phần ngày, tháng, năm, giờ, phút, giây
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const hours = String(date.getHours()).padStart(2, '0');
+        const minutes = String(date.getMinutes()).padStart(2, '0');
+    
+        // Trả về định dạng yyyy/MM/dd hh:mm:ss
+        return `${year}/${month}/${day} ${hours}:${minutes}`;
     }
-
- 
 
     async function fetchVouchers() {
         const idkh = GetByidKH();
@@ -82,7 +80,9 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
                     const formattedDate = new Date(
                         currentDate.getFullYear(),
                         currentDate.getMonth(),
-                        currentDate.getDate()
+                        currentDate.getDate(),
+                        currentDate.getHours(),
+                        currentDate.getMinutes()
                     );
     
                     const updatengaybatdauDate = new Date(data.ngaybatdau);
@@ -128,41 +128,6 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
         }
     }
     
-    function displayVouchers(vouchers, listId, noticeId) {
-        const voucherList = document.getElementById(listId);
-        const notice = document.getElementById(noticeId);
-        voucherList.innerHTML = '';
-        if (vouchers.length === 0) {
-            notice.style.display = 'block';
-            return;
-        }
-        notice.style.display = 'none';
-        vouchers.forEach(voucher => {
-            const card = document.createElement('div');
-            card.classList.add('card', 'mb-3');
-            const cardBody = document.createElement('div');
-            cardBody.classList.add('card-body');
-            const cardTitle = document.createElement('h5');
-            cardTitle.classList.add('card-title');
-            cardTitle.textContent = voucher.tengiamgia;
-            const cardText = document.createElement('p');
-            cardText.classList.add('card-text');
-            cardText.textContent = `Giá trị: ${voucher.giatri} ${voucher.donvi}`;
-            const cardStatus = document.createElement('p');
-            cardStatus.classList.add('card-text');
-            cardStatus.textContent = `Trạng thái: ${voucher.trangthai}`;
-            cardBody.appendChild(cardTitle);
-            cardBody.appendChild(cardText);
-            cardBody.appendChild(cardStatus);
-            card.appendChild(cardBody);
-            voucherList.appendChild(card);
-        });
-    }
-    
-    
-    
-    
-
     function displayVouchers(vouchers, listContainerId, noticeId) {
         const voucherListContainer = document.getElementById(listContainerId);
         const voucherNotice = document.getElementById(noticeId);
@@ -193,7 +158,7 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
                     const formattedValue = voucher.giatri >= 1000
                         ? voucher.giatri.toLocaleString('vi-VN')
                         : voucher.giatri;
-                    cardValue.textContent = `Giảm: ${formattedValue} ${voucher.donvi}`;
+                    cardValue.textContent = `Giá trị: ${formattedValue} ${voucher.donvi}`;
                 }
 
                 const cardDates = document.createElement('p');

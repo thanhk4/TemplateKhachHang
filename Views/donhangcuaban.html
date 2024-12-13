@@ -40,6 +40,36 @@
                 <button ng-click="filterOrders(4)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 4}">Đã hủy</button>
                 <button ng-click="filterOrders(5)" class="btn btn-outline-primary" ng-class="{active: filterStatus === 5}">Trả hàng/Hoàn tiền</button>
             </div>
+            <div class="row" ng-show="thediv==3">
+                <div class="col-md-6 mb-4" ng-repeat="x in paginatedOrders[currentPage]">
+                    <div class="order-card p-4 shadow-sm rounded">
+                        <p class="order-status text-end text-primary">{{ orderStatuses[x.trangthai] }}</p>
+                        <hr>
+                        <div>
+                            <div class="info-item">
+                                <span><i class="bi bi-clock"></i> Thời gian đặt:</span>
+                                <!-- Hiển thị ngày và giờ theo định dạng dd-MM-yyyy HH:mm -->
+                                <span>{{ x.thoigiandathang | date:'dd-MM-yyyy' }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span><i class="bi bi-wallet"></i> Tổng tiền:</span>
+                                <span class="fw-bold text-success">{{ x.tongtiencantra | number }} VNĐ</span>
+                            </div>
+                            <div class="info-item">
+                                <span><i class="bi bi-geo-alt"></i> Địa chỉ:</span>
+                                <span>{{ x.diachiship }}</span>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="text-end">
+                            <button class="btn btn-outline-primary" ng-if="x.trangthai==0||x.trangthai==1" ng-click="huydonhang(x.id)">Hủy đơn hàng</button>
+                            <a class="btn btn-outline-secondary" ng-if="(x.trangthai == 2 || x.trangthai==3)&&x.trangthai!=5" ng-click="trahang(x.id)">Trả hàng</a>
+                            <a class="btn btn-outline-danger" ng-if="x.trangthai == 2" ng-click="danhandonhang(x.id)">Đã Nhận Đơn Hàng</a>
+                            <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" ng-click="chitiethd(x.id)">Chi tiết hóa đơn</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
             <div class="row" ng-show="thediv<5">
                 <div class="col-md-6 mb-4" ng-repeat="x in paginatedOrders[currentPage]">
                     <div class="order-card p-4 shadow-sm rounded">
@@ -63,14 +93,15 @@
                         <hr>
                         <div class="text-end">
                             <button class="btn btn-outline-primary" ng-if="x.trangthai==0||x.trangthai==1" ng-click="huydonhang(x.id)">Hủy đơn hàng</button>
-                            <a class="btn btn-outline-secondary" ng-if="x.trangthai == 3" ng-click="trahang(x.id)">Trả hàng</a>
+                            <a class="btn btn-outline-secondary" ng-if="(x.trangthai == 2 || x.trangthai==3)&&x.trangthai!=5" ng-click="trahang(x.id)">Trả hàng</a>
+                            <a class="btn btn-outline-danger" ng-if="x.trangthai == 2" ng-click="danhandonhang(x.id)">Đã Nhận Đơn Hàng</a>
                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" ng-click="chitiethd(x.id)">Chi tiết hóa đơn</button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row" ng-show="thediv==5">
-                <div class="col-md-6 mb-4" ng-repeat="x in ViewHoaDonTra">
+                <div class="col-md-6 mb-4" ng-repeat="x in filteredOrders">
                     <div class="order-card p-4 shadow-sm rounded">
                         <p class="order-status text-end text-primary" ng-if="x.trangthai==0">Đơn hàng chờ trả hàng </p>
                         <p class="order-status text-end text-primary" ng-if="x.trangthai==1">Trả hàng không thành công</p>
