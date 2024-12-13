@@ -174,11 +174,11 @@
                             <input id="fileUpload" type="file" accept="image/*" multiple class="form-control" ng-model="hinhanh" name="hinhanh" readonly>
                             <span class="text-danger" ng-if="form.hinhanh.$touched && form.hinhanh.$error.required">Không được bỏ trống</span>
                         </div>
-                        <div class="col">
-                            <label for="fileUpload" class="form-label">Tải lên hình ảnh</label>
-                            <input id="fileUpload" type="file" accept="image/*" multiple class="form-control" ng-model="hinhanh2" name="hinhanh" readonly>
-                            <span class="text-danger" ng-if="form.hinhanh.$touched && form.hinhanh.$error.required">Không được bỏ trống</span>
-                        </div>
+                        
+                        <!-- Container để hiển thị hình ảnh -->
+                        <div id="imageContainer" class="mt-3">
+                            <!-- Hình ảnh sẽ được hiển thị ở đây -->
+                        </div>                        
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Ghi chú</label>
@@ -193,7 +193,7 @@
                     </div>                                        
                 </li>
                 <li class="list-group-item">
-                    <button type="submit" class="btn btn-danger w-100">Gửi xác nhận</button>
+                    <button type="submit" class="btn btn-danger w-100" id="submit">Gửi xác nhận</button>
                 </li>
             </ul>
             </form>
@@ -345,6 +345,57 @@ select {
     padding: 10px;
     text-align: left;
     border-bottom: 1px solid #ddd;
+}
+#imageContainer {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.image-item {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 10px;
+    border: 2px solid #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.image-item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+.image-item .close-btn {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.image-item .image-number {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 12px;
+    padding: 2px 5px;
+    border-radius: 12px;
 }
 
 </style>
