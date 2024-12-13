@@ -512,4 +512,19 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             console.error(error)
         })
     }
+    $scope.quahantra = function(today) {
+        if(today!=null){
+            // Đảm bảo `today` là đối tượng Date hợp lệ. Nếu không, chuyển đổi nó.
+            let todayDate = new Date(today).getTime(); // Chuyển `today` sang timestamp
+            let currentDate = Date.now(); // Lấy timestamp hiện tại
+            let differenceInDays = (todayDate-currentDate) / (1000 * 60 * 60 * 24); // Chuyển đổi từ mili giây sang ngày
+        
+            // Kiểm tra nếu số ngày chênh lệch nhỏ hơn hoặc bằng 15
+            return differenceInDays <= 15;
+        }
+        else{
+            return false;
+        }
+    };
+    
 });
