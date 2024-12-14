@@ -68,7 +68,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     // Trạng thái đơn hàngaaaaa
     $scope.orderStatuses = [
         "Chờ xác nhận",
-        "Đang được giao",
+        "Đã xác nhận",
         "Đang giao",
         "Thành công",
         "Đã hủy",
