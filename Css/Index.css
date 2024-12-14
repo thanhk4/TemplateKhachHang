@@ -5,7 +5,6 @@ html, body {
 .flex-grow-1 {
     flex-grow: 1;
 }
-
 .footer {
     background-color: #f8f9fa; /* Thay đổi màu nền nếu cần */
     padding: 1rem 0;
