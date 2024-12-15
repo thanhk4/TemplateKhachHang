@@ -60,12 +60,36 @@
                         </div>
                         <div class="mb-3">
                             <label for="password" class="form-label">Mật khẩu</label>
-                            <input type="password" class="form-control" id="password" ng-model="user.password" placeholder="••••••••" required>
+                            <div class="input-group">
+                                <input 
+                                    type="{{showPassword ? 'text' : 'password'}}" 
+                                    class="form-control" 
+                                    id="password" 
+                                    ng-model="user.password" 
+                                    placeholder="••••••••" 
+                                    required>
+                                <span class="input-group-text" ng-click="showPassword = !showPassword" style="cursor: pointer;">
+                                    <i ng-class="{'bi bi-eye': !showConfirmPassword, 'bi bi-eye-slash': showConfirmPassword}"></i>
+                                </span>
+                            </div>
                         </div>
+                        
                         <div class="mb-3">
                             <label for="confirm-password" class="form-label">Xác nhận mật khẩu</label>
-                            <input type="password" class="form-control" id="confirm-password" ng-model="user.confirmPassword" placeholder="••••••••" required>
+                            <div class="input-group">
+                                <input 
+                                    type="{{showConfirmPassword ? 'text' : 'password'}}" 
+                                    class="form-control" 
+                                    id="confirm-password" 
+                                    ng-model="user.confirmPassword" 
+                                    placeholder="••••••••" 
+                                    required>
+                                <span class="input-group-text" ng-click="showConfirmPassword = !showConfirmPassword" style="cursor: pointer;">
+                                    <i ng-class="{'bi bi-eye': !showConfirmPassword, 'bi bi-eye-slash': showConfirmPassword}"></i>
+                                </span>
+                            </div>
                         </div>
+                        
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="agree-terms" ng-model="user.agreeTerms" required>
                             <label class="form-check-label" for="agree-terms">Tôi đồng ý với các điều khoản và điều kiện</label>
