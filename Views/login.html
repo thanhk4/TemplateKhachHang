@@ -50,12 +50,25 @@
             </div>
             <div class="mb-3">
                 <label for="password" class="form-label">Mật khẩu</label>
-                <input type="password" class="form-control" id="password" name="password" placeholder="••••••••"
-                    autocomplete="current-password" ng-model="user.password" required>
+                <div class="input-group">
+                    <input 
+                        type="{{showPassword ? 'text' : 'password'}}" 
+                        class="form-control" 
+                        id="password" 
+                        name="password" 
+                        placeholder="••••••••" 
+                        autocomplete="current-password" 
+                        ng-model="user.password" 
+                        required>
+                    <span class="input-group-text" ng-click="showPassword = !showPassword" style="cursor: pointer;">
+                        <i ng-class="{'bi bi-eye': !showPassword, 'bi bi-eye-slash': showPassword}"></i>
+                    </span>
+                </div>
                 <div class="text-danger" ng-show="loginForm.password.$dirty && loginForm.password.$invalid">
                     <small ng-show="loginForm.password.$error.required">Mật khẩu là bắt buộc</small>
                 </div>
             </div>
+            
             <div class="mb-3 form-check">
                 <input type="checkbox" class="form-check-input" id="remember">
                 <label class="form-check-label" for="remember">Nhớ mật khẩu</label>
