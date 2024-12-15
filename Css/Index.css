@@ -51,3 +51,28 @@ body {
     border-color: #ee4d2d !important;
 }
 
+/* Cố định navbar ở trên cùng */
+.navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000; /* Đảm bảo navbar luôn ở trên các phần tử khác */
+    background-color: #343a40; /* Màu nền navbar, có thể thay đổi tùy ý */
+}
+
+/* Thêm padding cho body để tránh bị che khuất bởi navbar */
+body {
+    padding-top: 80px; /* Tùy chỉnh theo chiều cao của navbar */
+}
+
+/* Nếu bạn muốn có bóng đổ cho navbar */
+.navbar {
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Đảm bảo các liên kết trong navbar có đủ khoảng cách */
+.navbar-nav .nav-item {
+    margin-right: 15px; /* Khoảng cách giữa các item */
+}
+
