@@ -34,7 +34,7 @@ app.controller('LoginController', function ($scope, $http, $rootScope, $location
             }
         }).catch(function (error) {
             $scope.isLoading = false;
-            $scope.errorMessage = "Lỗi: " + (error.data || error.statusText);
+            $scope.errorMessage = (error.data || error.statusText);
         });
     };
     const checkSession = function () {

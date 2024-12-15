@@ -33,6 +33,81 @@
         border-radius: 50%;
         animation: spinner-border .75s linear infinite;
     }
+    /* Màu sắc khi hover lên biểu tượng mắt */
+.input-group-text i:hover {
+    color: #0056b3;
+}
+.login-form {
+    max-width: 400px;
+    margin: 50px auto; /* Đặt form vào giữa trang */
+    background-color: #fff;
+    padding: 30px;
+    border-radius: 12px; /* Bo góc cho form */
+    border: 2px solid #007bff; /* Đường viền màu xanh dương cho form */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Tạo bóng đổ nhẹ cho form */
+}
+
+/* Tiêu đề của form */
+h2 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+/* Các trường input */
+.form-control {
+    border-radius: 8px; /* Bo góc cho các trường input */
+    padding: 10px;
+    font-size: 16px;
+    border: 2px solid #ccc; /* Đặt đường viền mặc định màu xám nhạt */
+    transition: all 0.3s ease; /* Hiệu ứng chuyển đổi khi người dùng tương tác */
+}
+
+/* Tạo hiệu ứng focus cho các trường input */
+.form-control:focus {
+    border-color: #007bff; /* Đổi màu đường viền thành xanh dương khi người dùng chọn input */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Hiệu ứng bóng nhẹ */
+}
+
+/* Thông báo lỗi */
+.text-danger {
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+/* Checkbox "Nhớ mật khẩu" */
+.form-check-label {
+    font-size: 14px;
+}
+
+/* Nút Đăng nhập */
+.btn-primary {
+    background-color: #007bff;
+    border: 2px solid #007bff; /* Đặt đường viền màu xanh dương cho nút */
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    color: #fff;
+    transition: all 0.3s ease;
+}
+
+/* Hiệu ứng hover cho nút đăng nhập */
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3; /* Đổi màu đường viền khi hover */
+    
+}
+
+/* Biểu tượng mắt */
+
+.input-group-text i {
+    font-size: 20px;
+    color: #007bff;
+    transition: color 0.3s ease;
+}
+.input-group{
+    border-radius: 12px;
+}
 </style>
 
 <div class="container">
