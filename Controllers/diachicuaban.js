@@ -474,8 +474,14 @@ app.controller("DiachicuabanCtrl", function ($document, $scope, $rootScope) {
         })
             .then(response => {
                 if (response.ok) {
-                    Swal.fire("Thành công", "Cập nhật địa chỉ thành công!", "success");
-                    location.reload(); // Refresh lại trang
+                    Swal.fire("Thành công", "Cập nhật địa chỉ thành công!", "success")
+                    .then((result) => {
+                        // Kiểm tra nếu người dùng nhấn OK (hoặc nhấn vào nút xác nhận)
+                        if (result.isConfirmed) {
+                          // Sau khi nhấn OK, sẽ thực hiện reload trang
+                          location.reload();
+                        }
+                      });  
                 } else {
                     Swal.fire("Lỗi", "Cập nhật thất bại, vui lòng thử lại.", "error");
                 }
@@ -494,8 +500,14 @@ app.controller("DiachicuabanCtrl", function ($document, $scope, $rootScope) {
             })
                 .then(response => {
                     if (response.ok) {
-                        Swal.fire("Thành công", "Xóa địa chỉ thành công!", "success");
-                        location.reload(); // Refresh lại trang
+                        Swal.fire("Thành công", "Xóa địa chỉ thành công!", "success")
+                        .then((result) => {
+                            // Kiểm tra nếu người dùng nhấn OK (hoặc nhấn vào nút xác nhận)
+                            if (result.isConfirmed) {
+                              // Sau khi nhấn OK, sẽ thực hiện reload trang
+                              location.reload();
+                            }
+                          }); 
                     } else {
                         Swal.fire("Lỗi", "Xóa thất bại, vui lòng thử lại.", "error");
                     }
@@ -598,8 +610,14 @@ app.controller("DiachicuabanCtrl", function ($document, $scope, $rootScope) {
     
         try {
             await axios.post(apiAddressList, newAddress);
-            Swal.fire("Thành công", "Địa chỉ mới đã được lưu.", "success");
-            location.reload(); // Refresh lại trang
+            Swal.fire("Thành công", "Địa chỉ mới đã được lưu.", "success")
+            .then((result) => {
+                // Kiểm tra nếu người dùng nhấn OK (hoặc nhấn vào nút xác nhận)
+                if (result.isConfirmed) {
+                  // Sau khi nhấn OK, sẽ thực hiện reload trang
+                  location.reload();
+                }
+              }); 
         } catch (error) {
             Swal.fire("Lỗi", "Không thể lưu địa chỉ mới.", "error");
             console.error(error);
