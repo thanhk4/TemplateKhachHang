@@ -30,10 +30,21 @@ app.controller('PasswordResetController', function ($scope, $http, $rootScope, $
             $scope.errorMessages.confirmPassword = 'Mật khẩu mới và xác nhận mật khẩu không khớp.';
             return;
         }
-
+        if ($scope.passwordData.newPassword.length < 6) {
+            $scope.errorMessages.newPassword = 'Mật khẩu mới phải có ít nhất 6 ký tự.';
+            return;
+        }
+        if ($scope.passwordData.confirmPassword.length < 6) {
+            $scope.errorMessages.confirmPassword = 'Xác nhận mật khẩu mới phải có ít nhất 6 ký tự.';
+            return;
+        }
         // Kiểm tra các trường
         if (!$scope.passwordData.oldPassword) {
             $scope.errorMessages.oldPassword = 'Vui lòng nhập mật khẩu cũ.';
+        }
+        if ($scope.passwordData.newPassword === $scope.passwordData.oldPassword) {
+            $scope.errorMessages.newPassword = 'Mật khẩu mới không được trùng với mật khẩu cũ.';
+            return;
         }
         if (!$scope.passwordData.newPassword) {
             $scope.errorMessages.newPassword = 'Vui lòng nhập mật khẩu mới.';

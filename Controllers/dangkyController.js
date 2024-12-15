@@ -26,8 +26,8 @@ app.controller('dangkyController', function($scope, $http) {
 function isValidFullName(fullName) {
     if (!fullName) {
         return 'Họ tên không được để trống';
-    } else if (fullName.length < 5) {
-        return 'Họ tên phải có ít nhất 5 ký tự';
+    } else if (fullName.length < 6) {
+        return 'Họ tên phải có ít nhất 6 ký tự';
     } else if (fullName.length > 30) {
         return 'Họ tên không được dài quá 50 ký tự';
     }
@@ -44,7 +44,7 @@ function isValidEmail(email) {
 
     // Hàm để kiểm tra mật khẩu
     function isValidPassword(password) {
-        return password && password.length >= 5;
+        return password && password.length >= 6;
     }
 
     $scope.register = function() {
@@ -61,7 +61,7 @@ function isValidEmail(email) {
         }
         // Kiểm tra mật khẩu
         if (!isValidPassword($scope.user.password)) {
-            $scope.errorMessage = 'Mật khẩu phải có ít nhất 5 ký tự';
+            $scope.errorMessage = 'Mật khẩu phải có ít nhất 6 ký tự';
             return;
         }
         if (!isValidPhoneNumber($scope.user.sdt)) {

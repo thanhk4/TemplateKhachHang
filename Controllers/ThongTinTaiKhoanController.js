@@ -228,6 +228,46 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
             alert("Trạng thái không hợp lệ. Vui lòng chọn giá trị hợp lệ.");
             return; // Dừng xử lý nếu trạng thái không hợp lệ
         }
+        const hoTen = document.getElementById('editHoTen').value.trim();
+        const email = document.getElementById('editEmail').value.trim();
+        const sdt = document.getElementById('editSDT').value.trim();
+        const ngaysinh = document.getElementById('editNgaysinh').value.trim();
+        
+        // Kiểm tra validation
+        let isValid = true;
+    
+        // Kiểm tra tên (chỉ cho phép chữ cái và khoảng trắng)
+        if (!validateName(hoTen)) {
+            isValid = false;
+            document.getElementById('editHoTen').classList.add('is-invalid');
+        } else {
+            document.getElementById('editHoTen').classList.remove('is-invalid');
+        }
+    
+        // Kiểm tra email
+        if (!validateEmail(email)) {
+            isValid = false;
+            document.getElementById('editEmail').classList.add('is-invalid');
+        } else {
+            document.getElementById('editEmail').classList.remove('is-invalid');
+        }
+    
+        // Kiểm tra số điện thoại
+        if (!validatePhoneNumber(sdt)) {
+            isValid = false;
+            document.getElementById('editSDT').classList.add('is-invalid');
+        } else {
+            document.getElementById('editSDT').classList.remove('is-invalid');
+        }
+    
+        // Kiểm tra ngày sinh
+        if (!validateDateOfBirth(ngaysinh)) {
+            isValid = false;
+            document.getElementById('editNgaysinh').classList.add('is-invalid');
+        } else {
+            document.getElementById('editNgaysinh').classList.remove('is-invalid');
+        }
+        if (isValid) {
 
         // Cập nhật dữ liệu mới từ form
         const updatedData = {
@@ -263,8 +303,21 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
                 if (khachHangData) {
                     updateDataToHTML(khachHangData);  // Cập nhật giao diện với thông tin mới
                     updateDataToEditModal(khachHangData); // Cập nhật modal nếu cần
+
+                       // Cập nhật chỉ email, id và tên (ten) trong localStorage
+                       const updatedUserInfo = {
+                        id: idkh,  // Giữ nguyên id từ localStorage
+                        ten: hoTen,  // Cập nhật tên mới
+                        email: email  // Cập nhật email mới
+                    };
+                    localStorage.setItem('userInfo', JSON.stringify(updatedUserInfo));
+
                     var modal = bootstrap.Modal.getInstance(document.getElementById("editModal"));
                     modal.hide();
+                     // Tự động reload trang sau khi cập nhật thành công
+                     setTimeout(() => {
+                        window.location.reload();  // Reload lại trang sau 2 giây (2000ms)
+                    }, 2000); // Thời gian trì hoãn (2 giây)  // Tự động tải lại trang
                 }
             } else {
                 const errorData = await response.json();
@@ -275,7 +328,37 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
             console.error('Lỗi trong quá trình gửi yêu cầu:', error);
             alert('Có lỗi xảy ra. Vui lòng thử lại sau.');
         }
+    }
     });
+    function validateName(name) {
+        // Loại bỏ khoảng trắng và kiểm tra tên có ít nhất 5 chữ cái và tối đa 50 chữ cái
+        const strippedName = name.replace(/\s+/g, '');  // Loại bỏ tất cả các khoảng trắng
+        const regex = /^[a-zA-Zàáạảãâấầẩẫăắằẳẵêếềểễiíịỉĩòóọỏõôốồổỗơớờởỡuúụủũôớờởỡuúụủũựỳỹý]/g;  // Kiểm tra tên chỉ chứa chữ cái (bao gồm cả chữ có dấu)
+    
+        return strippedName.length >= 5 && strippedName.length <= 50 && regex.test(name);
+    }
+    
+    function validateEmail(email) {
+        var emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.(com|vn)$/;
+        return emailPattern.test(email);
+    }
+    
+    
+    function validatePhoneNumber(phone) {
+        var phoneRegex = /^[0-9]{10}$/; // Kiểm tra số điện thoại từ 10
+        return phoneRegex.test(phone);
+    }
+    
+    function validateDateOfBirth(dob) {
+        const today = new Date();
+        const birthDate = new Date(dob);
+        const age = today.getFullYear() - birthDate.getFullYear();
+        const m = today.getMonth() - birthDate.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            age--;
+        }
+        return age >= 10 && age <= 100;
+    }
 
     // Gọi API khi controller khởi tạo
     fetchAndUpdateData();
