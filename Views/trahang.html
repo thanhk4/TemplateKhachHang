@@ -110,11 +110,7 @@
                             <option value="Hàng hóa không đúng mô tả">Hàng hóa không đúng mô tả</option>
                             <option value="Sản phẩm bị hư hỏng hoặc lỗi">Sản phẩm bị hư hỏng hoặc lỗi</option>
                             <option value="Giao sai sản phẩm">Giao sai sản phẩm</option>
-                            <option value="Sản phẩm giả mạo">Sản phẩm giả mạo</option>
                             <option value="Chưa nhận được sản phẩm">Chưa nhận được sản phẩm</option>
-                            <option value="Thay đổi ý định">Thay đổi ý định</option>
-                            <option value="Đặt hàng nhầm">Đặt hàng nhầm</option>
-                            <option value="Lý do khác">Lý do khác</option>
                         </select>
                         <span class="text-danger" ng-if="form.lydotrahang.$touched && form.lydotrahang.$error.required">Không được bỏ trống</span>
                     </div>
@@ -124,12 +120,19 @@
                             <option value="" selected disabled>Chọn phương thức hoàn tiền</option>
                             <option value="Ngân hàng">Hoàn tiền vào tài khoản ngân hàng</option>
                             <option value="Thẻ thanh toán">Hoàn tiền qua thẻ thanh toán</option>
-                            <option value="Voucher">Hoàn tiền bằng voucher/mã giảm giá</option>
-                            <option value="Tiền mặt">Hoàn tiền trực tiếp bằng tiền mặt</option>
+                            <option value="Điểm sử dụng">Hoàn tiền bằng điểm sử dụng</option>
                         </select>
                         <span class="text-danger" ng-if="form.phuongthuchoantien.$touched && form.phuongthuchoantien.$error.required">Không được bỏ trống</span>
+                    </div>        
+                    <div class="mb-3">
+                        <label for="kieutrahangNote" class="form-label">Kiểu trả hàng</label>
+                        <select id="kieutrahangStatus" class="form-select" name="kieutrahangStatus" ng-model="kieutrahang" name="kieutrahang" required>
+                          <option value="" selected disabled>Chọn kiểu trả hàng</option>
+                          <option value="Hoàn tiền và có trả hàng">Hoàn tiền và có trả hàng</option>
+                          <option value="Hoàn tiền và không trả hàng">Hoàn tiền và không trả hàng</option>
+                        </select>
+                        <span class="text-danger" ng-if="form.kieutrahang.$touched && form.kieutrahang.$error.required">Không được bỏ trống</span>
                     </div>
-                    
                     <!-- Điều khiển Collapse với ng-show -->
                     <div ng-show="phuongthuchoantien === 'Thẻ thanh toán' || phuongthuchoantien === 'Ngân hàng'" class="collapse show" id="collapseExample">
                         <div class="row mb-3">
@@ -155,19 +158,10 @@
                     <div class="mb-3">
                         <label for="additionalNote" class="form-label">Tình trạng</label>
                         <select id="returnStatus" class="form-select" name="returnStatus" ng-model="tinhtrang" name="tinhtrang" required>
-                          <option value="Sản phẩm bị hỏng">Sản phẩm bị hỏng</option>
-                          <option value="Không còn mác hoặc bao bì gốc">Không còn mác hoặc bao bì gốc</option>
-                          <option value="Sản phẩm sai kích thước">Sản phẩm sai kích thước</option>
-                          <option value="Sản phẩm không đúng mô tả">Sản phẩm không đúng mô tả</option>
-                          <option value="Sản phẩm bị thiếu phụ kiện, linh kiện">Sản phẩm bị thiếu phụ kiện, linh kiện</option>
-                          <option value="Sản phẩm không hoạt động">Sản phẩm không hoạt động</option>
-                          <option value="Sản phẩm bị bẩn hoặc có vết ố">Sản phẩm bị bẩn hoặc có vết ố</option>
-                          <option value="Sản phẩm bị trầy xước, lỗi bề mặt">Sản phẩm bị trầy xước, lỗi bề mặt</option>
+                          <option value="" selected disabled>Chọn phương tình trạng</option>
+                          <option value="Sản phẩm thiếu hàng">Sản phẩm thiếu hàng</option>
                           <option value="Sản phẩm bị hư hỏng trong quá trình vận chuyển">Sản phẩm bị hư hỏng trong quá trình vận chuyển</option>
-                          <option value="Sản phẩm bị lỗi kỹ thuật">Sản phẩm bị lỗi kỹ thuật</option>
-                          <option value="Giao hàng muộn">Giao hàng muộn</option>
                           <option value="Sản phẩm bị thiếu hoặc giao sai đơn hàng">Sản phẩm bị thiếu hoặc giao sai đơn hàng</option>
-                          <option value="Không còn nhu cầu sử dụng">Không còn nhu cầu sử dụng</option>
                         </select>
                         <span class="text-danger" ng-if="form.tinhtrang.$touched && form.tinhtrang.$error.required">Không được bỏ trống</span>
                     </div>
