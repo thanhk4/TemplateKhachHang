@@ -242,6 +242,11 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             Swal.fire('Lỗi!', 'Vui lòng điền đầy đủ thông tin Ngân hàng, Số tài khoản và Tên người hưởng thụ.', 'error');
             return;
         }
+        // Kiểm tra tình trạng
+        if (!$scope.kieutrahang) {
+            Swal.fire('Lỗi!', 'Vui lòng chọn kiểu trả hàng.', 'error');
+            return;
+        }
 
         // Kiểm tra tình trạng
         if (!$scope.tinhtrang) {
@@ -422,7 +427,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                 soluong: product.quantity,
                 tinhtrang: 0,
                 ghichu: $scope.ghichu || "",
-                hinhthucxuly: $scope.hinhthucxuly || "",
+                hinhthucxuly: $scope.kieutrahang || "",
                 Idhdct: product.productId
             };
 

@@ -466,12 +466,16 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
         // Trả về userId
         return userId;
     }
-
+    function getRadioByValue(value) {
+        return document.querySelector(`input[name="paymentMethod"][value="${value}"]`);
+    }
     $('#muaHangBtn').on('click', async function () {
         const voucherCodeInputdata = document.getElementById('voucherCodeDisplay');
         const tongHoaDon = parseInt(document.getElementById("tongHoaDon")?.innerText.replace(/[VND.]/g, "") || 0) || 0;
         const tongSanPham = parseInt(document.getElementById("tongSanPham")?.innerText.replace(/[VND.]/g, "") || 0) || 0;
         const soTienDatCoc = 0;
+        const cashOnDeliveryRadio = getRadioByValue("1");
+        const bankTransferRadio = getRadioByValue("2");
         if (tongHoaDon > 10000000)
         {
             soTienDatCoc = tongHoaDon * 0.3
@@ -524,7 +528,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
                 await UpdateDiem(diemsudung);
             }
 
-            if (paymentMethod === "1" && tongHoaDon >= 10000000) {
+            if (cashOnDeliveryRadio && tongHoaDon >= 10000000) {
                 const confirm = await Swal.fire({
                     title: 'Yêu cầu đặt cọc',
                     text: 'Hóa đơn trên 10.000.000 VND, vui lòng đặt cọc 30%.',
@@ -552,6 +556,11 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
                     if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
                 }
             } else {
+                if(tongHoaDon == 0 && bankTransferRadio)
+                    {
+                        Swal.fire("Lỗi", "Tổng sản phẩm = 0, không thể chuyển khoản", "error");
+                        return
+                    }
                 const idhd = await taoHoaDon(hoadonData);
                 if (!idhd) return; // Dừng nếu tạo hóa đơn thất bại
     
@@ -561,7 +570,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
                 const addPaymentHistoryResult = await addPaymentHistory(idhd);
                 if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
                 sessionStorage.clear();
-                if (paymentMethod === "2") {
+                if (bankTransferRadio) {
                     const taoLinkThanhToanResult = await taoLinkThanhToan(idhd);
                     if (!taoLinkThanhToanResult) return; // Dừng nếu tạo link thanh toán thất bại
                 }
@@ -1473,32 +1482,68 @@ async function taoLinkThanhToan(idhd) {
         });
     });    
 
-        const tongHoaDonEl = document.getElementById("tongHoaDon");
-        const cashOnDeliveryRadio = document.getElementById("cashOnDelivery");
-        const bankTransferRadio = document.getElementById("bankTransfer");
-        const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
-  
-        // Hàm cập nhật trạng thái phương thức thanh toán
-        function updatePaymentMethod() {
-            const tongHoaDonValue = parseInt(tongHoaDonEl.textContent.replace(/[VND.]/g, ''));
-  
-            if (tongHoaDonValue === 0) {
-                cashOnDeliveryRadio.checked = true; // Chọn "Thanh toán khi nhận hàng"
-                bankTransferRadio.disabled = true; // Vô hiệu hóa "Chuyển khoản ngân hàng"
-                bankTransferLabel.style.display = "none"; // Ẩn nhãn
-            } else {
-                bankTransferRadio.disabled = false; // Bật lại "Chuyển khoản ngân hàng"
-                bankTransferLabel.style.display = "inline-block"; // Hiện lại nhãn
+        // API endpoint
+        const apiUrl = "https://localhost:7297/api/Phuongthucthanhtoan";
+
+        // Fetch payment methods từ API
+        async function fetchPaymentMethods() {
+            try {
+                const response = await fetch(apiUrl);
+                if (!response.ok) {
+                    throw new Error("Không thể lấy phương thức thanh toán.");
+                }
+                const paymentMethods = await response.json();
+    
+                // Xử lý hiển thị phương thức thanh toán
+                renderPaymentMethods(paymentMethods);
+            } catch (error) {
+                console.error(error);
+                renderNoPaymentMethods();
             }
         }
-  
-        // Theo dõi thay đổi nội dung của tổng hóa đơn
-        const observer = new MutationObserver(updatePaymentMethod);
-        observer.observe(tongHoaDonEl, { childList: true, subtree: true });
-  
-        // Khởi chạy khi tải trang
-        document.addEventListener("DOMContentLoaded", updatePaymentMethod);
     
+        // Hiển thị danh sách phương thức thanh toán
+        function renderPaymentMethods(paymentMethods) {
+            const container = document.getElementById("payment-methods-container");
+            container.innerHTML = ""; // Xóa nội dung cũ
+    
+            if (paymentMethods.length === 0) {
+                renderNoPaymentMethods();
+                return;
+            }
+    
+            paymentMethods.forEach((method, index) => {
+                const isChecked = index === 0 ? "checked" : ""; // Chọn mặc định phương thức đầu tiên
+    
+                // Tạo input và label cho từng phương thức thanh toán
+                const input = document.createElement("input");
+                input.type = "radio";
+                input.className = "btn-check";
+                input.name = "paymentMethod";
+                input.id = `paymentMethod-${method.id}`;
+                input.value = method.id;
+                input.autocomplete = "off";
+                input.checked = isChecked;
+    
+                const label = document.createElement("label");
+                label.className = "btn btn-outline-primary";
+                label.htmlFor = `paymentMethod-${method.id}`;
+                label.innerText = method.tenpttt;
+    
+                // Thêm input và label vào container
+                container.appendChild(input);
+                container.appendChild(label);
+            });
+        }
+    
+        // Hiển thị thông báo khi không có phương thức thanh toán
+        function renderNoPaymentMethods() {
+            const container = document.getElementById("payment-methods-container");
+            container.innerHTML = `<p class="text-danger">Chưa có phương thức thanh toán</p>`;
+        }
+    
+    // Gọi hàm fetchPaymentMethods khi trang tải
+    fetchPaymentMethods();
     loadAddressesByIdKH();
     fetchkhachangById();
     renderSanPham();
