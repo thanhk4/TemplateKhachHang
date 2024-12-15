@@ -212,7 +212,14 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
         $scope.GioHang = async function () {
             // Lấy danh sách các thuộc tính đã chọn
             const tenthuoctinhList = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
-        
+         
+            
+            if (!$scope.selectedSPCTs || $scope.selectedSPCTs[0].soluong === 0 && selectedSPCTs[0].sales[0].soluong <= 0) {
+                console.log("Không thể mua sản phẩm do hết hàng.");
+                console.log(selectedSPCTs[0].sales[0].soluong);
+                
+                return;
+            }
             // Kiểm tra xem tất cả các thuộc tính có được chọn chưa
             if (tenthuoctinhList.length === Object.keys($scope.groupedThuocTinhs).length) {
                 try {
@@ -404,7 +411,11 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
     $scope.MuaSanPham = async function () {
         // Lấy danh sách các thuộc tính đã chọn
         const tenthuoctinhList = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
-        
+
+        if (!$scope.selectedSPCTs || $scope.selectedSPCTs[0].soluong === 0) {
+            console.log("Không thể mua sản phẩm do hết hàng.");
+            return;
+        }
         // Kiểm tra xem tất cả các thuộc tính có được chọn chưa
         if (tenthuoctinhList.length === Object.keys($scope.groupedThuocTinhs).length) {
             try {

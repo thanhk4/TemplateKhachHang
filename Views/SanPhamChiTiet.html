@@ -27,7 +27,7 @@
                     <span class="discount-badge text-danger" ng-if="selectedSPCTs[0].sales[0].donvi === 0">
                         -{{selectedSPCTs[0].giathoidiemhientai - selectedSPCTs[0].giaSaleSanPhamChiTiet | number : 0}}VNĐ
                     </span>
-                    <h5 class="current-price text-danger" ng-if=" selectedSPCTs[0].giathoidiemhientai === selectedSPCTs[0].giaSaleSanPhamChiTiet">
+                    <h5 class="current-price text-danger" ng-if=" selectedSPCTs[0].giathoidiemhientai === selectedSPCTs[0].giaSaleSanPhamChiTiet ">
                         {{selectedSPCTs[0].giaSaleSanPhamChiTiet | currency:'' : 0}}VNĐ
                     </h5>
                     <h5 class="current-price text-danger" ng-if=" selectedSPCTs[0].giathoidiemhientai !== selectedSPCTs[0].giaSaleSanPhamChiTiet">
@@ -78,19 +78,28 @@
             
                 <div ng-if="selectedSPCTs && selectedSPCTs.length > 0">
                     <!-- Hiển thị số lượng tối đa -->
-                    <p class="mt-2" ng-if=" selectedSPCTs[0].giathoidiemhientai === selectedSPCTs[0].giaSaleSanPhamChiTiet">Số lượng tối đa có sẵn: <strong>{{selectedSPCTs[0].soluong}}</strong></p>
-                    <p class="mt-2" ng-if=" selectedSPCTs[0].giathoidiemhientai !== selectedSPCTs[0].giaSaleSanPhamChiTiet">Số lượng tối đa có sẵn: <strong>{{selectedSPCTs[0].sales[0].soluong}}</strong></p>
+                    <p class="mt-2" ng-if=" selectedSPCTs[0].giathoidiemhientai === selectedSPCTs[0].giaSaleSanPhamChiTiet && selectedSPCTs[0].soluong >0 ">Số lượng tối đa có sẵn: <strong>{{selectedSPCTs[0].soluong}}</strong></p>
+                    <p class="mt-2" ng-if=" selectedSPCTs[0].giathoidiemhientai !== selectedSPCTs[0].giaSaleSanPhamChiTiet">Số lượng sale có sẵn: <strong>{{selectedSPCTs[0].sales[0].soluong}}</strong></p>
+                    <p class="mt-2" ng-if=" selectedSPCTs[0].giathoidiemhientai === selectedSPCTs[0].giaSaleSanPhamChiTiet && selectedSPCTs[0].soluong === 0 ">Hết hàng</strong></p>
+                    
                 </div>
             
                 <hr class="mt-3" style="border: 0; border-top: 2px solid;">
                 <!-- Nút "Mua ngay" -->
+               <!-- Nút "Mua ngay" -->
                 <a href="" ng-click="MuaSanPham()" class="btn btn-outline-dark chat-btn"
-                    ng-class="{'btn-disabled': selectedSPCTs.length !== 1}">
-                    Mua ngay
+                ng-class="{'btn-disabled': selectedSPCTs.length !== 1 || selectedSPCTs[0].soluong === 0}" 
+                ng-disabled="selectedSPCTs.length !== 1 || selectedSPCTs[0].soluong === 0">
+                Mua ngay
                 </a>
-                <!-- Nút "Thêm vào giỏ hàng" -->
+
+            <!-- Nút "Thêm vào giỏ hàng" -->
                 <a href="" ng-click="GioHang()" class="btn btn-dark add-cart-btn"
-                    ng-class="{'btn-disabled': selectedSPCTs.length !== 1}">Thêm vào giỏ hàng</a>
+                ng-class="{'btn-disabled': selectedSPCTs.length !== 1 || selectedSPCTs[0].soluong === 0}" 
+                ng-disabled="selectedSPCTs.length !== 1 || selectedSPCTs[0].soluong === 0">
+            hêm vào giỏ hàng
+            </a>
+
             </div>
         </div>
     </div>
@@ -139,7 +148,7 @@
                                 </div>
                                 <div class="footer">
                                     <div ng-if="danhGia.urlHinhanh" >
-                                        <img ng-src="{{ danhGia.urlHinhanh }}" alt="Hình ảnh đánh giá" style="width: 300px;"/>
+                                        <img ng-src="{{ danhGia.urlHinhanh }}" alt="Hình ảnh đánh giá" style="width: 200px;"/>
                                     </div>
                                 </div>
                                 <hr />
