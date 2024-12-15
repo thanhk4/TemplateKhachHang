@@ -21,10 +21,10 @@
                         <s>{{selectedSPCTs[0].giathoidiemhientai | currency:'' : 0}}VNĐ</s>
                     </span>
                    
-                    <span class="discount-badge text-danger" ng-if="selectedSPCTs[0].sales[0].donvi === 1">
+                    <span class="discount-badge text-danger" ng-if="selectedSPCTs[0].sales[0].donvi === 1 && selectedSPCTs[0].giathoidiemhientai !== selectedSPCTs[0].giaSaleSanPhamChiTiet ">
                         -{{((1 - selectedSPCTs[0].giaSaleSanPhamChiTiet / selectedSPCTs[0].giathoidiemhientai) * 100) | number : 0}}%
                     </span>
-                    <span class="discount-badge text-danger" ng-if="selectedSPCTs[0].sales[0].donvi === 0">
+                    <span class="discount-badge text-danger" ng-if="selectedSPCTs[0].sales[0].donvi === 0 && selectedSPCTs[0].giathoidiemhientai !== selectedSPCTs[0].giaSaleSanPhamChiTiet">
                         -{{selectedSPCTs[0].giathoidiemhientai - selectedSPCTs[0].giaSaleSanPhamChiTiet | number : 0}}VNĐ
                     </span>
                     <h5 class="current-price text-danger" ng-if=" selectedSPCTs[0].giathoidiemhientai === selectedSPCTs[0].giaSaleSanPhamChiTiet ">
