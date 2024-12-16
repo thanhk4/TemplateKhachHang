@@ -552,37 +552,48 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             });
         }
     };
-    $scope.hdtrahang = async function(id){
-        $http.get('https://localhost:7297/api/Trahang/'+id)
-        .then(function(response){
-            $scope.datatrahang = response.data
-            console.log($scope.datatrahang)
-        })
-        .catch(function(error){
-            console.error(error)
-        })
-        $http.get('https://localhost:7297/api/Trahangchitiet/View-Hoadonct-Theo-Idth-'+id)
-        .then(function(response){
-            $scope.trahangct = response.data
-            console.log($scope.trahangct)
-        })
-        .catch(function(error){
-            console.error(error)
-        })
-    }
-    $scope.quahantra = function(today) {
-        if(today!=null){
-            // Đảm bảo `today` là đối tượng Date hợp lệ. Nếu không, chuyển đổi nó.
-            let todayDate = new Date(today).getTime(); // Chuyển `today` sang timestamp
-            let currentDate = Date.now(); // Lấy timestamp hiện tại
-            let differenceInDays = (todayDate-currentDate) / (1000 * 60 * 60 * 24); // Chuyển đổi từ mili giây sang ngày
-        
-            // Kiểm tra nếu số ngày chênh lệch nhỏ hơn hoặc bằng 15
-            return differenceInDays <= 15;
+    $scope.hdtrahang = async function (id) {
+        try {
+            // First API call
+            const response1 = await $http.get('https://localhost:7297/api/Trahang/' + id);
+            $scope.datatrahang = response1.data;
+            console.log($scope.datatrahang);
+        } catch (error) {
+            console.error("Error fetching Trahang data:", error);
         }
-        else{
-            return false;
+    
+        try {
+            // Second API call
+            const response2 = await $http.get('https://localhost:7297/api/Trahangchitiet/View-Hoadonct-Theo-Idth-' + id);
+            $scope.trahangct = response2.data;
+            console.log($scope.trahangct);
+    
+            // Iterate over `trahangct` and handle async operations
+            for (const element of $scope.trahangct) {
+                try {
+                    // Fetch attributes for the product
+                    const datathuoctinh = await fetchThuocTinhSPCT(element.idspct);
+                    element.thuocTinhSelects = createThuocTinhSelects(datathuoctinh, element.idspct);
+                } catch (innerError) {
+                    console.error("Error loading attributes or creating selects:", innerError);
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching Trahangchitiet data:", error);
         }
     };
     
+    $scope.quahantra = function(today) {
+        if (today != null) {
+            // Đảm bảo `today` là đối tượng Date hợp lệ. Nếu không, chuyển đổi nó.
+            let todayDate = new Date(today).getTime(); // Chuyển `today` sang timestamp
+            let currentDate = Date.now(); // Lấy timestamp hiện tại
+            let differenceInDays = (todayDate - currentDate) / (1000 * 60 * 60 * 24); // Chuyển đổi từ mili giây sang ngày
+    
+            // Kiểm tra nếu số ngày chênh lệch nhỏ hơn hoặc bằng 15
+            return differenceInDays <= 15 && differenceInDays >= 0; // Bao gồm kiểm tra ngày trong tương lai
+        } else {
+            return true; // Nếu không có ngày được truyền vào, mặc định trả về `true`
+        }
+    };
 });

@@ -260,12 +260,6 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             return;
         }
 
-        const currentDate = new Date();
-        const vietnamTimezoneOffset = 0; // Múi giờ Việt Nam là UTC+7
-
-        // Điều chỉnh thời gian theo múi giờ Việt Nam
-        currentDate.setMinutes(currentDate.getMinutes() + vietnamTimezoneOffset - currentDate.getTimezoneOffset());
-
         // Hiển thị xác nhận gửi thông tin
         Swal.fire({
             title: 'Bạn có chắc chắn?',
@@ -291,7 +285,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                     lydotrahang: $scope.lydotrahang || null,
                     trangthai: 0,
                     phuongthuchoantien: $scope.phuongthuchoantien,
-                    ngaytrahangdukien: currentDate,
+                    ngaytrahangdukien: new Date(),
                     ngaytrahangthucte: null,
                     chuthich: chuthich
                 };

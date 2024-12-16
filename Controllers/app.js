@@ -331,3 +331,4 @@ function updateCartDOM() {
         `;
     }
 }
+console.log('Gio hiejn tai: '+new Date())
