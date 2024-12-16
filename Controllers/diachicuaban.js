@@ -54,7 +54,19 @@ app.controller("DiachicuabanCtrl", function ($document, $scope, $rootScope) {
                     return [];
                 }
                 renderData(response.data, "province");
+                
+                const provinceSelect = document.querySelector("#province");
+                if (provinceSelect) {
+                    const hanoiOption = Array.from(provinceSelect.options).find(option => option.text === "Thành phố Hà Nội");
+                    if (hanoiOption) {
+                        hanoiOption.selected = true;
+                        // Get the code for Hanoi and call the district API
+                        const hanoiCode = hanoiOption.value;
+                        callApiDistrict(host + "p/" + hanoiCode + "?depth=2");
+                    }
+                }
             })
+    
             .catch((error) => {
                 console.error("Lỗi khi gọi API:", error);
                 Swal.fire("Lỗi", "Không thể kết nối tới máy chủ!", "error");
@@ -86,8 +98,11 @@ app.controller("DiachicuabanCtrl", function ($document, $scope, $rootScope) {
                     Swal.fire("Lỗi", "Không có dữ liệu quận!", "error");
                     return [];
                 }
-                renderData(response.data.districts, "district");
-                document.querySelector("#district").disabled = false;
+                const districtSelect = document.querySelector("#district");
+                if (districtSelect) {
+                    renderData(response.data.districts, "district");
+                    districtSelect.disabled = false;
+                }
             })
             .catch((error) => {
                 console.error("Lỗi khi gọi API quận:", error);
@@ -143,10 +158,41 @@ app.controller("DiachicuabanCtrl", function ($document, $scope, $rootScope) {
         array.forEach(element => {
             row += `<option value="${element.code}">${element.name}</option>`; // Thêm các option vào dropdown
         });
-        if (document.querySelector("#" + select)) {
-            document.querySelector("#" + select).innerHTML = row; // Cập nhật nội dung dropdown
+        const selectElement = document.querySelector("#" + select);
+    if (selectElement) {
+        selectElement.innerHTML = row;
+        
+        // If this is the province select and Hanoi is being set
+        if (select === "province") {
+            const hanoiOption = Array.from(selectElement.options).find(option => 
+                option.text === "Thành phố Hà Nội"
+            );
+            if (hanoiOption) {
+                hanoiOption.selected = true;
+                // Trigger the change event manually
+                const event = new Event('change');
+                selectElement.dispatchEvent(event);
+            }
         }
-    };
+    }
+};
+if (document.querySelector("#province")) {
+    document.querySelector("#province").addEventListener("change", function() {
+        const provinceCode = this.value;
+        if (provinceCode) {
+            // Clear and disable ward dropdown
+            const wardSelect = document.querySelector("#ward");
+            if (wardSelect) {
+                wardSelect.innerHTML = '<option disabled value="">Chọn Phường/Xã</option>';
+                wardSelect.disabled = true;
+            }
+            
+            // Call API to get districts
+            callApiDistrict(host + "p/" + provinceCode + "?depth=2");
+        }
+    });
+}
+
 
     // Hàm để render dữ liệu vào các dropdown
     var renderDataUpdate = (array, select) => {
@@ -367,27 +413,65 @@ app.controller("DiachicuabanCtrl", function ($document, $scope, $rootScope) {
             .then(response => response.json())
             .then(address => {
                 document.getElementById("updateAddressId").value = id;
-                const updateTenNguoiNhan = document.getElementById("Updatetennguoinhan");
-                const updateSoDienThoai = document.getElementById("Updatesdtnguoinhan");
-                const updateProvince = document.getElementById("updateprovince");
-                const updateDistrict = document.getElementById("updatedistrict");
-                const updateWard = document.getElementById("updateward");
-                const updateDetailInput = document.getElementById("UpdatedetailInput");
-
-                if (!updateTenNguoiNhan || !updateSoDienThoai || !updateProvince || !updateDistrict || !updateWard || !updateDetailInput) {
-                    console.error("Một hoặc nhiều phần tử không tồn tại trong DOM.");
-                    return;
-                }
-
-                updateTenNguoiNhan.value = address.ten;
-                updateSoDienThoai.value = address.sdt;
-                updateProvince.selectedOptions.value = address.thanhpho;
-                updateDistrict.selectedOptions.value = address.quanhuyen;
-                updateWard.selectedOptions.value = address.phuongxa;
-                updateDetailInput.value = address.diachicuthe;
+                document.getElementById("Updatetennguoinhan").value = address.ten;
+                document.getElementById("Updatesdtnguoinhan").value = address.sdt;
+                document.getElementById("UpdatedetailInput").value = address.diachicuthe;
+    
+                // Gọi API để lấy danh sách tỉnh/thành phố
+                fetch('https://provinces.open-api.vn/api/?depth=1')
+                    .then(response => response.json())
+                    .then(provinces => {
+                        const updateProvince = document.getElementById("updateprovince");
+                        updateProvince.innerHTML = '<option disabled value="">Chọn Tỉnh/Thành</option>';
+                        provinces.forEach(province => {
+                            const option = document.createElement('option');
+                            option.value = province.code;
+                            option.textContent = province.name;
+                            option.selected = province.name === address.thanhpho;
+                            updateProvince.appendChild(option);
+                        });
+    
+                        // Sau khi chọn tỉnh/thành, gọi API để lấy quận/huyện
+                        const selectedProvince = updateProvince.options[updateProvince.selectedIndex];
+                        if (selectedProvince) {
+                            fetch(`https://provinces.open-api.vn/api/p/${selectedProvince.value}?depth=2`)
+                                .then(response => response.json())
+                                .then(data => {
+                                    const updateDistrict = document.getElementById("updatedistrict");
+                                    updateDistrict.innerHTML = '<option disabled value="">Chọn Quận/Huyện</option>';
+                                    updateDistrict.disabled = false;
+                                    data.districts.forEach(district => {
+                                        const option = document.createElement('option');
+                                        option.value = district.code;
+                                        option.textContent = district.name;
+                                        option.selected = district.name === address.quanhuyen;
+                                        updateDistrict.appendChild(option);
+                                    });
+    
+                                    // Sau khi chọn quận/huyện, gọi API để lấy phường/xã
+                                    const selectedDistrict = updateDistrict.options[updateDistrict.selectedIndex];
+                                    if (selectedDistrict) {
+                                        fetch(`https://provinces.open-api.vn/api/d/${selectedDistrict.value}?depth=2`)
+                                            .then(response => response.json())
+                                            .then(data => {
+                                                const updateWard = document.getElementById("updateward");
+                                                updateWard.innerHTML = '<option disabled value="">Chọn Phường/Xã</option>';
+                                                updateWard.disabled = false;
+                                                data.wards.forEach(ward => {
+                                                    const option = document.createElement('option');
+                                                    option.value = ward.code;
+                                                    option.textContent = ward.name;
+                                                    option.selected = ward.name === address.phuongxa;
+                                                    updateWard.appendChild(option);
+                                                });
+                                            });
+                                    }
+                                });
+                        }
+                    });
             })
             .catch(error => console.error("Lỗi khi lấy dữ liệu địa chỉ:", error));
-    }    
+    }
 
     document.getElementById("updateForm").addEventListener("click", function (event) {
         event.preventDefault();
