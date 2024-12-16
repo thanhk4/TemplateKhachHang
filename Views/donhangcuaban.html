@@ -62,8 +62,8 @@
                         </div>
                         <hr>
                         <div class="text-end">
-                            <button class="btn btn-outline-primary" ng-if="x.trangthai == 2" ng-click="huydonhang(x.id)">Hủy đơn hàng</button>
-                            <a class="btn btn-outline-secondary" ng-if="(x.trangthai == 2)&&x.trangthai!=5" ng-click="trahang(x.id)">Trả hàng</a>
+                            <button class="btn btn-outline-primary" ng-if="x.trangthai == 0" ng-click="huydonhang(x.id)">Hủy đơn hàng</button>
+                            <a class="btn btn-outline-secondary" ng-if="x.trangthai == 2" ng-click="trahang(x.id)">Trả hàng</a>
                             <a class="btn btn-outline-danger" ng-if="x.trangthai == 2" ng-click="danhandonhang(x.id)">Đã Nhận Đơn Hàng</a>
                             <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" ng-click="chitiethd(x.id)">Chi tiết hóa đơn</button>
                         </div>

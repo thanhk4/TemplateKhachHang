@@ -522,7 +522,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
     };
     function getRadioByValue(value) {
         return document.querySelector(`input[name="paymentMethod"][value="${value}"]`);
-    }z
+    }
     $('#muaHangBtn').on('click', async function () {
         const voucherCodeInputdata = document.getElementById('voucherCodeDisplay');
         const tongHoaDon = parseInt(document.getElementById("tongHoaDon")?.innerText.replace(/[VND.]/g, "") || 0) || 0;
