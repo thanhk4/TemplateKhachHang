@@ -34,6 +34,7 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
         return `${year}/${month}/${day} ${hours}:${minutes}`;
     }
 
+   
     async function fetchVouchers() {
         const idkh = GetByidKH();
         try {
@@ -69,6 +70,8 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
     
             const activeVouchers = [];
             const historyVouchers = [];
+            const preparingVouchers = []; // Thêm mảng cho các voucher chuẩn bị phát hành
+    
             for (const id of discountIds) {
                 const isUsed = usedVouchers.length > 0 && usedVouchers.some(voucher => voucher.idgg === id.iDgiamgia);
                 if (isUsed) continue;
@@ -76,6 +79,7 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
                 try {
                     const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/${id.iDgiamgia}`);
                     const data = await responseVoucher.json();
+                    console.log(data);
                     const currentDate = new Date();
                     const formattedDate = new Date(
                         currentDate.getFullYear(),
@@ -92,6 +96,15 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
                         if (updatengaybatdauDate <= formattedDate && formattedDate <= updatengayketthucDate) {
                             activeVouchers.push(data);
                         }
+                        else if (formattedDate > updatengayketthucDate) {
+                            // Cập nhật trạng thái voucher thành "Dừng phát hành"
+                            await updateVoucherStatus(data.iDgiamgia, 'Dừng phát hành');
+                            historyVouchers.push(data);
+                        }
+                        else if (data.trangthai === 'Chuẩn bị phát hành') {
+                            // Thêm các voucher chuẩn bị phát hành vào danh sách
+                            preparingVouchers.push(data);
+                        }
                     } else if (data.trangthai === 'Dừng phát hành') {
                         historyVouchers.push(data);
                     }
@@ -107,11 +120,31 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
                 return a.giatri - b.giatri;
             });
     
+            // Hiển thị các voucher
             displayVouchers(activeVouchers, 'active-voucher-list', 'active-voucher-notice');
             displayVouchers(historyVouchers, 'history-voucher-list', 'history-voucher-notice');
+            displayVouchers(preparingVouchers, 'preparing-voucher-list', 'preparing-voucher-notice'); // Hiển thị voucher chuẩn bị phát hành
+    
         } catch (error) {
             console.error('Lỗi khi lấy danh sách voucher:', error);
-            
+        }
+    }
+    
+    async function updateVoucherStatus(voucherId, newStatus) {
+        try {
+            const response = await fetch(`https://localhost:7297/api/giamgia/${voucherId}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ trangthai: newStatus })
+            });
+            if (!response.ok) {
+                throw new Error(`Lỗi khi cập nhật trạng thái voucher: ${response.status}`);
+            }
+            console.log(`Voucher ${voucherId} đã được cập nhật trạng thái thành ${newStatus}`);
+        } catch (error) {
+            console.error('Lỗi khi cập nhật trạng thái voucher:', error);
         }
     }
     
