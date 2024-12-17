@@ -704,7 +704,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 }
 
                 const result = await deleteGioHangChiTiet(idgiohangct.id);
-                
+
                 // Kiểm tra nếu BE trả thông báo lỗi
                 if (result.ok && result.error) {
                     Swal.fire("Lỗi", result.error, "error");
@@ -1262,7 +1262,9 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                     const formattedDate = new Date(
                         currentDate.getFullYear(),
                         currentDate.getMonth(),
-                        currentDate.getDate()
+                        currentDate.getDate(),
+                        currentDate.getHours(),
+                        currentDate.getMinutes()
                     );
 
                     // Chuyển đổi updatengaybatdau và updatengayketthuc sang đối tượng Date

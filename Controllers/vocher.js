@@ -36,6 +36,7 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
 
    
     async function fetchVouchers() {
+        const voucherhoadon = [];
         const idkh = GetByidKH();
         try {
             // Bước 1: Lấy idRank từ API khách hàng
@@ -65,9 +66,12 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
                 const usedVouchersText = await responseUsedVouchers.text();
                 if (usedVouchersText) {
                     usedVouchers = JSON.parse(usedVouchersText);
+                    for(const idgg of usedVouchers)
+                    {
+                        voucherhoadon.push(idgg.idgg)
+                    }
                 }
             }
-    
             const activeVouchers = [];
             const historyVouchers = [];
             const preparingVouchers = []; // Thêm mảng cho các voucher chuẩn bị phát hành
@@ -124,7 +128,7 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
             displayVouchers(activeVouchers, 'active-voucher-list', 'active-voucher-notice');
             displayVouchers(historyVouchers, 'history-voucher-list', 'history-voucher-notice');
             displayVouchers(preparingVouchers, 'preparing-voucher-list', 'preparing-voucher-notice'); // Hiển thị voucher chuẩn bị phát hành
-    
+            displayVouchers(voucherhoadon, 'hoadon-voucher-list', 'hoadon-voucher-notice');
         } catch (error) {
             console.error('Lỗi khi lấy danh sách voucher:', error);
         }
