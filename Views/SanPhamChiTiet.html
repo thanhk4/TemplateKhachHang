@@ -15,13 +15,8 @@
     
             <div class="col-md-5">
                 <h3>{{sanPham.tensp}}</h3>
-                <div ng-if="(!selectedSPCTs || selectedSPCTs.length === 0) && giaMin >= 0 && giaMax >= 0"
-                    class="product-price">
-                    <div class="d-flex align-items-center" ng-if="giaMin === giaMax">
-                        <h5 class="current-price text-danger me-2">{{ giaMin | currency:'' : 0 }}VNĐ</h5>
-                        
-                    </div>
-                    <div class="d-flex align-items-center" ng-if="giaMin !== giaMax">
+                <div ng-if="!selectedSPCTs || selectedSPCTs.length === 0" class="product-price">
+                    <div class="d-flex align-items-center">
                         <h5 class="current-price text-danger me-2">{{ giaMin | currency:'' : 0 }}VNĐ</h5>
                         <h5 class="current-price text-danger">- {{ giaMax | currency:'' : 0 }}VNĐ</h5>
                     </div>
@@ -85,12 +80,8 @@
                 
                     <!-- Nút tăng số lượng -->
                     <button class="btn btn-outline-secondary mx-2" type="button" 
-                    ng-click="changeQuantity(1)" 
-                    ng-disabled="quantity >= (selectedSPCTs[0].sales.length > 0 
-                            ? selectedSPCTs[0].sales[0].soluong 
-                            : selectedSPCTs[0].soluong)">+</button>
-           
-                
+                            ng-click="changeQuantity(1)" 
+                            ng-disabled="quantity >= selectedSPCTs[0].soluong">+</button>
                 </div>
                 
             
