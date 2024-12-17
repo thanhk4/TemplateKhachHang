@@ -1213,7 +1213,9 @@ async function taoLinkThanhToan(idhd) {
                     const formattedDate = new Date(
                         currentDate.getFullYear(),
                         currentDate.getMonth(),
-                        currentDate.getDate()
+                        currentDate.getDate(),
+                        currentDate.getHours(),
+                        currentDate.getMinutes()
                     );
 
                     // Chuyển đổi updatengaybatdau và updatengayketthuc sang đối tượng Date

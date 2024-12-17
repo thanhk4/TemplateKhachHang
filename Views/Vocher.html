@@ -1,34 +1,34 @@
+<style>
+    .voucher-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
 
-    <style>
-        .voucher-card {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            transition: all 0.3s ease;
-        }
+    .voucher-card:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
 
-        .voucher-card:hover {
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
+    .voucher-value {
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #28a745;
+    }
 
-        .voucher-value {
-            font-size: 1.2em;
-            font-weight: bold;
-            color: #28a745;
-        }
+    .voucher-dates {
+        font-size: 0.9em;
+        color: #6c757d;
+    }
 
-        .voucher-dates {
-            font-size: 0.9em;
-            color: #6c757d;
-        }
-
-        .history-section {
-            margin-top: 50px;
-            padding-top: 30px;
-            border-top: 1px solid #dee2e6;
-        }
-    </style>
+    .history-section {
+        margin-top: 50px;
+        padding-top: 30px;
+        border-top: 1px solid #dee2e6;
+    }
+</style>
 </head>
+
 <body>
     <div class="container-fluid">
         <div class="row">
@@ -62,42 +62,71 @@
             <div class="col-md-9 p-4">
                 <h1 class="text-center mb-5">Voucher của tôi</h1>
                 <div class="p-2  d-flex justify-content-end">
-                    <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#voucherExpiredModal">
-                         Voucher hết hiệu lực
-                      </button>
-                                    
+                    <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                        data-bs-target="#voucherExpiredModal">
+                        Voucher hết hiệu lực
+                    </button>
+
+                    <button type="button" class="btn btn-warning" data-bs-toggle="modal"
+                        data-bs-target="#hdvoucherExpiredModal">
+                        Voucher đã sử dụng
+                    </button>
                 </div>
                 <div id="active-voucher-list" class="row">
                     <!-- Active vouchers will be dynamically inserted here -->
                 </div>
-                        <!-- Button để mở Modal -->
+                <!-- Button để mở Modal -->
                 <div id="active-voucher-notice" class="alert alert-info text-center" style="display: none;">
                     Bạn không có voucher nào khả dụng.
                 </div>
-                <div id="preparing-voucher-notice" class="alert alert-info text-center" style="display: none;">
+                <h2>Voucher chuẩn bị phát hành</h2>
+                <div id="preparing-voucher-list" class="row">
+                    <!-- Các voucher hết hiệu lực sẽ được hiển thị ở đây -->
+                </div>
+                <div id="preparing-voucher-notice" class="alert alert-info text-center"
+                    style="display: none;">
                     Không có voucher nào chuẩn bị phát hành.
                 </div>
             </div>
-               <!-- Modal cho các voucher hết hiệu lực -->
-<div class="modal fade" id="voucherExpiredModal" tabindex="-1" aria-labelledby="voucherExpiredModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="voucherExpiredModalLabel">Voucher hết hiệu lực</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <div id="history-voucher-list" class="row">
-            <!-- Các voucher hết hiệu lực sẽ được hiển thị ở đây -->
-          </div>
-          <div id="history-voucher-notice" class="alert alert-info text-center" style="display: none;">
-            Không có voucher nào hết hiệu lực.
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  
-  
-  
+            <!-- Modal cho các voucher hết hiệu lực -->
+            <div class="modal fade" id="voucherExpiredModal" tabindex="-1" aria-labelledby="voucherExpiredModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="voucherExpiredModalLabel">Voucher hết hiệu lực</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="history-voucher-list" class="row">
+                                <!-- Các voucher hết hiệu lực sẽ được hiển thị ở đây -->
+                            </div>
+                            <div id="history-voucher-notice" class="alert alert-info text-center"
+                                style="display: none;">
+                                Không có voucher nào hết hiệu lực.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
+            <div class="modal fade" id="hdvoucherExpiredModal" tabindex="-1" aria-labelledby="hdvoucherExpiredModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="hdvoucherExpiredModalLabel">Voucher hết hiệu lực</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div id="hoadon-voucher-list" class="row">
+                                <!-- Các voucher hết hiệu lực sẽ được hiển thị ở đây -->
+                            </div>
+                            <div id="hoadon-voucher-notice" class="alert alert-info text-center"
+                                style="display: none;">
+                                Chưa có voucher nào sử dụng
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
