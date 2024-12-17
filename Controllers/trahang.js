@@ -217,111 +217,74 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
         const dataanh = datahinhanhbase64;
         const sotienhoan = parseInt(document.getElementById("tongsotienhoan").textContent.replace(" VND", "").replace(/\,/g, "")) || 0;
         // Kiểm tra lý do trả hàng
-        if (!$scope.lydotrahang) {
-            Swal.fire('Lỗi!', 'Vui lòng chọn lý do trả hàng.', 'error');
-            return;
+         if (!$scope.lydotrahang||!$scope.selectedProducts || $scope.selectedProducts.length === 0||!$scope.phuongthuchoantien||(($scope.phuongthuchoantien === 'Ngân hàng' || $scope.phuongthuchoantien === 'Thẻ thanh toán') &&
+         (!$scope.nganhang || !$scope.stk || !$scope.tennguoihuongthu))||!$scope.kieutrahang||!$scope.tinhtrang||!$scope.tinhtrang||dataanh.length == 0) {
+             Swal.fire('Lỗi!', 'Vui lòng nhập đầy đủ thông tin!', 'error');
+             return;
         }
-
-        // Kiểm tra danh sách sản phẩm
-        if (!$scope.selectedProducts || $scope.selectedProducts.length === 0) {
-            Swal.fire('Lỗi!', 'Vui lòng chọn ít nhất một sản phẩm trong hóa đơn.', 'error');
-            return;
-        }
-
-        // Kiểm tra phương thức hoàn tiền
-        if (!$scope.phuongthuchoantien) {
-            Swal.fire('Lỗi!', 'Vui lòng chọn phương thức hoàn tiền.', 'error');
-            return;
-        }
-
-        // Kiểm tra thông tin ngân hàng khi phương thức hoàn tiền yêu cầu
-        if (
-            ($scope.phuongthuchoantien === 'Ngân hàng' || $scope.phuongthuchoantien === 'Thẻ thanh toán') &&
-            (!$scope.nganhang || !$scope.stk || !$scope.tennguoihuongthu)
-        ) {
-            Swal.fire('Lỗi!', 'Vui lòng điền đầy đủ thông tin Ngân hàng, Số tài khoản và Tên người hưởng thụ.', 'error');
-            return;
-        }
-        // Kiểm tra tình trạng
-        if (!$scope.kieutrahang) {
-            Swal.fire('Lỗi!', 'Vui lòng chọn kiểu trả hàng.', 'error');
-            return;
-        }
-
-        // Kiểm tra tình trạng
-        if (!$scope.tinhtrang) {
-            Swal.fire('Lỗi!', 'Vui lòng chọn tình trạng sản phẩm.', 'error');
-            return;
-        }
-
-        // Kiểm tra hình ảnh hoặc video
-        if (dataanh.length == 0) {
-            Swal.fire('Lỗi!', 'Vui lòng tải lên ít nhất một hình ảnh hoặc video.', 'error');
-            return;
-        }
-
         // Hiển thị xác nhận gửi thông tin
-        Swal.fire({
-            title: 'Bạn có chắc chắn?',
-            text: "Bạn muốn gửi thông tin này!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Đồng ý',
-            cancelButtonText: 'Hủy bỏ'
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                const chuthich = "";
-                ($scope.phuongthuchoantien === 'Ngân hàng' || $scope.phuongthuchoantien === 'Thẻ thanh toán')
-                    ? `Ngân hàng: ${$scope.nganhang} - STK: ${$scope.stk} - Tên người hưởng thụ: ${$scope.tennguoihuongthu}`
-                    : "";
-                // Gửi thông tin nếu tất cả điều kiện hợp lệ
-                const datatrahang = {
-                    tenkhachhang: $scope.userInfo.ten,
-                    idnv: null,
-                    idkh: $scope.userInfo.id,
-                    sotienhoan: sotienhoan,
-                    lydotrahang: $scope.lydotrahang || null,
-                    trangthai: 0,
-                    phuongthuchoantien: $scope.phuongthuchoantien,
-                    ngaytrahangdukien: new Date(),
-                    ngaytrahangthucte: null,
-                    chuthich: chuthich
-                };
-
-                try {
-                    const hoadondata = await CheckHoaDon()
-                    console.log(hoadondata)
-                    if (hoadondata.trangthai != 3) {
-                        Swal.fire('Trả hàng thất bại!', 'Hoá đơn này đã trả hàng, vui lòng kiểm tra lại', 'error');
-                        return;
+        else{
+            Swal.fire({
+                title: 'Bạn có chắc chắn?',
+                text: "Bạn muốn gửi thông tin này!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý',
+                cancelButtonText: 'Hủy bỏ'
+            }).then(async (result) => {
+                if (result.isConfirmed) {
+                    // Gửi thông tin nếu tất cả điều kiện hợp lệ
+                    const datatrahang = {
+                        tenkhachhang: $scope.userInfo.ten,
+                        idnv: null,
+                        idkh: $scope.userInfo.id,
+                        sotienhoan: sotienhoan,
+                        lydotrahang: $scope.lydotrahang || null,
+                        trangthai: 0,
+                        phuongthuchoantien: $scope.phuongthuchoantien,
+                        ngaytrahangdukien: new Date(),
+                        ngaytrahangthucte: null,
+                        chuthich: `Ngân hàng: ${$scope.nganhang} - STK: ${$scope.stk} - Tên người hưởng thụ: ${$scope.tennguoihuongthu}`
+                        ?? ""
                     };
-
-                    // Gửi thông tin trả hàng
-                    const returnOrder = await trahang(datatrahang);
-                    if (!returnOrder) return;  // Nếu không có kết quả trả về, dừng
-
-                    // Thêm hình ảnh sau khi tạo đơn trả hàng
-                    const checkhinhanh = await hinhanh(returnOrder, dataanh);
-                    if (!checkhinhanh) return;
-
-                    // Thêm chi tiết đơn trả hàng
-                    const checktrahangchitiet = await trahangchitiet(returnOrder, $scope.selectedProducts);
-                    if (!checktrahangchitiet) return;
-                    await UpdateHoaDon();
-                    Swal.fire("Thành Công", "Tạo Đơn Trả Hàng Thành Công.", "success");
-                    $scope.$apply(() => {
-                        $location.path(`/donhangcuaban`);
-                    });
-                } catch (error) {
-                    console.error('Error submitting return order:', error);
-                    Swal.fire("Lỗi", "Đã có lỗi xảy ra khi gửi thông tin trả hàng.", "error");
+    
+                    try {
+                        const hoadondata = await CheckHoaDon()
+                        console.log(hoadondata)
+                        if (hoadondata.trangthai != 3) {
+                            Swal.fire('Trả hàng thất bại!', 'Hoá đơn này đã trả hàng, vui lòng kiểm tra lại', 'error');
+                            return;
+                        };
+    
+                        // Gửi thông tin trả hàng
+                        const returnOrder = await trahang(datatrahang);
+                        if (!returnOrder) return;  // Nếu không có kết quả trả về, dừng
+    
+                        // Thêm hình ảnh sau khi tạo đơn trả hàng
+                        const checkhinhanh = await hinhanh(returnOrder, dataanh);
+                        if (!checkhinhanh) return;
+    
+                        // Thêm chi tiết đơn trả hàng
+                        const checktrahangchitiet = await trahangchitiet(returnOrder, $scope.selectedProducts);
+                        if (!checktrahangchitiet) return;
+                        await UpdateHoaDon();
+                        Swal.fire("Thành Công", "Tạo Đơn Trả Hàng Thành Công.", "success");
+                        $scope.$apply(() => {
+                            $location.path(`/donhangcuaban`);
+                        });
+                    } catch (error) {
+                        console.error('Error submitting return order:', error);
+                        Swal.fire("Lỗi", "Đã có lỗi xảy ra khi gửi thông tin trả hàng.", "error");
+                    }
+                } else {
+                    Swal.fire('Đã hủy!', 'Bạn đã hủy gửi thông tin.', 'error');
                 }
-            } else {
-                Swal.fire('Đã hủy!', 'Bạn đã hủy gửi thông tin.', 'error');
-            }
-        });
+            });
+        }
+        
+        
     });
 
     // Hàm lấy thông tin khách hàng từ API và cập nhật vào HTML
