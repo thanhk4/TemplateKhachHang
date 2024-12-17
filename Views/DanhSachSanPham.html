@@ -40,70 +40,59 @@
                 <!-- Lọc theo giá -->
                 <hr
                     style="border: 0; border-top: 2px solid; margin-top: 5px; margin-bottom: 5px; width: 88%; max-width: 300px; margin-left: auto; margin-right: auto;">
-                <div class="mt-3 mb-3">
-                    <div class="accordion" id="accordionGia">
-                        <div class="accordion-item border-0">
-                            <h4 class="accordion-header fw-bold">
-                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                    data-bs-target="#collapseGia" aria-expanded="false" aria-controls="collapseGia">
-                                    Giá
-                                </button>
-                            </h4>
-                            <div id="collapseGia" class="accordion-collapse collapse" data-bs-parent="#accordionGia">
-                                <div class="accordion-body">
-                                    <div class="row">
-                                        <div class="col-6">
-                                            <input class="form-control" type="number" placeholder="Giá thấp nhất"
-                                                ng-model="searchParams.giaMin">
-                                        </div>
-                                        <div class="col-6">
-                                            <input class="form-control" type="number" placeholder="Giá cao nhất"
-                                                ng-model="searchParams.giaMax">
-                                        </div>
-                                        <div class="text-danger text-center mt-2" ng-if="errorMessage1">
-                                            {{ errorMessage1 }}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                <!-- Lọc theo giá -->
+<div class="mt-3 mb-3">
+    <div class="accordion" id="accordionGia">
+        <div class="accordion-item border-0">
+            <h5 class="accordion-header fw-bold mt-2">
+                Giá
+            </h5>
+            <div id="collapseGia">
+                <div class="accordion-body">
+                    <div class="row">
+                        <div class="col-6">
+                            <input class="form-control" type="number" placeholder="Giá thấp nhất" ng-model="searchParams.giaMin">
+                        </div>
+                        <div class="col-6">
+                            <input class="form-control" type="number" placeholder="Giá cao nhất" ng-model="searchParams.giaMax">
+                        </div>
+                        <div class="text-danger text-center mt-2" ng-if="errorMessage1">
+                            {{ errorMessage1 }}
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
 
-                <!-- Lọc theo thuộc tính -->
-                <div ng-repeat="thuoctinh in groupedThuocTinhs">
-                    <hr
-                        style="border: 0; border-top: 2px solid; margin-top: 5px; margin-bottom: 5px; width: 88%; max-width: 330px; margin-left: auto; margin-right: auto;">
-                    <div class="mt-3 mb-3">
-                        <div class="accordion" id="accordionExample">
-                            <div class="accordion-item border-0">
-                                <h3 class="accordion-header mb-2">
-                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#collapse-{{thuoctinh.idThuocTinh}}" aria-expanded="false"
-                                        aria-controls="collapse-{{thuoctinh.idThuocTinh}}">
-                                        <h7 class="fw-bold">{{thuoctinh.nameThuocTinh}}</h7>
-                                    </button>
-                                </h3>
-                                <div id="collapse-{{thuoctinh.idThuocTinh}}" class="accordion-collapse collapse"
-                                    data-bs-parent="#accordionExample">
-                                    <div class="accordion-body">
-                                        <div class="row">
-                                            <!-- Lặp qua từng chi tiết thuộc tính -->
-                                            <div class="col-3 mb-3" ng-repeat="chiTiet in thuoctinh.chiTiet">
-                                                <input type="checkbox" class="btn-check" id="btn-check-{{chiTiet}}"
-                                                    autocomplete="off"
-                                                    ng-checked="searchParams.tenThuocTinhs.indexOf(chiTiet) > -1"
-                                                    ng-click="toggleChiTiet(chiTiet)">
-                                                <label class="btn btn-outline-primary"
-                                                    for="btn-check-{{chiTiet}}">{{chiTiet}}</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
+<!-- Lọc theo thuộc tính -->
+<div ng-repeat="thuoctinh in groupedThuocTinhs">
+    <hr style="border: 0; border-top: 2px solid; margin-top: 5px; margin-bottom: 5px; width: 88%; max-width: 330px; margin-left: auto; margin-right: auto;">
+    <div class="mt-3 mb-3">
+        <div class="accordion" id="accordionExample">
+            <div class="accordion-item border-0">
+                <h5 class="accordion-header mb-2">
+                    <span class="fw-bold">{{thuoctinh.nameThuocTinh}}</span>
+                </h5>
+                <div id="collapse-{{thuoctinh.idThuocTinh}}">
+                    <div class="accordion-body">
+                        <div class="row">
+                            <!-- Lặp qua từng chi tiết thuộc tính -->
+                            <div class="col-3 mb-3" ng-repeat="chiTiet in thuoctinh.chiTiet">
+                                <input type="checkbox" class="btn-check" id="btn-check-{{chiTiet}}" autocomplete="off"
+                                    ng-checked="searchParams.tenThuocTinhs.indexOf(chiTiet) > -1"
+                                    ng-click="toggleChiTiet(chiTiet)">
+                                <label class="btn btn-outline-primary" for="btn-check-{{chiTiet}}">{{chiTiet}}</label>
                             </div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+</div>
+
                 <!-- Áp dụng bộ lọc -->
                 <div class="mt-2 mb-4 d-flex justify-content-center">
                     <button type="button" class="btn btn-primary btn-lg" ng-click="applyFilters()"

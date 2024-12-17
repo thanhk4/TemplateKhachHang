@@ -15,8 +15,17 @@
     
             <div class="col-md-5">
                 <h3>{{sanPham.tensp}}</h3>
+                <div ng-if="!selectedSPCTs || selectedSPCTs.length === 0" class="product-price">
+                    <div class="d-flex align-items-center">
+                        <h5 class="current-price text-danger me-2">{{ giaMin | currency:'' : 0 }}VNĐ</h5>
+                        <h5 class="current-price text-danger">- {{ giaMax | currency:'' : 0 }}VNĐ</h5>
+                    </div>
+                </div>
+                
+                                
+
                 <div ng-if="selectedSPCTs && selectedSPCTs.length > 0" class="product-price">
-                 
+                     
                     <span class="original-price text-muted"  ng-if=" selectedSPCTs[0].giathoidiemhientai !== selectedSPCTs[0].giaSaleSanPhamChiTiet">
                         <s>{{selectedSPCTs[0].giathoidiemhientai | currency:'' : 0}}VNĐ</s>
                     </span>

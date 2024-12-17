@@ -31,10 +31,23 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
         SanPhamService.getSanPhamById(sanPhamId)
             .then(function (data) {
                 $scope.sanPham = data;
+                if (data.sanphamchitiets && data.sanphamchitiets.length > 0) {
+                    const giaSanPham = data.sanphamchitiets.map(sp => sp.giaSaleSanPhamChiTiet);
+                    $scope.giaMin = Math.min(...giaSanPham);
+                    $scope.giaMax = Math.max(...giaSanPham);
+                } else {
+                    $scope.giaMin = 0;
+                    $scope.giaMax = 0;
+                }
+
+
                 $scope.groupedThuocTinhs = groupThuocTinhs(data.sanphamchitiets.flatMap(sp => sp.thuocTinhs));
                 console.log("Chi tiết sản phẩm:", $scope.sanPham);
                 console.log("Nhóm thuộc tính:", $scope.groupedThuocTinhs);
-
+                console.log("Chi tiết sản phẩm:", $scope.sanPham);
+                console.log("Nhóm thuộc tính:", $scope.groupedThuocTinhs);
+                console.log("Giá nhỏ nhất:", $scope.giaMin);
+                console.log("Giá lớn nhất:", $scope.giaMax);
 
                 if ($scope.sanPham.idthuonghieu !== null) {
                     LoadSanPhamTuongTu($scope.sanPham.idThuongHieu, $scope.sanPham.id);
