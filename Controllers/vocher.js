@@ -36,8 +36,9 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
 
    
     async function fetchVouchers() {
-        const voucherhoadon = [];
+        
         const idkh = GetByidKH();
+        const voucherhoadon = [];
         try {
             // Bước 1: Lấy idRank từ API khách hàng
             const responseRank = await fetch(`https://localhost:7297/api/khachhang/${idkh}`);
@@ -72,6 +73,7 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
                     }
                 }
             }
+           
             const activeVouchers = [];
             const historyVouchers = [];
             const preparingVouchers = []; // Thêm mảng cho các voucher chuẩn bị phát hành
@@ -112,6 +114,7 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
                     } else if (data.trangthai === 'Dừng phát hành') {
                         historyVouchers.push(data);
                     }
+                    
                 } catch (error) {
                     console.warn(`Lỗi không xác định khi lấy voucher với id: ${id.iDgiamgia}`, error);
                 }
