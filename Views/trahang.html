@@ -95,7 +95,7 @@
                                 </div>
                             </div>
                         </li>
-                        <span class="text-danger" ng-show="selectedProducts.length==0">Vui lòng chọn sản phẩm</span>
+                        <span class="text-danger" ng-show="submitted &&selectedProducts.length==0">Vui lòng chọn sản phẩm</span>
                     </ul>
                 </li>
             </ul>        
@@ -113,7 +113,7 @@
                             <option value="Giao sai sản phẩm">Giao sai sản phẩm</option>
                             <option value="Chưa nhận được sản phẩm">Chưa nhận được sản phẩm</option>
                         </select>
-                        <span class="text-danger" ng-show="form.lydotrahang.$error.required">Vui lòng chọn lý do trả hàng</span>
+                        <span class="text-danger" ng-show="submitted &&form.lydotrahang.$error.required">Vui lòng chọn lý do trả hàng</span>
                     </div>
                     <div class="mb-3">
                         <label for="refundMethod" class="form-label">Phương thức hoàn tiền</label>
@@ -123,7 +123,7 @@
                             <option value="Thẻ thanh toán">Hoàn tiền qua thẻ thanh toán</option>
                             <option value="Điểm sử dụng">Hoàn tiền bằng điểm sử dụng</option>
                         </select>
-                        <span class="text-danger" ng-show="form.phuongthuchoantien.$error.required">Vui lòng chọn phương thức hoàn tiền</span>
+                        <span class="text-danger" ng-show="submitted &&form.phuongthuchoantien.$error.required">Vui lòng chọn phương thức hoàn tiền</span>
                     </div>    
                     <div ng-show="phuongthuchoantien === 'Thẻ thanh toán' || phuongthuchoantien === 'Ngân hàng'" class="collapse show" id="collapseExample">
                         <div class="row mb-3">
@@ -153,7 +153,7 @@
                           <option value="Hoàn tiền và có trả hàng">Hoàn tiền và có trả hàng</option>
                           <option value="Hoàn tiền và không trả hàng">Hoàn tiền và không trả hàng</option>
                         </select>
-                        <span class="text-danger" ng-show="form.kieutrahangStatus.$error.required">Vui lòng chọn kiểu trả hàng</span>
+                        <span class="text-danger" ng-show="submitted &&form.kieutrahangStatus.$error.required">Vui lòng chọn kiểu trả hàng</span>
                     </div>
                     <!-- Điều khiển Collapse với ng-show -->
                                        
@@ -165,7 +165,7 @@
                             <option value="Sản phẩm bị hư hỏng trong quá trình vận chuyển">Sản phẩm bị hư hỏng trong quá trình vận chuyển</option>
                             <option value="Sản phẩm bị thiếu hoặc giao sai đơn hàng">Sản phẩm bị thiếu hoặc giao sai đơn hàng</option>
                         </select>
-                        <span class="text-danger" ng-show="form.tinhtrang.$error.required">Vui lòng chọn tình trạng</span>
+                        <span class="text-danger" ng-show="submitted &&form.tinhtrang.$error.required">Vui lòng chọn tình trạng</span>
                     </div>
                     
                     <div class="mb-3 row">
@@ -178,7 +178,8 @@
                         <!-- Container để hiển thị hình ảnh -->
                         <div id="imageContainer" class="mt-3">
                             <!-- Hình ảnh sẽ được hiển thị ở đây -->
-                        </div>                     
+                        </div>   
+                        <span class="text-danger" ng-show="submitted &&datahinhanhbase64.length==0">Vui lòng tải lên ít nhất 1 ảnh</span>                  
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Ghi chú</label>
