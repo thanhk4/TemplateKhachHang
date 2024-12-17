@@ -469,6 +469,9 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
     function getRadioByValue(value) {
         return document.querySelector(`input[name="paymentMethod"][value="${value}"]`);
     }
+    function getLabelByValue(value) {
+        return document.querySelector(`label[for="paymentMethod-${value}"]`);
+    }
     $('#muaHangBtn').on('click', async function () {
         const voucherCodeInputdata = document.getElementById('voucherCodeDisplay');
         const tongHoaDon = parseInt(document.getElementById("tongHoaDon")?.innerText.replace(/[VND.]/g, "") || 0) || 0;
@@ -519,6 +522,10 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
         };
     
         try {
+            if (tongHoaDon == 0 && bankTransferRadio.checked) {
+                Swal.fire("Lỗi", "Tổng sản phẩm = 0, không thể chuyển khoản", "error");
+                return
+            }
             // Kiểm tra xem checkbox điểm có được chọn hay không
             const diemsudungcheckbox = document.getElementById('diemsudungcheckbox');
             if (diemsudungcheckbox.checked) {
@@ -528,7 +535,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
                 await UpdateDiem(diemsudung);
             }
 
-            if (cashOnDeliveryRadio && tongHoaDon >= 10000000) {
+            if (cashOnDeliveryRadio.checked && tongHoaDon >= 10000000) {
                 const confirm = await Swal.fire({
                     title: 'Yêu cầu đặt cọc',
                     text: 'Hóa đơn trên 10.000.000 VND, vui lòng đặt cọc 30%.',
@@ -570,7 +577,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
                 const addPaymentHistoryResult = await addPaymentHistory(idhd);
                 if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
                 sessionStorage.clear();
-                if (bankTransferRadio) {
+                if (bankTransferRadio.checked) {
                     const taoLinkThanhToanResult = await taoLinkThanhToan(idhd);
                     if (!taoLinkThanhToanResult) return; // Dừng nếu tạo link thanh toán thất bại
                 }
@@ -1390,24 +1397,29 @@ async function taoLinkThanhToan(idhd) {
                             // Gọi hàm updateTotals để tính lại tổng sản phẩm và hóa đơn
                             updateTotals();
 
+                            const tongHoaDonValuecheck = parseInt(tongHoaDonEl.textContent.replace(/[VND.]/g, ''));
+                            const cashOnDeliveryRadio = getRadioByValue("1"); // Thanh toán khi nhận hàng
+                            const bankTransferRadio = getRadioByValue("2"); // Chuyển khoản ngân hàng
+                            const bankTransferLabel = getLabelByValue("2");
+
                             // Kiểm tra nếu tổng hóa đơn là 0
-                            if (tongHoaDonValue === 0) {
-                                const cashOnDeliveryRadio = document.getElementById("cashOnDelivery");
-                                const bankTransferRadio = document.getElementById("bankTransfer");
-                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
-
-                                // Chọn phương thức "Thanh toán khi nhận hàng"
-                                cashOnDeliveryRadio.checked = true;
-
-                                // Vô hiệu hóa và ẩn phương thức "Chuyển khoản ngân hàng"
-                                bankTransferRadio.disabled = true;
-                                bankTransferLabel.style.display = "none";
+                            if (tongHoaDonValuecheck === 0) {
+                                if (cashOnDeliveryRadio) {
+                                    cashOnDeliveryRadio.checked = true; // Chọn "Thanh toán khi nhận hàng"
+                                }
+                                if (bankTransferRadio) {
+                                    bankTransferRadio.disabled = true; // Vô hiệu hóa "Chuyển khoản ngân hàng"
+                                }
+                                if (bankTransferLabel) {
+                                    bankTransferLabel.style.display = "none"; // Ẩn nhãn
+                                }
                             } else {
-                                // Khôi phục trạng thái nếu tổng hóa đơn khác 0
-                                const bankTransferRadio = document.getElementById("bankTransfer");
-                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
-                                bankTransferRadio.disabled = false;
-                                bankTransferLabel.style.display = "inline-block";
+                                if (bankTransferRadio) {
+                                    bankTransferRadio.disabled = false; // Bật lại "Chuyển khoản ngân hàng"
+                                }
+                                if (bankTransferLabel) {
+                                    bankTransferLabel.style.display = "inline-block"; // Hiện lại nhãn
+                                }
                             }
 
                             document.getElementById("btnRestoreVoucher").style.display = 'inline-block';
@@ -1541,6 +1553,43 @@ async function taoLinkThanhToan(idhd) {
             const container = document.getElementById("payment-methods-container");
             container.innerHTML = `<p class="text-danger">Chưa có phương thức thanh toán</p>`;
         }
+
+        const tongHoaDonEl = document.getElementById("tongHoaDon");
+
+        // Hàm cập nhật trạng thái phương thức thanh toán
+        function updatePaymentMethod() {
+            const tongHoaDonValue = parseInt(tongHoaDonEl.textContent.replace(/[VND.]/g, ''));
+        
+            const cashOnDeliveryRadio = getRadioByValue("1"); // Thanh toán khi nhận hàng
+            const bankTransferRadio = getRadioByValue("2"); // Chuyển khoản ngân hàng
+            const bankTransferLabel = getLabelByValue("2");
+        
+            if (tongHoaDonValue === 0) {
+                if (cashOnDeliveryRadio) {
+                    cashOnDeliveryRadio.checked = true; // Chọn "Thanh toán khi nhận hàng"
+                }
+                if (bankTransferRadio) {
+                    bankTransferRadio.disabled = true; // Vô hiệu hóa "Chuyển khoản ngân hàng"
+                }
+                if (bankTransferLabel) {
+                    bankTransferLabel.style.display = "none"; // Ẩn nhãn
+                }
+            } else {
+                if (bankTransferRadio) {
+                    bankTransferRadio.disabled = false; // Bật lại "Chuyển khoản ngân hàng"
+                }
+                if (bankTransferLabel) {
+                    bankTransferLabel.style.display = "inline-block"; // Hiện lại nhãn
+                }
+            }
+        }
+        
+    // Theo dõi thay đổi nội dung của tổng hóa đơn
+    const observer = new MutationObserver(updatePaymentMethod);
+    observer.observe(tongHoaDonEl, { childList: true, subtree: true });
+
+    // Gọi hàm khi cần cập nhật trạng thái
+    updatePaymentMethod();
     
     // Gọi hàm fetchPaymentMethods khi trang tải
     fetchPaymentMethods();
