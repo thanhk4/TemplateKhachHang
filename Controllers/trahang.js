@@ -213,20 +213,74 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
 
 
 
-    document.getElementById("submit").addEventListener("click", function () {
+    $scope.submit= function () {
         const dataanh = datahinhanhbase64;
         const sotienhoan = parseInt(document.getElementById("tongsotienhoan").textContent.replace(" VND", "").replace(/\,/g, "")) || 0;
-        // Kiểm tra lý do trả hàng
-         if (!$scope.lydotrahang||!$scope.selectedProducts || $scope.selectedProducts.length === 0||!$scope.phuongthuchoantien||(($scope.phuongthuchoantien === 'Ngân hàng' || $scope.phuongthuchoantien === 'Thẻ thanh toán') &&
-         (!$scope.nganhang || !$scope.stk || !$scope.tennguoihuongthu))||!$scope.kieutrahang||!$scope.tinhtrang||!$scope.tinhtrang||dataanh.length == 0) {
-             Swal.fire('Lỗi!', 'Vui lòng nhập đầy đủ thông tin!', 'error');
-             return;
-        }
-        // Hiển thị xác nhận gửi thông tin
-        else{
+        // if($scope.selectedProducts.length==0&&$scope.lydotrahang.length==0&&$scope.phuongthuchoantien.length==0&&$scope.kieutrahang.length==0&&$scope.tinhtrang.length==0&&datahinhanhbase64.length==0){
+        //     Swal.fire('Lỗi!', 'Vui lòng nhập thông tin.', 'error');
+        //     return;
+        // }
+        // if($scope.selectedProducts.length==0){
+        //     Swal.fire('Lỗi!', 'Vui lòng chọn sản phẩm.', 'error');
+        //     return;
+        // }
+        // if($scope.lydotrahang.length==0){
+        //     Swal.fire('Lỗi!', 'Vui lòng chọn lý do trả hàng.', 'error');
+        //     return;
+        // }
+        // if($scope.phuongthuchoantien.length==0){
+        //     Swal.fire('Lỗi!', 'Vui lòng chọn phương thức hoàn tiền.', 'error');
+        //     return;
+        // }
+        // if($scope.phuongthuchoantien=='Ngân hàng'||$scope.phuongthuchoantien=='Thẻ thanh toán'){
+        //     if($scope.nganhang==null){
+        //         Swal.fire('Lỗi!', 'Vui lòng chọn ngân hàng.', 'error');
+        //         return;
+        //     }
+        //     if($scope.stk.length==0){
+        //         Swal.fire('Lỗi!', 'Vui lòng nhập số tài khoản.', 'error');
+        //         return;
+        //     }
+        //     if($scope.stk.length<9||$scope.stk.length>16){
+        //         Swal.fire('Lỗi!', 'Vui lòng nhập số tài khoản từ 9 đến 16 ký tự.', 'error');
+        //         return;
+        //     }
+        //     if($scope.tennguoihuongthu.length==0){
+        //         Swal.fire('Lỗi!', 'Vui lòng nhập tên người hưởng thụ.', 'error');
+        //         return;
+        //     }
+        // }
+        
+        // if($scope.kieutrahang.length==0){
+        //     Swal.fire('Lỗi!', 'Vui lòng chọn kiểu trả hàng.', 'error');
+        //     return;
+        // }
+        // if($scope.tinhtrang.length==0){
+        //     Swal.fire('Lỗi!', 'Vui lòng chọn tình trạng.', 'error');
+        //     return;
+        // }
+        // if(datahinhanhbase64.length==0){
+        //     Swal.fire('Lỗi!', 'Vui lòng chọn hình ảnh.', 'error');
+        //     return;
+        // }
+        if ($scope.form.$valid) {
+             if($scope.phuongthuchoantien=='Ngân hàng'||$scope.phuongthuchoantien=='Thẻ thanh toán'){
+                if($scope.nganhang==null||$scope.tennguoihuongthu.length==0||$scope.stk.length==0){
+                    Swal.fire('Lỗi!', 'Vui lòng nhập đầy đủ thông tin chuyển khoản.', 'error');
+                    return;
+                }
+                if($scope.stk.length<9||$scope.stk.length>16){
+                    Swal.fire('Lỗi!', 'Vui lòng nhập số tài khoản từ 9 đến 16 ký tự.', 'error');
+                    return;
+                }
+            }
+            if(datahinhanhbase64.length==0){
+               Swal.fire('Lỗi!', 'Vui lòng chọn hình ảnh.', 'error');
+               return;
+            }
             Swal.fire({
                 title: 'Bạn có chắc chắn?',
-                text: "Bạn muốn gửi thông tin này!",
+                text: "Hóa đơn của bạn chỉ được phép trả hàng 1 lần duy nhất! Bạn muốn gửi thông tin này!",
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
@@ -282,10 +336,14 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                     Swal.fire('Đã hủy!', 'Bạn đã hủy gửi thông tin.', 'error');
                 }
             });
+            console.log('Form hợp lệ, đang gửi...', $scope);
+        } else {
+            Swal.fire('Lỗi!', 'Vui lòng nhập đầy đủ thông tin.', 'error');
+            console.log('Form không hợp lệ');
+            return;
         }
         
-        
-    });
+    };
 
     // Hàm lấy thông tin khách hàng từ API và cập nhật vào HTML
     async function CheckHoaDon() {
