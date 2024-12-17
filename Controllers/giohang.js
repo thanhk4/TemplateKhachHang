@@ -254,7 +254,7 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
             }
 
             alert("Cập nhật thành công");
-            renderGioHang();
+            location.reload();
         } catch (error) {
             console.error("Cập nhật giỏ hàng thất bại", error);
             alert("Cập nhật giỏ hàng thất bại. Vui lòng thử lại sau.");
@@ -649,18 +649,20 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
     document.getElementById("selectAllCheckbox").addEventListener("click", function () {
         // Lấy trạng thái của checkbox "chọn tất cả"
         const isChecked = this.checked;
-
-        // Lấy tất cả các checkbox của sản phẩm
-        const productCheckboxes = document.querySelectorAll(".product-list .product-checkbox");
-
-        // Thay đổi trạng thái của tất cả checkbox sản phẩm
+    
+        // Lấy tất cả các checkbox của sản phẩm (bỏ qua checkbox bị disabled)
+        const productCheckboxes = document.querySelectorAll(".product-list .product-checkbox:not(:disabled)");
+    
+        // Thay đổi trạng thái của tất cả checkbox sản phẩm không bị disabled
         productCheckboxes.forEach(checkbox => {
             checkbox.checked = isChecked;
-            initializeCheckboxEvents();
-            initializeTotalPrices();
-            updateTotals();
         });
-    });
+    
+        // Gọi các hàm xử lý liên quan sau khi cập nhật trạng thái checkbox
+        initializeCheckboxEvents();
+        initializeTotalPrices();
+        updateTotals();
+    });    
 
     
     $scope.changePage = async function () {

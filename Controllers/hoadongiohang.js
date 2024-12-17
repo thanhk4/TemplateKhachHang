@@ -167,7 +167,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 // Lấy điểm sử dụng, đảm bảo giá trị không bị null
                 const diemsudung = parseInt(khachHangData.diemsudung || "0", 10);
                 document.getElementById("diemsudung").innerText = `${diemsudung.toLocaleString()} VND`;
-                
+
                 // Xử lý trạng thái checkbox
                 const diemsudungCheckbox = document.getElementById("diemsudungcheckbox");
                 if (diemsudung === 0) {
@@ -178,7 +178,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                     diemsudungCheckbox.disabled = false; // Cho phép chọn nếu có điểm
                     console.log(`Điểm sử dụng = ${diemsudung}: Checkbox được bật.`);
                 }
-            }            
+            }
             // Trả về dữ liệu khách hàng
             return khachHangData;
 
@@ -196,11 +196,11 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         const diemsudungElement = document.getElementById('diemsudung');
         const tongHoaDonElement = document.getElementById('tongHoaDon');
         const diemSuDungHienThiElement = document.getElementById('diemSuDungHienThi'); // Đối tượng hiển thị số điểm sử dụng bên cạnh hóa đơn
-    
+
         // Lấy giá trị điểm sử dụng và tổng hóa đơn
         const diemsudung = parseInt(diemsudungElement.innerText.replace(/[VND.,]/g, "").trim() || "0", 10);
         let tongHoaDon = parseInt(tongHoaDonElement.innerText.replace(/[VND.,]/g, "") || "0", 10);
-    
+
         // Kiểm tra trạng thái checkbox
         if (this.checked) {
             // Nếu điểm sử dụng lớn hơn hoặc bằng tổng hóa đơn, chỉ trừ đủ số tiền trong hóa đơn
@@ -211,19 +211,19 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 diemTru = diemsudung;  // Lưu số tiền trừ vào biến diemTru
                 tongHoaDon -= diemsudung;  // Trừ số điểm sử dụng vào tổng hóa đơn
             }
-    
+
             // Cập nhật số điểm sử dụng hiển thị bên cạnh hóa đơn
             diemSuDungHienThiElement.innerText = `Sử dụng: ${diemTru.toLocaleString()} VND`;
-    
+
         } else {
             // Nếu bỏ chọn, hoàn lại số tiền đã trừ
             tongHoaDon += diemTru;  // Cộng lại số tiền đã trừ
             diemTru = 0;  // Reset lại biến diemTru
-    
+
             // Ẩn số điểm sử dụng bên cạnh hóa đơn khi checkbox không được chọn
             diemSuDungHienThiElement.innerText = '';
         }
-    
+
         // Cập nhật tổng hóa đơn
         tongHoaDonElement.innerText = `${tongHoaDon.toLocaleString()} VND`;
     });
@@ -428,9 +428,9 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         const discountElement = document.querySelector("#soTienGiamGia");
         const totalProductElement = document.querySelector("#tongSanPham");
         const totalInvoiceElement = document.querySelector("#tongHoaDon");
-    
+
         let totalProduct = 0;
-    
+
         // Tính tổng giá trị sản phẩm
         productItems.forEach((item) => {
             const priceElement = item.querySelector(".total-price");
@@ -439,17 +439,17 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 totalProduct += price;
             }
         });
-    
+
         // Lấy số tiền giảm giá và đảm bảo nó luôn là giá trị dương
         let discount = parseInt(discountElement.textContent.replace(/[VND.\-]/g, "")) || 0;
-    
+
         // Cập nhật giá trị
         totalProductElement.textContent = `${totalProduct.toLocaleString('vi-VN')} VND`;
-    
+
         // Nếu tổng hóa đơn nhỏ hơn 0, thì gán giá trị bằng 0
         const totalInvoiceValue = Math.max(0, totalProduct - discount);
         totalInvoiceElement.textContent = `${totalInvoiceValue.toLocaleString('vi-VN')} VND`;
-    }   
+    }
 
     function initializeTotalPrices() {
         const productItems = document.querySelectorAll(".product-item");
@@ -493,7 +493,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
     }
 
     // Hàm xử lý khi bấm nút xóa
-    async function deleteProduct () {
+    async function deleteProduct() {
         const ListdanhSachSanPham = danhSachSanPham;
         for (const sanPham of ListdanhSachSanPham) {
 
@@ -523,6 +523,11 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
     function getRadioByValue(value) {
         return document.querySelector(`input[name="paymentMethod"][value="${value}"]`);
     }
+
+    function getLabelByValue(value) {
+        return document.querySelector(`label[for="paymentMethod-${value}"]`);
+    }
+
     $('#muaHangBtn').on('click', async function () {
         const voucherCodeInputdata = document.getElementById('voucherCodeDisplay');
         const tongHoaDon = parseInt(document.getElementById("tongHoaDon")?.innerText.replace(/[VND.]/g, "") || 0) || 0;
@@ -535,8 +540,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         const soTienDatCoc = 0;
         const cashOnDeliveryRadio = getRadioByValue("1");
         const bankTransferRadio = getRadioByValue("2");
-        if (tongHoaDon > 10000000)
-        {
+        if (tongHoaDon > 10000000) {
             soTienDatCoc = tongHoaDon * 0.3
         }
         const currentDate = new Date();
@@ -544,7 +548,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
         // Điều chỉnh thời gian theo múi giờ Việt Nam
         currentDate.setMinutes(currentDate.getMinutes() + vietnamTimezoneOffset - currentDate.getTimezoneOffset());
-        
+
         const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked')?.value;
 
         const hoadonData = {
@@ -568,15 +572,21 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         };
 
         try {
+            
+            if (tongHoaDon == 0 && bankTransferRadio.checked) {
+                Swal.fire("Lỗi", "Tổng sản phẩm = 0, không thể chuyển khoản", "error");
+                return
+            }
+            
             // Kiểm tra xem checkbox điểm có được chọn hay không
             const diemsudungcheckbox = document.getElementById('diemsudungcheckbox');
             if (diemsudungcheckbox.checked) {
                 const diemsudung = diemTru;
-                
+
                 // Nếu có sử dụng điểm, gọi hàm cập nhật điểm khách hàng
                 await UpdateDiem(diemsudung);
             }
-            if (cashOnDeliveryRadio && tongHoaDon >= 10000000) {
+            if (cashOnDeliveryRadio.checked && tongHoaDon >= 10000000) {
                 const confirm = await Swal.fire({
                     title: 'Yêu cầu đặt cọc',
                     text: 'Hóa đơn trên 10.000.000 VND, vui lòng đặt cọc 30%.',
@@ -590,10 +600,10 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                     // Tính tiền cọc và cập nhật vào hoadonData
                     const tienCoc = Math.floor(tongHoaDon * 0.3); // 30% tiền cọc
                     hoadonData.tiencoc = tienCoc;
-    
+
                     const idhd = await taoHoaDon(hoadonData);
                     if (!idhd) return; // Dừng nếu tạo hóa đơn thất bại
-    
+
                     const hoaDonChiTietResult = await themHoaDonChiTiet(idhd);
                     if (!hoaDonChiTietResult) return; // Dừng nếu thêm chi tiết hóa đơn thất bại
 
@@ -601,16 +611,11 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                     if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
 
                     sessionStorage.clear();
-                    deleteProduct ();
+                    deleteProduct();
                     const thanhToanCocResult = await taoLinkThanhToanCoc(idhd);
                     if (!thanhToanCocResult) return; // Dừng nếu tạo link thanh toán cọc thất bại
                 }
             } else {
-                if(tongHoaDon == 0 && bankTransferRadio)
-                    {
-                        Swal.fire("Lỗi", "Tổng sản phẩm = 0, không thể chuyển khoản", "error");
-                        return
-                    }
                 const idhd = await taoHoaDon(hoadonData);
                 if (!idhd) return; // Dừng nếu tạo hóa đơn thất bại
 
@@ -621,8 +626,8 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
 
                 sessionStorage.clear();
-                deleteProduct ();
-                if (bankTransferRadio) {
+                deleteProduct();
+                if (bankTransferRadio.checked) {
                     const taoLinkThanhToanResult = await taoLinkThanhToan(idhd);
                     if (!taoLinkThanhToanResult) return; // Dừng nếu tạo link thanh toán thất bại
                 }
@@ -745,31 +750,31 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             // Lấy thông tin khách hàng từ API
             const datakhachang = await fetchkhachangById(); // Giả sử đây là async function
             const capnhatdiem = datakhachang.diemsudung - diemtru
-    
+
             // Gửi PUT request để cập nhật điểm cho khách hàng
             const response = await fetch(`${apiKHUrl}/diem/${userId}?diemsudung=${capnhatdiem}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" }
             });
-    
+
             // Xử lý phản hồi từ API
             if (!response.ok) {
                 const errorResult = await response.json();
                 Swal.fire("Lỗi", errorResult.message || "Cập nhật không thành công", "error");
                 return null;  // Dừng nếu có lỗi từ BE
             }
-    
+
             const result = await response.json();
-    
+
             // Hiển thị thông báo thành công
             Swal.fire("Thành công", result.message || "Cập nhật thành công", "success");
             return result;
-    
+
         } catch (error) {
             console.error("Lỗi khi gọi API:", error);
             Swal.fire("Lỗi", "Kết nối cập nhật điểm khách hàng thất bại.", "error");
         }
-    }   
+    }
 
     // Hàm tạo link thanh toán cọc
     async function taoLinkThanhToanCoc(idhd) {
@@ -802,7 +807,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             if (result.error) {
                 throw new Error(result.error || 'Có lỗi xảy ra trong quá trình xử lý.');
             }
-    
+
             if (result.checkoutUrl) {
                 window.location.href = result.checkoutUrl;
             } else {
@@ -845,7 +850,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             if (result.error) {
                 throw new Error(result.error || 'Có lỗi xảy ra trong quá trình xử lý.');
             }
-    
+
             if (result.checkoutUrl) {
                 sessionStorage.clear();
                 window.location.href = result.checkoutUrl;
@@ -1040,10 +1045,10 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         $timeout(() => {
             $scope.$apply(() => {
                 modal.hide();
-                $location.path(`/diachicuaban`); 
+                $location.path(`/diachicuaban`);
             });
             $scope.isLoading = false;
-        }, 1500); 
+        }, 1500);
     });
 
     /// Lắng nghe sự kiện "Khôi phục" địa chỉ mặc định
@@ -1256,7 +1261,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                     }
                     if (formattedDate > updatengayketthucDate) {
                         continue;
-                    }if (data.soluong == 0) {
+                    } if (data.soluong == 0) {
                         continue;
                     }
                     vouchers.push(data);
@@ -1418,7 +1423,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                             // Hiển thị số tiền giảm
                             soTienGiamGia.textContent = `-${soTienGiam.toLocaleString()} VND`;
                             soTienGiamGia.style.color = 'red';
-                            
+
                             if (soTienGiamGia < 0) {
                                 soTienGiamGia = Math.abs(soTienGiamGia); // Chuyển thành giá trị dương
                             }
@@ -1431,23 +1436,29 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                             updateTotals();
 
                             // Kiểm tra nếu tổng hóa đơn là 0
-                            if (tongHoaDonValue === 0) {
-                                const cashOnDeliveryRadio = document.getElementById("cashOnDelivery");
-                                const bankTransferRadio = document.getElementById("bankTransfer");
-                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
+                            const tongHoaDonValuecheck = parseInt(tongHoaDonEl.textContent.replace(/[VND.]/g, ''));
+                            const cashOnDeliveryRadio = getRadioByValue("1"); // Thanh toán khi nhận hàng
+                            const bankTransferRadio = getRadioByValue("2"); // Chuyển khoản ngân hàng
+                            const bankTransferLabel = getLabelByValue("2");
 
-                                // Chọn phương thức "Thanh toán khi nhận hàng"
-                                cashOnDeliveryRadio.checked = true;
-
-                                // Vô hiệu hóa và ẩn phương thức "Chuyển khoản ngân hàng"
-                                bankTransferRadio.disabled = true;
-                                bankTransferLabel.style.display = "none";
+                            // Kiểm tra nếu tổng hóa đơn là 0
+                            if (tongHoaDonValuecheck === 0) {
+                                if (cashOnDeliveryRadio) {
+                                    cashOnDeliveryRadio.checked = true; // Chọn "Thanh toán khi nhận hàng"
+                                }
+                                if (bankTransferRadio) {
+                                    bankTransferRadio.disabled = true; // Vô hiệu hóa "Chuyển khoản ngân hàng"
+                                }
+                                if (bankTransferLabel) {
+                                    bankTransferLabel.style.display = "none"; // Ẩn nhãn
+                                }
                             } else {
-                                // Khôi phục trạng thái nếu tổng hóa đơn khác 0
-                                const bankTransferRadio = document.getElementById("bankTransfer");
-                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
-                                bankTransferRadio.disabled = false;
-                                bankTransferLabel.style.display = "inline-block";
+                                if (bankTransferRadio) {
+                                    bankTransferRadio.disabled = false; // Bật lại "Chuyển khoản ngân hàng"
+                                }
+                                if (bankTransferLabel) {
+                                    bankTransferLabel.style.display = "inline-block"; // Hiện lại nhãn
+                                }
                             }
 
                             document.getElementById("btnRestoreVoucher").style.display = 'inline-block';
@@ -1581,7 +1592,42 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         const container = document.getElementById("payment-methods-container");
         container.innerHTML = `<p class="text-danger">Chưa có phương thức thanh toán</p>`;
     }
+    const tongHoaDonEl = document.getElementById("tongHoaDon");
 
+    // Hàm cập nhật trạng thái phương thức thanh toán
+    function updatePaymentMethod() {
+        const tongHoaDonValue = parseInt(tongHoaDonEl.textContent.replace(/[VND.]/g, ''));
+
+        const cashOnDeliveryRadio = getRadioByValue("1"); // Thanh toán khi nhận hàng
+        const bankTransferRadio = getRadioByValue("2"); // Chuyển khoản ngân hàng
+        const bankTransferLabel = getLabelByValue("2");
+
+        if (tongHoaDonValue === 0) {
+            if (cashOnDeliveryRadio) {
+                cashOnDeliveryRadio.checked = true; // Chọn "Thanh toán khi nhận hàng"
+            }
+            if (bankTransferRadio) {
+                bankTransferRadio.disabled = true; // Vô hiệu hóa "Chuyển khoản ngân hàng"
+            }
+            if (bankTransferLabel) {
+                bankTransferLabel.style.display = "none"; // Ẩn nhãn
+            }
+        } else {
+            if (bankTransferRadio) {
+                bankTransferRadio.disabled = false; // Bật lại "Chuyển khoản ngân hàng"
+            }
+            if (bankTransferLabel) {
+                bankTransferLabel.style.display = "inline-block"; // Hiện lại nhãn
+            }
+        }
+    }
+
+    // Theo dõi thay đổi nội dung của tổng hóa đơn
+    const observer = new MutationObserver(updatePaymentMethod);
+    observer.observe(tongHoaDonEl, { childList: true, subtree: true });
+
+    // Gọi hàm khi cần cập nhật trạng thái
+    updatePaymentMethod();
 
     fetchPaymentMethods();
     loadAddressesByIdKH();
