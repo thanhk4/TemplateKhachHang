@@ -233,6 +233,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
     }
     // Biến toàn cục lưu trữ danh sách sản phẩm
     let danhSachSanPham = [];
+    let sale = [];
 
     // Hàm render sản phẩm
     async function renderSanPham() {
@@ -258,8 +259,11 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
             let giaGiam = null; // Giá giảm mặc định là null
         
             if (saleChiTiet != null) {
-                const { giatrigiam, donvi } = saleChiTiet;
+                const { giatrigiam, donvi} = saleChiTiet;
                 giaGiam = calculateDiscountPrice(giathoidiemhientai, giatrigiam, donvi);
+                sale.push({
+                    id : saleChiTiet.id, 
+                })
             }
         
             const thuocTinhList = await fetchThuocTinhSPCT(id);
@@ -569,7 +573,10 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
     
                     const hoaDonChiTietResult = await themHoaDonChiTiet(idhd);
                     if (!hoaDonChiTietResult) return; // Dừng nếu thêm chi tiết hóa đơn thất bại
-    
+                    if (sale != null)
+                        {
+                            await updatesale(sale)
+                        }
                     const thanhToanCocResult = await taoLinkThanhToanCoc(idhd);
                     if (!thanhToanCocResult) return; // Dừng nếu tạo link thanh toán cọc thất bại
                     sessionStorage.clear();
@@ -585,6 +592,10 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
     
                 const addPaymentHistoryResult = await addPaymentHistory(idhd);
                 if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
+                if (sale != null)
+                {
+                    await updatesale(sale)
+                }
                 sessionStorage.clear();
                 if (bankTransferRadio.checked) {
                     const taoLinkThanhToanResult = await taoLinkThanhToan(idhd);
@@ -658,6 +669,34 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
         }
     }
     
+    async function updatesale(sale) {
+        const Listsale = sale; // Danh sách sản phẩm từ giỏ hàng
+    
+        for (const item of Listsale) {
+            try {
+                const response = await fetch(`https://localhost:7297/api/HoaDonChiTiet/salespct/${item.id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+    
+                // Kiểm tra nếu API trả về lỗi
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Lỗi API:", errorData.message);
+                    Swal.fire("Lỗi", `Cập nhật sale thất bại cho ID ${item.id}: ${errorData.message}`, "error");
+                } else {
+                    const result = await response.json();
+                    console.log(`Cập nhật sale thành công cho ID ${item.id}`, result);
+                }
+            } catch (error) {
+                console.error(`Lỗi kết nối API khi cập nhật sale ID ${item.id}:`, error);
+                Swal.fire("Lỗi", `Kết nối cập nhật sale thất bại cho ID ${item.id}.`, "error");
+            }
+        }
+    }    
+
     // Hàm thêm lịch sử thanh toán
     async function addPaymentHistory(idhd) {
         // Lấy thời gian hiện tại và điều chỉnh theo múi giờ Việt Nam (UTC+7)
