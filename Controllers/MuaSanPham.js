@@ -466,16 +466,33 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
         // Trả về userId
         return userId;
     }
-    function getRadioByValue(value) {
-        return document.querySelector(`input[name="paymentMethod"][value="${value}"]`);
+    function getLabelByText(text) {
+        const labels = document.querySelectorAll('label');
+        for (let label of labels) {
+            if (label.innerText.trim() === text) {
+                return label;
+            }
+        }
+        return null; // If no label is found with the matching text
     }
+    
+    
     $('#muaHangBtn').on('click', async function () {
         const voucherCodeInputdata = document.getElementById('voucherCodeDisplay');
         const tongHoaDon = parseInt(document.getElementById("tongHoaDon")?.innerText.replace(/[VND.]/g, "") || 0) || 0;
         const tongSanPham = parseInt(document.getElementById("tongSanPham")?.innerText.replace(/[VND.]/g, "") || 0) || 0;
         const soTienDatCoc = 0;
-        const cashOnDeliveryRadio = getRadioByValue("1");
-        const bankTransferRadio = getRadioByValue("2");
+        const cashOnDeliveryLabel  = getLabelByText("Thanh toán khi nhận hàng");
+        const bankTransferLabel = getLabelByText("Chuyển khoản ngân hàng");
+
+        // Lấy id của các radio button thông qua thuộc tính 'for' của label
+        const cashOnDeliveryRadioId = cashOnDeliveryLabel ? cashOnDeliveryLabel.getAttribute('for') : null;
+        const bankTransferRadioId = bankTransferLabel ? bankTransferLabel.getAttribute('for') : null;
+        
+        // Tìm radio buttons theo id
+        const cashOnDeliveryRadio = cashOnDeliveryRadioId ? document.getElementById(cashOnDeliveryRadioId) : null;
+        const bankTransferRadio = bankTransferRadioId ? document.getElementById(bankTransferRadioId) : null;
+        
         if (tongHoaDon > 10000000)
         {
             soTienDatCoc = tongHoaDon * 0.3
@@ -519,6 +536,10 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
         };
     
         try {
+            if (tongHoaDon == 0 && bankTransferRadio.checked) {
+                Swal.fire("Lỗi", "Tổng sản phẩm = 0, không thể chuyển khoản", "error");
+                return
+            }
             // Kiểm tra xem checkbox điểm có được chọn hay không
             const diemsudungcheckbox = document.getElementById('diemsudungcheckbox');
             if (diemsudungcheckbox.checked) {
@@ -556,11 +577,6 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
                     if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
                 }
             } else {
-                if(tongHoaDon == 0 && bankTransferRadio)
-                    {
-                        Swal.fire("Lỗi", "Tổng sản phẩm = 0, không thể chuyển khoản", "error");
-                        return
-                    }
                 const idhd = await taoHoaDon(hoadonData);
                 if (!idhd) return; // Dừng nếu tạo hóa đơn thất bại
     
@@ -570,7 +586,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
                 const addPaymentHistoryResult = await addPaymentHistory(idhd);
                 if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
                 sessionStorage.clear();
-                if (bankTransferRadio) {
+                if (bankTransferRadio.checked) {
                     const taoLinkThanhToanResult = await taoLinkThanhToan(idhd);
                     if (!taoLinkThanhToanResult) return; // Dừng nếu tạo link thanh toán thất bại
                 }
@@ -645,14 +661,11 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
     // Hàm thêm lịch sử thanh toán
     async function addPaymentHistory(idhd) {
         // Lấy thời gian hiện tại và điều chỉnh theo múi giờ Việt Nam (UTC+7)
-        const vietnamTimezoneOffset = 7 * 60; // Múi giờ Việt Nam là UTC+7
         const currentDate = new Date();
+        const vietnamTimezoneOffset = 0; // Múi giờ Việt Nam là UTC+7
 
         // Điều chỉnh thời gian theo múi giờ Việt Nam
         currentDate.setMinutes(currentDate.getMinutes() + vietnamTimezoneOffset - currentDate.getTimezoneOffset());
-
-        // Chuyển sang định dạng ISO
-        const thoigianthanhtoan = currentDate.toISOString();
 
         const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
         if (!paymentMethodElement) {
@@ -664,7 +677,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
         const paymentHistoryData = {
             idhd: idhd,
             idPttt: paymentMethodId,
-            thoigianthanhtoan: thoigianthanhtoan,
+            thoigianthanhtoan: currentDate,
             trangthai: 0
         };
     
@@ -1390,24 +1403,35 @@ async function taoLinkThanhToan(idhd) {
                             // Gọi hàm updateTotals để tính lại tổng sản phẩm và hóa đơn
                             updateTotals();
 
-                            // Kiểm tra nếu tổng hóa đơn là 0
-                            if (tongHoaDonValue === 0) {
-                                const cashOnDeliveryRadio = document.getElementById("cashOnDelivery");
-                                const bankTransferRadio = document.getElementById("bankTransfer");
-                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
-
-                                // Chọn phương thức "Thanh toán khi nhận hàng"
-                                cashOnDeliveryRadio.checked = true;
-
-                                // Vô hiệu hóa và ẩn phương thức "Chuyển khoản ngân hàng"
-                                bankTransferRadio.disabled = true;
-                                bankTransferLabel.style.display = "none";
+                            const tongHoaDonValuecheck = parseInt(tongHoaDonEl.textContent.replace(/[VND.]/g, ''));
+                            const cashOnDeliveryLabel = getLabelByText("Thanh toán khi nhận hàng"); // Tìm nhãn "Thanh toán khi nhận hàng"
+                            const bankTransferLabel = getLabelByText("Chuyển khoản ngân hàng"); // Tìm nhãn "Chuyển khoản ngân hàng"
+                            
+                            // Lấy id của các radio button thông qua thuộc tính 'for' của label
+                            const cashOnDeliveryRadioId = cashOnDeliveryLabel ? cashOnDeliveryLabel.getAttribute('for') : null;
+                            const bankTransferRadioId = bankTransferLabel ? bankTransferLabel.getAttribute('for') : null;
+                            
+                            // Tìm radio buttons theo id
+                            const cashOnDeliveryRadio = cashOnDeliveryRadioId ? document.getElementById(cashOnDeliveryRadioId) : null;
+                            const bankTransferRadio = bankTransferRadioId ? document.getElementById(bankTransferRadioId) : null;
+                        
+                            if (tongHoaDonValuecheck === 0) {
+                                if (cashOnDeliveryRadio) {
+                                    cashOnDeliveryRadio.checked = true; // Chọn "Thanh toán khi nhận hàng"
+                                }
+                                if (bankTransferRadio) {
+                                    bankTransferRadio.disabled = true; // Vô hiệu hóa "Chuyển khoản ngân hàng"
+                                }
+                                if (bankTransferLabel) {
+                                    bankTransferLabel.style.display = "none"; // Ẩn nhãn
+                                }
                             } else {
-                                // Khôi phục trạng thái nếu tổng hóa đơn khác 0
-                                const bankTransferRadio = document.getElementById("bankTransfer");
-                                const bankTransferLabel = document.querySelector("label[for='bankTransfer']");
-                                bankTransferRadio.disabled = false;
-                                bankTransferLabel.style.display = "inline-block";
+                                if (bankTransferRadio) {
+                                    bankTransferRadio.disabled = false; // Bật lại "Chuyển khoản ngân hàng"
+                                }
+                                if (bankTransferLabel) {
+                                    bankTransferLabel.style.display = "inline-block"; // Hiện lại nhãn
+                                }
                             }
 
                             document.getElementById("btnRestoreVoucher").style.display = 'inline-block';
@@ -1482,65 +1506,109 @@ async function taoLinkThanhToan(idhd) {
         });
     });    
 
-        // API endpoint
-        const apiUrl = "https://localhost:7297/api/Phuongthucthanhtoan";
+    // API endpoint
+    const apiUrl = "https://localhost:7297/api/Phuongthucthanhtoan";
 
-        // Fetch payment methods từ API
-        async function fetchPaymentMethods() {
-            try {
-                const response = await fetch(apiUrl);
-                if (!response.ok) {
-                    throw new Error("Không thể lấy phương thức thanh toán.");
-                }
-                const paymentMethods = await response.json();
-    
-                // Xử lý hiển thị phương thức thanh toán
-                renderPaymentMethods(paymentMethods);
-            } catch (error) {
-                console.error(error);
-                renderNoPaymentMethods();
+    // Fetch payment methods từ API
+    async function fetchPaymentMethods() {
+        try {
+            const response = await fetch(apiUrl);
+            if (!response.ok) {
+                throw new Error("Không thể lấy phương thức thanh toán.");
             }
+            const paymentMethods = await response.json();
+
+            // Xử lý hiển thị phương thức thanh toán
+            renderPaymentMethods(paymentMethods);
+        } catch (error) {
+            console.error(error);
+            renderNoPaymentMethods();
         }
-    
-        // Hiển thị danh sách phương thức thanh toán
-        function renderPaymentMethods(paymentMethods) {
-            const container = document.getElementById("payment-methods-container");
-            container.innerHTML = ""; // Xóa nội dung cũ
-    
-            if (paymentMethods.length === 0) {
-                renderNoPaymentMethods();
-                return;
-            }
-    
-            paymentMethods.forEach((method, index) => {
-                const isChecked = index === 0 ? "checked" : ""; // Chọn mặc định phương thức đầu tiên
-    
-                // Tạo input và label cho từng phương thức thanh toán
-                const input = document.createElement("input");
-                input.type = "radio";
-                input.className = "btn-check";
-                input.name = "paymentMethod";
-                input.id = `paymentMethod-${method.id}`;
-                input.value = method.id;
-                input.autocomplete = "off";
-                input.checked = isChecked;
-    
-                const label = document.createElement("label");
-                label.className = "btn btn-outline-primary";
-                label.htmlFor = `paymentMethod-${method.id}`;
-                label.innerText = method.tenpttt;
-    
-                // Thêm input và label vào container
-                container.appendChild(input);
-                container.appendChild(label);
-            });
+    }
+
+    // Hiển thị danh sách phương thức thanh toán
+    function renderPaymentMethods(paymentMethods) {
+        const container = document.getElementById("payment-methods-container");
+        container.innerHTML = ""; // Xóa nội dung cũ
+
+        if (paymentMethods.length === 0) {
+            renderNoPaymentMethods();
+            return;
         }
+
+        paymentMethods.forEach((method, index) => {
+            const isChecked = index === 0 ? "checked" : ""; // Chọn mặc định phương thức đầu tiên
+
+            // Tạo input và label cho từng phương thức thanh toán
+            const input = document.createElement("input");
+            input.type = "radio";
+            input.className = "btn-check";
+            input.name = "paymentMethod";
+            input.id = `paymentMethod-${method.id}`;
+            input.value = method.id;
+            input.autocomplete = "off";
+            input.checked = isChecked;
+
+            const label = document.createElement("label");
+            label.className = "btn btn-outline-primary";
+            label.htmlFor = `paymentMethod-${method.id}`;
+            label.innerText = method.tenpttt;
+
+            // Thêm input và label vào container
+            container.appendChild(input);
+            container.appendChild(label);
+        });
+    }
     
         // Hiển thị thông báo khi không có phương thức thanh toán
         function renderNoPaymentMethods() {
             const container = document.getElementById("payment-methods-container");
             container.innerHTML = `<p class="text-danger">Chưa có phương thức thanh toán</p>`;
         }
+
+        const tongHoaDonEl = document.getElementById("tongHoaDon");
+
+        // Hàm cập nhật trạng thái phương thức thanh toán
+        function updatePaymentMethod() {
+            const tongHoaDonValue = parseInt(tongHoaDonEl.textContent.replace(/[VND.]/g, ''));
+        
+            const cashOnDeliveryLabel = getLabelByText("Thanh toán khi nhận hàng"); // Tìm nhãn "Thanh toán khi nhận hàng"
+            const bankTransferLabel = getLabelByText("Chuyển khoản ngân hàng"); // Tìm nhãn "Chuyển khoản ngân hàng"
+            
+            // Lấy id của các radio button thông qua thuộc tính 'for' của label
+            const cashOnDeliveryRadioId = cashOnDeliveryLabel ? cashOnDeliveryLabel.getAttribute('for') : null;
+            const bankTransferRadioId = bankTransferLabel ? bankTransferLabel.getAttribute('for') : null;
+            
+            // Tìm radio buttons theo id
+            const cashOnDeliveryRadio = cashOnDeliveryRadioId ? document.getElementById(cashOnDeliveryRadioId) : null;
+            const bankTransferRadio = bankTransferRadioId ? document.getElementById(bankTransferRadioId) : null;
+        
+            if (tongHoaDonValue === 0) {
+                if (cashOnDeliveryRadio) {
+                    cashOnDeliveryRadio.checked = true; // Chọn "Thanh toán khi nhận hàng"
+                }
+                if (bankTransferRadio) {
+                    bankTransferRadio.disabled = true; // Vô hiệu hóa "Chuyển khoản ngân hàng"
+                }
+                if (bankTransferLabel) {
+                    bankTransferLabel.style.display = "none"; // Ẩn nhãn
+                }
+            } else {
+                if (bankTransferRadio) {
+                    bankTransferRadio.disabled = false; // Bật lại "Chuyển khoản ngân hàng"
+                }
+                if (bankTransferLabel) {
+                    bankTransferLabel.style.display = "inline-block"; // Hiện lại nhãn
+                }
+            }
+        }        
+        
+    // Theo dõi thay đổi nội dung của tổng hóa đơn
+    const observer = new MutationObserver(updatePaymentMethod);
+    observer.observe(tongHoaDonEl, { childList: true, subtree: true });
+
+    // Gọi hàm khi cần cập nhật trạng thái
+    updatePaymentMethod();
     
     // Gọi hàm fetchPaymentMethods khi trang tải
     fetchPaymentMethods();
