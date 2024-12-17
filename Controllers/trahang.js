@@ -411,7 +411,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             Swal.fire("Lỗi", "Kết nối tạo đơn trả hàng thất bại.", "error");
         }
     }
-
+    
     // Hàm tạo chi tiết hóa đơn
     async function trahangchitiet(idth, selectedProducts) {
         for (const product of selectedProducts) {
