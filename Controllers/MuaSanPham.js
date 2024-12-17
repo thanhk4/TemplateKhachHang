@@ -492,7 +492,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
         // Tìm radio buttons theo id
         const cashOnDeliveryRadio = cashOnDeliveryRadioId ? document.getElementById(cashOnDeliveryRadioId) : null;
         const bankTransferRadio = bankTransferRadioId ? document.getElementById(bankTransferRadioId) : null;
-        
+
         if (tongHoaDon > 10000000)
         {
             soTienDatCoc = tongHoaDon * 0.3
@@ -549,7 +549,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
                 await UpdateDiem(diemsudung);
             }
 
-            if (cashOnDeliveryRadio && tongHoaDon >= 10000000) {
+            if (cashOnDeliveryRadio.checked && tongHoaDon >= 10000000) {
                 const confirm = await Swal.fire({
                     title: 'Yêu cầu đặt cọc',
                     text: 'Hóa đơn trên 10.000.000 VND, vui lòng đặt cọc 30%.',
