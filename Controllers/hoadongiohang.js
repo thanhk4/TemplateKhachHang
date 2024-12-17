@@ -492,34 +492,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         }
     }
 
-    // Hàm xử lý khi bấm nút xóa
-    async function deleteProduct() {
-        const ListdanhSachSanPham = danhSachSanPham;
-        for (const sanPham of ListdanhSachSanPham) {
-
-            const idkh = GetByidKH();
-            if (!idkh) {
-                throw new Error("Không thể lấy ID khách hàng.");
-            }
-
-            const idgh = await fetchGioHangByIdKh(idkh);
-            if (!idgh || !idgh.id) {
-                throw new Error("Không thể lấy ID giỏ hàng.");
-            }
-
-            const idgiohangct = await fetchSoLuongSpctInGhcht(idgh.id, sanPham.id);
-            if (!idgiohangct) {
-                throw new Error("Không thể lấy ID giỏ hàng chi tiết.");
-            }
-
-            const result = await deleteGioHangChiTiet(idgiohangct.id);
-            if (result) {
-                return true;
-            } else {
-                alert("Xóa sản phẩm thất bại, vui lòng thử lại.");
-            }
-        }
-    };
     function getLabelByText(text) {
         const labels = document.querySelectorAll('label');
         for (let label of labels) {
@@ -551,7 +523,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         // Tìm radio buttons theo id
         const cashOnDeliveryRadio = cashOnDeliveryRadioId ? document.getElementById(cashOnDeliveryRadioId) : null;
         const bankTransferRadio = bankTransferRadioId ? document.getElementById(bankTransferRadioId) : null;
-        
+
         if (tongHoaDon > 10000000) {
             soTienDatCoc = tongHoaDon * 0.3
         }
@@ -585,7 +557,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
         try {
             
-            if (tongHoaDon == 0 && bankTransferRadio) {
+            if (tongHoaDon == 0 && bankTransferRadio.checked) {
                 Swal.fire("Lỗi", "Tổng sản phẩm = 0, không thể chuyển khoản", "error");
                 return
             }
@@ -598,7 +570,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 // Nếu có sử dụng điểm, gọi hàm cập nhật điểm khách hàng
                 await UpdateDiem(diemsudung);
             }
-            if (cashOnDeliveryRadio && tongHoaDon >= 10000000) {
+            if (cashOnDeliveryRadio.checked && tongHoaDon >= 10000000) {
                 const confirm = await Swal.fire({
                     title: 'Yêu cầu đặt cọc',
                     text: 'Hóa đơn trên 10.000.000 VND, vui lòng đặt cọc 30%.',
@@ -623,7 +595,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                     if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
 
                     sessionStorage.clear();
-                    deleteProduct();
+                    await deleteProduct();
                     const thanhToanCocResult = await taoLinkThanhToanCoc(idhd);
                     if (!thanhToanCocResult) return; // Dừng nếu tạo link thanh toán cọc thất bại
                 }
@@ -638,8 +610,8 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
 
                 sessionStorage.clear();
-                deleteProduct();
-                if (bankTransferRadio) {
+                await deleteProduct();
+                if (bankTransferRadio.checked) {
                     const taoLinkThanhToanResult = await taoLinkThanhToan(idhd);
                     if (!taoLinkThanhToanResult) return; // Dừng nếu tạo link thanh toán thất bại
                 }
@@ -710,6 +682,41 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         }
         return true;
     }
+
+    // Hàm xử lý khi bấm nút xóa
+    async function deleteProduct() {
+        const ListdanhSachSanPham = danhSachSanPham;
+        for (const sanPham of ListdanhSachSanPham) {
+            try {
+                const idkh = GetByidKH();
+                if (!idkh) {
+                    throw new Error("Không thể lấy ID khách hàng.");
+                }
+
+                const idgh = await fetchGioHangByIdKh(idkh);
+                if (!idgh || !idgh.id) {
+                    throw new Error("Không thể lấy ID giỏ hàng.");
+                }
+
+                const idgiohangct = await fetchSoLuongSpctInGhcht(idgh.id, sanPham.id);
+                if (!idgiohangct) {
+                    throw new Error("Không thể lấy ID giỏ hàng chi tiết.");
+                }
+
+                const result = await deleteGioHangChiTiet(idgiohangct.id);
+                
+                // Kiểm tra nếu BE trả thông báo lỗi
+                if (result.ok && result.error) {
+                    Swal.fire("Lỗi", result.error, "error");
+                    return null;  // Dừng nếu có lỗi từ BE
+                }
+            } catch (error) {
+                console.error("Lỗi kết nối API khi xoá sản phẩm ở giỏ hàng:", error);
+                Swal.fire("Lỗi", "Kết nối xoá sản phẩm ở giỏ hàng thất bại.", "error");
+            }
+        }
+        return true;
+    };
 
     // Hàm thêm lịch sử thanh toán
     async function addPaymentHistory(idhd) {
@@ -1273,6 +1280,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                     } if (data.soluong == 0) {
                         continue;
                     }
+
                     vouchers.push(data);
                 } catch (error) {
                     console.warn(`Lỗi không xác định khi lấy voucher với id: ${id.iDgiamgia}`, error);
