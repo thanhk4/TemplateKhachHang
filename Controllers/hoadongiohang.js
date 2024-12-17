@@ -520,12 +520,14 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             }
         }
     };
-    function getRadioByValue(value) {
-        return document.querySelector(`input[name="paymentMethod"][value="${value}"]`);
-    }
-
-    function getLabelByValue(value) {
-        return document.querySelector(`label[for="paymentMethod-${value}"]`);
+    function getLabelByText(text) {
+        const labels = document.querySelectorAll('label');
+        for (let label of labels) {
+            if (label.innerText.trim() === text) {
+                return label;
+            }
+        }
+        return null; // If no label is found with the matching text
     }
 
     $('#muaHangBtn').on('click', async function () {
@@ -538,8 +540,18 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         const voucherCodeInput = voucherCodeInputdata.getAttribute('data-value') || 0;
         const userId = GetByidKH();
         const soTienDatCoc = 0;
-        const cashOnDeliveryRadio = getRadioByValue("1");
-        const bankTransferRadio = getRadioByValue("2");
+
+        const cashOnDeliveryLabel  = getLabelByText("Thanh toán khi nhận hàng");
+        const bankTransferLabel = getLabelByText("Chuyển khoản ngân hàng");
+
+        // Lấy id của các radio button thông qua thuộc tính 'for' của label
+        const cashOnDeliveryRadioId = cashOnDeliveryLabel ? cashOnDeliveryLabel.getAttribute('for') : null;
+        const bankTransferRadioId = bankTransferLabel ? bankTransferLabel.getAttribute('for') : null;
+        
+        // Tìm radio buttons theo id
+        const cashOnDeliveryRadio = cashOnDeliveryRadioId ? document.getElementById(cashOnDeliveryRadioId) : null;
+        const bankTransferRadio = bankTransferRadioId ? document.getElementById(bankTransferRadioId) : null;
+        
         if (tongHoaDon > 10000000) {
             soTienDatCoc = tongHoaDon * 0.3
         }
@@ -573,11 +585,11 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
         try {
             
-            if (tongHoaDon == 0 && bankTransferRadio.checked) {
+            if (tongHoaDon == 0 && bankTransferRadio) {
                 Swal.fire("Lỗi", "Tổng sản phẩm = 0, không thể chuyển khoản", "error");
                 return
             }
-            
+
             // Kiểm tra xem checkbox điểm có được chọn hay không
             const diemsudungcheckbox = document.getElementById('diemsudungcheckbox');
             if (diemsudungcheckbox.checked) {
@@ -586,7 +598,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 // Nếu có sử dụng điểm, gọi hàm cập nhật điểm khách hàng
                 await UpdateDiem(diemsudung);
             }
-            if (cashOnDeliveryRadio.checked && tongHoaDon >= 10000000) {
+            if (cashOnDeliveryRadio && tongHoaDon >= 10000000) {
                 const confirm = await Swal.fire({
                     title: 'Yêu cầu đặt cọc',
                     text: 'Hóa đơn trên 10.000.000 VND, vui lòng đặt cọc 30%.',
@@ -627,7 +639,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
                 sessionStorage.clear();
                 deleteProduct();
-                if (bankTransferRadio.checked) {
+                if (bankTransferRadio) {
                     const taoLinkThanhToanResult = await taoLinkThanhToan(idhd);
                     if (!taoLinkThanhToanResult) return; // Dừng nếu tạo link thanh toán thất bại
                 }
@@ -701,15 +713,12 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
     // Hàm thêm lịch sử thanh toán
     async function addPaymentHistory(idhd) {
-        // Lấy thời gian hiện tại và điều chỉnh theo múi giờ Việt Nam (UTC+7)
-        const vietnamTimezoneOffset = 7 * 60; // Múi giờ Việt Nam là UTC+7
+        
         const currentDate = new Date();
+        const vietnamTimezoneOffset = 0; // Múi giờ Việt Nam là UTC+7
 
         // Điều chỉnh thời gian theo múi giờ Việt Nam
         currentDate.setMinutes(currentDate.getMinutes() + vietnamTimezoneOffset - currentDate.getTimezoneOffset());
-
-        // Chuyển sang định dạng ISO
-        const thoigianthanhtoan = currentDate.toISOString();
 
         const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
         if (!paymentMethodElement) {
@@ -721,7 +730,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         const paymentHistoryData = {
             idhd: idhd,
             idPttt: paymentMethodId,
-            thoigianthanhtoan: thoigianthanhtoan,
+            thoigianthanhtoan: currentDate,
             trangthai: 0
         };
 
@@ -1423,7 +1432,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                             // Hiển thị số tiền giảm
                             soTienGiamGia.textContent = `-${soTienGiam.toLocaleString()} VND`;
                             soTienGiamGia.style.color = 'red';
-
+                            
                             if (soTienGiamGia < 0) {
                                 soTienGiamGia = Math.abs(soTienGiamGia); // Chuyển thành giá trị dương
                             }
@@ -1435,13 +1444,18 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                             // Gọi hàm updateTotals để tính lại tổng sản phẩm và hóa đơn
                             updateTotals();
 
-                            // Kiểm tra nếu tổng hóa đơn là 0
                             const tongHoaDonValuecheck = parseInt(tongHoaDonEl.textContent.replace(/[VND.]/g, ''));
-                            const cashOnDeliveryRadio = getRadioByValue("1"); // Thanh toán khi nhận hàng
-                            const bankTransferRadio = getRadioByValue("2"); // Chuyển khoản ngân hàng
-                            const bankTransferLabel = getLabelByValue("2");
-
-                            // Kiểm tra nếu tổng hóa đơn là 0
+                            const cashOnDeliveryLabel = getLabelByText("Thanh toán khi nhận hàng"); // Tìm nhãn "Thanh toán khi nhận hàng"
+                            const bankTransferLabel = getLabelByText("Chuyển khoản ngân hàng"); // Tìm nhãn "Chuyển khoản ngân hàng"
+                            
+                            // Lấy id của các radio button thông qua thuộc tính 'for' của label
+                            const cashOnDeliveryRadioId = cashOnDeliveryLabel ? cashOnDeliveryLabel.getAttribute('for') : null;
+                            const bankTransferRadioId = bankTransferLabel ? bankTransferLabel.getAttribute('for') : null;
+                            
+                            // Tìm radio buttons theo id
+                            const cashOnDeliveryRadio = cashOnDeliveryRadioId ? document.getElementById(cashOnDeliveryRadioId) : null;
+                            const bankTransferRadio = bankTransferRadioId ? document.getElementById(bankTransferRadioId) : null;
+                        
                             if (tongHoaDonValuecheck === 0) {
                                 if (cashOnDeliveryRadio) {
                                     cashOnDeliveryRadio.checked = true; // Chọn "Thanh toán khi nhận hàng"
@@ -1480,6 +1494,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             }
         });
     });
+
 
     document.getElementById("btnRestoreVoucher").addEventListener("click", function () {
         // Hiển thị hộp thoại xác nhận huỷ voucher
@@ -1586,42 +1601,50 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             container.appendChild(label);
         });
     }
-
-    // Hiển thị thông báo khi không có phương thức thanh toán
-    function renderNoPaymentMethods() {
-        const container = document.getElementById("payment-methods-container");
-        container.innerHTML = `<p class="text-danger">Chưa có phương thức thanh toán</p>`;
-    }
-    const tongHoaDonEl = document.getElementById("tongHoaDon");
-
-    // Hàm cập nhật trạng thái phương thức thanh toán
-    function updatePaymentMethod() {
-        const tongHoaDonValue = parseInt(tongHoaDonEl.textContent.replace(/[VND.]/g, ''));
-
-        const cashOnDeliveryRadio = getRadioByValue("1"); // Thanh toán khi nhận hàng
-        const bankTransferRadio = getRadioByValue("2"); // Chuyển khoản ngân hàng
-        const bankTransferLabel = getLabelByValue("2");
-
-        if (tongHoaDonValue === 0) {
-            if (cashOnDeliveryRadio) {
-                cashOnDeliveryRadio.checked = true; // Chọn "Thanh toán khi nhận hàng"
-            }
-            if (bankTransferRadio) {
-                bankTransferRadio.disabled = true; // Vô hiệu hóa "Chuyển khoản ngân hàng"
-            }
-            if (bankTransferLabel) {
-                bankTransferLabel.style.display = "none"; // Ẩn nhãn
-            }
-        } else {
-            if (bankTransferRadio) {
-                bankTransferRadio.disabled = false; // Bật lại "Chuyển khoản ngân hàng"
-            }
-            if (bankTransferLabel) {
-                bankTransferLabel.style.display = "inline-block"; // Hiện lại nhãn
-            }
+    
+        // Hiển thị thông báo khi không có phương thức thanh toán
+        function renderNoPaymentMethods() {
+            const container = document.getElementById("payment-methods-container");
+            container.innerHTML = `<p class="text-danger">Chưa có phương thức thanh toán</p>`;
         }
-    }
 
+        const tongHoaDonEl = document.getElementById("tongHoaDon");
+
+        // Hàm cập nhật trạng thái phương thức thanh toán
+        function updatePaymentMethod() {
+            const tongHoaDonValue = parseInt(tongHoaDonEl.textContent.replace(/[VND.]/g, ''));
+        
+            const cashOnDeliveryLabel = getLabelByText("Thanh toán khi nhận hàng"); // Tìm nhãn "Thanh toán khi nhận hàng"
+            const bankTransferLabel = getLabelByText("Chuyển khoản ngân hàng"); // Tìm nhãn "Chuyển khoản ngân hàng"
+            
+            // Lấy id của các radio button thông qua thuộc tính 'for' của label
+            const cashOnDeliveryRadioId = cashOnDeliveryLabel ? cashOnDeliveryLabel.getAttribute('for') : null;
+            const bankTransferRadioId = bankTransferLabel ? bankTransferLabel.getAttribute('for') : null;
+            
+            // Tìm radio buttons theo id
+            const cashOnDeliveryRadio = cashOnDeliveryRadioId ? document.getElementById(cashOnDeliveryRadioId) : null;
+            const bankTransferRadio = bankTransferRadioId ? document.getElementById(bankTransferRadioId) : null;
+        
+            if (tongHoaDonValue === 0) {
+                if (cashOnDeliveryRadio) {
+                    cashOnDeliveryRadio.checked = true; // Chọn "Thanh toán khi nhận hàng"
+                }
+                if (bankTransferRadio) {
+                    bankTransferRadio.disabled = true; // Vô hiệu hóa "Chuyển khoản ngân hàng"
+                }
+                if (bankTransferLabel) {
+                    bankTransferLabel.style.display = "none"; // Ẩn nhãn
+                }
+            } else {
+                if (bankTransferRadio) {
+                    bankTransferRadio.disabled = false; // Bật lại "Chuyển khoản ngân hàng"
+                }
+                if (bankTransferLabel) {
+                    bankTransferLabel.style.display = "inline-block"; // Hiện lại nhãn
+                }
+            }
+        }        
+        
     // Theo dõi thay đổi nội dung của tổng hóa đơn
     const observer = new MutationObserver(updatePaymentMethod);
     observer.observe(tongHoaDonEl, { childList: true, subtree: true });
