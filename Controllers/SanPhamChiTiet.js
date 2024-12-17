@@ -34,10 +34,10 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                 $scope.groupedThuocTinhs = groupThuocTinhs(data.sanphamchitiets.flatMap(sp => sp.thuocTinhs));
                 console.log("Chi tiết sản phẩm:", $scope.sanPham);
                 console.log("Nhóm thuộc tính:", $scope.groupedThuocTinhs);
-                
+
 
                 if ($scope.sanPham.idthuonghieu !== null) {
-                    LoadSanPhamTuongTu($scope.sanPham.idThuongHieu,$scope.sanPham.id);
+                    LoadSanPhamTuongTu($scope.sanPham.idThuongHieu, $scope.sanPham.id);
                 } else {
                     console.warn("Không tìm thấy idThuongHieu trong sản phẩm.");
                 }
@@ -59,7 +59,7 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                 const filteredProducts = data.filter(function (product) {
                     return product.id !== idSanPhamHienTai; // Loại bỏ sản phẩm hiện tại
                 });
-                
+
                 // Lấy danh sách sản phẩm tương tự ngẫu nhiên
                 $scope.sanPhams = randomizeProducts(filteredProducts, 4);
                 console.log("Danh sách sản phẩm tương tự:", $scope.sanPhams);
@@ -68,22 +68,29 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                 $scope.errorMessage = "Không thể tải danh sách sản phẩm. Vui lòng thử lại sau.";
                 console.error("Lỗi khi tải sản phẩm tương tự:", error);
             });
-    }    
+    }
     function randomizeProducts(products, maxItems) {
         if (products.length > maxItems) {
-            const shuffled = products.sort(() => 0.5 - Math.random()); 
-            return shuffled.slice(0, maxItems); 
+            const shuffled = products.sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, maxItems);
         }
-        return products; 
+        return products;
     }
 
     function LoadDanhGia() {
-        SanPhamService.getDanhGiaByIdSPCT(sanPhamId)
+        SanPhamService.getDanhGiaByIdSPCT(sanPhamId) // Gọi API lấy tất cả đánh giá
             .then(function (data) {
-                $scope.danhGias = data;
-                console.log("Danh sách đánh giá:", $scope.danhGias);
-    
-                $scope.danhGias.forEach(danhGia => {
+                $scope.danhGiasAll = data; // Lưu tất cả đánh giá vào mảng
+                console.log("Danh sách đánh giá:", $scope.danhGiasAll);
+
+                $scope.pageSize = 3; // Số đánh giá mỗi trang
+                $scope.currentPage = 1; // Trang mặc định là trang 1
+
+                // Lọc dữ liệu cho trang hiện tại
+                $scope.paginateDanhGias();
+
+                // Duyệt qua từng đánh giá và load thông tin khách hàng nếu có
+                $scope.danhGiasAll.forEach(danhGia => {
                     if (danhGia.idkh) {
                         LoadKhachHangById(danhGia);
                     } else {
@@ -93,189 +100,224 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                 });
             })
             .catch(function (error) {
-                console.error("Lỗi khi tải danh sách đánh giá:", error);
+                // Xử lý lỗi từ API
+                if (error.status === 404) {
+                    $scope.errorMessage = "Không tìm thấy đánh giá nào cho sản phẩm này.";
+                    $scope.danhGiasAll = []; // Xóa dữ liệu khi không tìm thấy
+                } else if (error.status === 400) {
+                    $scope.errorMessage = error.data.message || "Yêu cầu không hợp lệ.";
+                } else {
+                    $scope.errorMessage = "Đã xảy ra lỗi không xác định.";
+                }
             });
     }
-    
+
+    // Hàm phân trang
+    $scope.paginateDanhGias = function () {
+        // Tính toán vị trí bắt đầu và kết thúc của mảng cần hiển thị
+        var start = ($scope.currentPage - 1) * $scope.pageSize;
+        var end = start + $scope.pageSize;
+        $scope.danhGias = $scope.danhGiasAll.slice(start, end); // Cắt mảng để hiển thị các đánh giá của trang hiện tại
+    };
+
+    // Chuyển trang
+    $scope.goToPage = function (page) {
+        if (page >= 1 && page <= $scope.totalPages()) {
+            $scope.currentPage = page;
+            $scope.paginateDanhGias(); // Lọc lại dữ liệu khi chuyển trang
+        }
+    };
+
+    // Tính tổng số trang
+    $scope.totalPages = function () {
+        return Math.ceil($scope.danhGiasAll.length / $scope.pageSize);
+    };
+
+
     function LoadKhachHangById(danhGia) {
         SanPhamService.getKhachHangById(danhGia.idkh)
             .then(function (data) {
                 danhGia.tenKhachHang = data.ten;
                 console.log("Thông tin khách hàng:", data);
-                
+
             })
             .catch(function (error) {
                 console.error("Lỗi khi gọi API:", error);
                 danhGia.tenKhachHang = "Không xác định"; // Gán giá trị mặc định khi lỗi
             });
     }
-    
-        
-        $scope.xemChiTiet = function (id) {
-            console.log("Xem chi tiết sản phẩm:", id);
-            $location.path(`/sanphamchitiet/${id}`);
-        };
-        loadSanPhamChiTiet();
-        LoadDanhGia();
+    $scope.goToPage = function (page) {
+        if (page >= 1 && page <= $scope.totalPages()) {
+            $scope.currentPage = page; // Chuyển đến trang mới
+            $scope.paginateDanhGias(); // Gọi hàm phân trang để cập nhật danh sách đánh giá
+        }
+    };
 
-        // Đặt giá trị mặc định cho quantity
-        $scope.quantity = parseInt(sessionStorage.getItem('quantity')) || 1; // Lấy số lượng từ sessionStorage nếu có
-        $scope.maxQuantity = 100; // Giới hạn số lượng, có thể lấy từ dữ liệu sản phẩm
+    $scope.xemChiTiet = function (id) {
+        console.log("Xem chi tiết sản phẩm:", id);
+        $location.path(`/sanphamchitiet/${id}`);
+    };
+    loadSanPhamChiTiet();
+    LoadDanhGia();
 
-        // Hàm thay đổi số lượng
-        $scope.changeQuantity = function (delta) {
-            let newQuantity = $scope.quantity + delta;
-            if (newQuantity >= 1 && newQuantity <= $scope.maxQuantity) {
-                $scope.quantity = newQuantity;
-                sessionStorage.setItem('quantity', $scope.quantity); // Lưu số lượng vào sessionStorage
+    // Đặt giá trị mặc định cho quantity
+    $scope.quantity = parseInt(sessionStorage.getItem('quantity')) || 1; // Lấy số lượng từ sessionStorage nếu có
+    $scope.maxQuantity = 100; // Giới hạn số lượng, có thể lấy từ dữ liệu sản phẩm
+
+    // Hàm thay đổi số lượng
+    $scope.changeQuantity = function (delta) {
+        let newQuantity = $scope.quantity + delta;
+        if (newQuantity >= 1 && newQuantity <= $scope.maxQuantity) {
+            $scope.quantity = newQuantity;
+            sessionStorage.setItem('quantity', $scope.quantity); // Lưu số lượng vào sessionStorage
+        }
+    };
+
+    // Hàm lấy giá trị số lượng từ phần tử span (hiển thị)
+    $scope.getQuantityDisplay = function () {
+        const quantityDisplay = document.getElementById("quantity-display");
+        if (quantityDisplay) {
+            return quantityDisplay.innerText || quantityDisplay.textContent; // Lấy giá trị hiển thị
+        }
+        return null;
+    };
+
+    // Hàm lấy thông tin khách hàng từ localStorage
+    function GetByidKH() {
+        // Lấy dữ liệu từ localStorage
+        const userInfoString = localStorage.getItem("userInfo");
+        let userId = 0; // Giá trị mặc định nếu không có thông tin khách hàng
+
+        // Kiểm tra nếu dữ liệu tồn tại
+        if (userInfoString) {
+            try {
+                // Chuyển đổi chuỗi JSON thành đối tượng
+                const userInfo = JSON.parse(userInfoString);
+
+                // Kiểm tra và lấy giá trị id từ userInfo
+                userId = userInfo?.id || 0;
+            } catch (error) {
+                console.error("Lỗi khi phân tích dữ liệu userInfo:", error);
             }
-        };
+        } else {
+            console.warn("Dữ liệu userInfo không tồn tại trong localStorage.");
+        }
 
-        // Hàm lấy giá trị số lượng từ phần tử span (hiển thị)
-        $scope.getQuantityDisplay = function() {
-            const quantityDisplay = document.getElementById("quantity-display");
-            if (quantityDisplay) {
-                return quantityDisplay.innerText || quantityDisplay.textContent; // Lấy giá trị hiển thị
-            }
+        return userId;
+    }
+
+    // Hàm lấy id giỏ hàng
+    async function fetchGioHangId(idkh) {
+        try {
+            const response = await fetch(`${gioHang}/${idkh}`);
+            return await response.json();
+        } catch (error) {
+            console.error("Lỗi khi lấy id giỏ hàng:", error);
             return null;
+        }
+    }
+
+    // Lưu địa chỉ mới api
+    async function AddGHCT(idspct) {
+        const idkh = await GetByidKH();
+        const idgh = await fetchGioHangId(idkh);
+        const soluong = $scope.quantity;
+
+        const newGioHangCT = {
+            id: 0,
+            idgh: idgh.id,
+            idspct: idspct,
+            soluong: soluong
         };
 
-        // Hàm lấy thông tin khách hàng từ localStorage
-        function GetByidKH() {
-            // Lấy dữ liệu từ localStorage
-            const userInfoString = localStorage.getItem("userInfo");
-            let userId = 0; // Giá trị mặc định nếu không có thông tin khách hàng
-
-            // Kiểm tra nếu dữ liệu tồn tại
-            if (userInfoString) {
-                try {
-                    // Chuyển đổi chuỗi JSON thành đối tượng
-                    const userInfo = JSON.parse(userInfoString);
-
-                    // Kiểm tra và lấy giá trị id từ userInfo
-                    userId = userInfo?.id || 0;
-                } catch (error) {
-                    console.error("Lỗi khi phân tích dữ liệu userInfo:", error);
-                }
-            } else {
-                console.warn("Dữ liệu userInfo không tồn tại trong localStorage.");
-            }
-
-            return userId;
+        try {
+            await axios.post(gioHangChiTiet, newGioHangCT);
+            Swal.fire("Thành công", "Sản phẩm đã được thêm giỏ hàng.", "success");
+            $scope.$apply(() => {
+                $location.path(`/muasanpham/${firstSPCTId}`);
+            });
+        } catch (error) {
+            Swal.fire("Lỗi", "Không thể thêm sản phẩm vào giỏ hàng.", "error");
+            console.error(error);
         }
+    };
 
-        // Hàm lấy id giỏ hàng
-        async function fetchGioHangId(idkh) {
+    const apIDSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/GetSanPhamChiTietByThuocTinh";
+    const apiIDSPtoIDSPCT = "https://localhost:7297/api/Sanphamchitiet/sanpham/"; ``
+    const gioHang = "https://localhost:7297/api/Giohang/giohangkhachhang";
+    const gioHangChiTiet = "https://localhost:7297/api/Giohangchitiet";
+
+    $scope.timkhachHang = function (idkhachHang) {
+
+    }
+
+    $scope.GioHang = async function () {
+        // Lấy danh sách các thuộc tính đã chọn
+        const tenthuoctinhList = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
+
+
+        if (!$scope.selectedSPCTs || $scope.selectedSPCTs[0].soluong === 0 && selectedSPCTs[0].sales[0].soluong <= 0) {
+            console.log("Không thể mua sản phẩm do hết hàng.");
+            console.log(selectedSPCTs[0].sales[0].soluong);
+
+            return;
+        }
+        // Kiểm tra xem tất cả các thuộc tính có được chọn chưa
+        if (tenthuoctinhList.length === Object.keys($scope.groupedThuocTinhs).length) {
             try {
-                const response = await fetch(`${gioHang}/${idkh}`);
-                return await response.json();
-            } catch (error) {
-                console.error("Lỗi khi lấy id giỏ hàng:", error);
-                return null;
-            }
-        }
+                // Chuyển mảng tenthuoctinhList thành chuỗi query string
+                const queryString = tenthuoctinhList.map(item => `tenthuoctinh=${encodeURIComponent(item)}`).join('&');
 
-        // Lưu địa chỉ mới api
-        async function AddGHCT(idspct) {
-            const idkh = await GetByidKH();
-            const idgh = await fetchGioHangId(idkh);
-            const soluong = $scope.quantity;
-
-            const newGioHangCT = {
-                id : 0,
-                idgh : idgh.id,
-                idspct : idspct,
-                soluong : soluong
-            };
-
-            try {
-                await axios.post(gioHangChiTiet, newGioHangCT);
-                Swal.fire("Thành công", "Sản phẩm đã được thêm giỏ hàng.", "success");
-                $scope.$apply(() => {
-                    $location.path(`/muasanpham/${firstSPCTId}`);
-                });  
-            } catch (error) {
-                Swal.fire("Lỗi", "Không thể thêm sản phẩm vào giỏ hàng.", "error");
-                console.error(error);
-            }
-        };
-
-        const apIDSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/GetSanPhamChiTietByThuocTinh";
-        const apiIDSPtoIDSPCT = "https://localhost:7297/api/Sanphamchitiet/sanpham/";``
-        const gioHang = "https://localhost:7297/api/Giohang/giohangkhachhang";
-        const gioHangChiTiet = "https://localhost:7297/api/Giohangchitiet";
-    
-        $scope.timkhachHang = function (idkhachHang) {
-            
-        }
-
-        $scope.GioHang = async function () {
-            // Lấy danh sách các thuộc tính đã chọn
-            const tenthuoctinhList = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
-         
-            
-            if (!$scope.selectedSPCTs || $scope.selectedSPCTs[0].soluong === 0 && selectedSPCTs[0].sales[0].soluong <= 0) {
-                console.log("Không thể mua sản phẩm do hết hàng.");
-                console.log(selectedSPCTs[0].sales[0].soluong);
-                
-                return;
-            }
-            // Kiểm tra xem tất cả các thuộc tính có được chọn chưa
-            if (tenthuoctinhList.length === Object.keys($scope.groupedThuocTinhs).length) {
-                try {
-                    // Chuyển mảng tenthuoctinhList thành chuỗi query string
-                    const queryString = tenthuoctinhList.map(item => `tenthuoctinh=${encodeURIComponent(item)}`).join('&');
-        
-                    // Gọi API để lấy danh sách SPCT theo thuộc tính
-                    const idspctTTResponse = await fetch(`${apIDSPCTUrl}?${queryString}`);
-                    if (!idspctTTResponse.ok) {
-                        throw new Error('Lỗi khi gọi API GetSanPhamChiTietByThuocTinh');
-                    }
-                    const dataspcttt = await idspctTTResponse.json();
-        
-                    // Kiểm tra kết quả của API thuộc tính
-                    if (!dataspcttt || dataspcttt.length === 0) {
-                        $scope.errorMessage = "Không có sản phẩm chi tiết nào phù hợp với thuộc tính đã chọn.";
-                        console.log($scope.errorMessage);
-                        return;
-                    }
-        
-                    // Gọi API để lấy danh sách SPCT theo sản phẩm
-                    const idspctSPResponse = await fetch(`${apiIDSPtoIDSPCT}${sanPhamId}`);
-                    if (!idspctSPResponse.ok) {
-                        throw new Error('Lỗi khi gọi API GetSanPhamChiTietBySanPham');
-                    }
-                    const dataspctsp = await idspctSPResponse.json();
-        
-                    // Lọc ra các sản phẩm chi tiết trùng khớp giữa hai API
-                    const matchedSPCT = dataspcttt.filter(item => 
-                        dataspctsp.some(sp => sp.id === item.idspct)
-                    );
-        
-                    if (matchedSPCT.length > 0) {
-                        const firstSPCTId = matchedSPCT[0].idspct;
-                        AddGHCT(firstSPCTId)
-                        $timeout(() => {
-                            $scope.$apply(() => {
-                                $location.path('/giohang'); // Chuyển hướng đến trang "Giỏ hàng"
-                            });
-                            $scope.isLoading = false; // Kết thúc tải (nếu cần)
-                        }, 3000);            
-                    } else {
-                        $scope.errorMessage = "Không có sản phẩm chi tiết nào phù hợp giữa hai API.";
-                        console.log($scope.errorMessage);
-                    }
-                } catch (error) {
-                    $scope.errorMessage = "Không thể tải thông tin sản phẩm chi tiết. Vui lòng thử lại sau.";
-                    console.error("Lỗi khi tải sản phẩm chi tiết:", error);
+                // Gọi API để lấy danh sách SPCT theo thuộc tính
+                const idspctTTResponse = await fetch(`${apIDSPCTUrl}?${queryString}`);
+                if (!idspctTTResponse.ok) {
+                    throw new Error('Lỗi khi gọi API GetSanPhamChiTietByThuocTinh');
                 }
-            } else {
-                // Hiển thị thông báo nếu chưa chọn đủ tất cả các thuộc tính
-                $scope.errorMessage = "Vui lòng chọn tất cả các thuộc tính của sản phẩm.";
-                console.log($scope.errorMessage);
+                const dataspcttt = await idspctTTResponse.json();
+
+                // Kiểm tra kết quả của API thuộc tính
+                if (!dataspcttt || dataspcttt.length === 0) {
+                    $scope.errorMessage = "Không có sản phẩm chi tiết nào phù hợp với thuộc tính đã chọn.";
+                    console.log($scope.errorMessage);
+                    return;
+                }
+
+                // Gọi API để lấy danh sách SPCT theo sản phẩm
+                const idspctSPResponse = await fetch(`${apiIDSPtoIDSPCT}${sanPhamId}`);
+                if (!idspctSPResponse.ok) {
+                    throw new Error('Lỗi khi gọi API GetSanPhamChiTietBySanPham');
+                }
+                const dataspctsp = await idspctSPResponse.json();
+
+                // Lọc ra các sản phẩm chi tiết trùng khớp giữa hai API
+                const matchedSPCT = dataspcttt.filter(item =>
+                    dataspctsp.some(sp => sp.id === item.idspct)
+                );
+
+                if (matchedSPCT.length > 0) {
+                    const firstSPCTId = matchedSPCT[0].idspct;
+                    AddGHCT(firstSPCTId)
+                    $timeout(() => {
+                        $scope.$apply(() => {
+                            $location.path('/giohang'); // Chuyển hướng đến trang "Giỏ hàng"
+                        });
+                        $scope.isLoading = false; // Kết thúc tải (nếu cần)
+                    }, 3000);
+                } else {
+                    $scope.errorMessage = "Không có sản phẩm chi tiết nào phù hợp giữa hai API.";
+                    console.log($scope.errorMessage);
+                }
+            } catch (error) {
+                $scope.errorMessage = "Không thể tải thông tin sản phẩm chi tiết. Vui lòng thử lại sau.";
+                console.error("Lỗi khi tải sản phẩm chi tiết:", error);
             }
-        };
-        
+        } else {
+            // Hiển thị thông báo nếu chưa chọn đủ tất cả các thuộc tính
+            $scope.errorMessage = "Vui lòng chọn tất cả các thuộc tính của sản phẩm.";
+            console.log($scope.errorMessage);
+        }
+    };
+
 
     $scope.updateValidThuocTinhs = function () {
         const selectedThuocTinhs = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);
@@ -291,11 +333,11 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
             selectedThuocTinhs.every(selected =>
                 spct.thuocTinhs.some(thuocTinh => thuocTinh.tenthuoctinhchitiet === selected)
             )
-            
+
         );
-    
+
         console.log("Các sản phẩm chi tiết khớp:", matchingSPCTs);
-        
+
         // Xác định các thuộc tính hợp lệ từ các sản phẩm chi tiết phù hợp
         const validThuocTinhs = {};
         matchingSPCTs.forEach(spct => {
@@ -315,7 +357,7 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
 
         $scope.selectedSPCTs = matchingSPCTs;
         console.log("Các thuộc tính hợp lệ:", $scope.selectedSPCTs);
-        
+
     };
 
     $scope.onThuocTinhChange = function () {
@@ -339,7 +381,7 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
         }
         console.log("Các thuộc tính đã chọn:", selectedAttributes);
         console.log("Các sản phẩm chi tiết đã chọn:", $scope.selectedSPCTs);
-        
+
     };
 
 
@@ -363,8 +405,8 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
         // Kiểm tra và khởi tạo nếu chưa có dữ liệu ban đầu
         $scope.selectedValues = $scope.selectedValues || {}; // Khởi tạo nếu chưa có
         $scope.groupedThuocTinhs = $scope.groupedThuocTinhs || {}; // Khởi tạo nếu chưa có
-        console.log( $scope.selectedValues, $scope.groupedThuocTinhs );
-        
+        console.log($scope.selectedValues, $scope.groupedThuocTinhs);
+
         // Kiểm tra các điều kiện hợp lệ
         $scope.validateSelection();
     };
@@ -444,7 +486,7 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                 const dataspctsp = await idspctSPResponse.json();
 
                 // Lọc ra các sản phẩm chi tiết trùng khớp giữa hai API
-                const matchedSPCT = dataspcttt.filter(item => 
+                const matchedSPCT = dataspcttt.filter(item =>
                     dataspctsp.some(sp => sp.id === item.idspct)
                 );
 
@@ -454,7 +496,7 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                     console.log(`Chuyển sang trang mua sản phẩm với id: ${firstSPCTId}`);
                     $scope.$apply(() => {
                         $location.path(`/muasanpham/${firstSPCTId}`); // Chuyển sang trang mua sản phẩm
-                    });                
+                    });
                 } else {
                     $scope.errorMessage = "Không có sản phẩm chi tiết nào phù hợp giữa hai API.";
                     console.log($scope.errorMessage);
@@ -471,4 +513,4 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
     };
 
 
-    });
+});

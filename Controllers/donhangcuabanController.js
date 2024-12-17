@@ -21,30 +21,38 @@ app.service('OrderHistoryService', function ($http) {
     };
 // Tạo đánh giá mới
 this.createRating = function (reviewText, customerId, orderDetailId, imageBase64) {
+    // Lấy ngày giờ hiện tại ở UTC
+    const ngayDanhGiaUTC = new Date().toISOString();  // Chuyển ngày giờ hiện tại thành UTC
+console.log(ngayDanhGiaUTC);
+
     const data = {
         idkh: customerId,
         trangthai: 0, // Trạng thái mặc định là 0
         noidungdanhgia: reviewText,
-        ngaydanhgia: new Date().toISOString(),
+        ngaydanhgia: ngayDanhGiaUTC, // Sử dụng ngày giờ UTC
         idhdct: orderDetailId,
         urlHinhanh: imageBase64 // Dữ liệu Base64
     };
     return $http.post('https://localhost:7297/api/Danhgias', data);
+    
 };
 
 // Sửa đánh giá
 this.updateRating = function (ratingId, reviewText, customerId, orderDetailId, imageBase64) {
+    const ngayDanhGiaUTC = new Date().toISOString();  // Chuyển ngày giờ hiện tại thành UTC
+
     const data = {
         id: ratingId,
         idkh: customerId,
         trangthai: 0,
         noidungdanhgia: reviewText,
-        ngaydanhgia: new Date().toISOString(),
+        ngaydanhgia: ngayDanhGiaUTC, // Sử dụng ngày giờ UTC
         idhdct: orderDetailId,
         urlHinhanh: imageBase64
     };
     return $http.put('https://localhost:7297/api/Danhgias/' + ratingId, data);
 };
+
 
    
     // Xóa đánh giá
@@ -488,7 +496,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     document.getElementById('imageUpload').addEventListener('change', function () {
         convertImageToBase64(this, handleBase64Data);
     });    
-
+     
     $scope.submitRating = function () {
         const formData = {
             reviewText: $scope.reviewText,

@@ -89,6 +89,15 @@
     color: black; /* Đặt màu chữ là đen */
 }
 
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.pagination button {
+    margin: 0 10px;
+}
 
 /* Khi hover, chỉ thay đổi border và các thuộc tính của select */
 .select-hover:hover {

@@ -108,61 +108,66 @@
 
     <div class="mt-3">
         <div class="row">
-            <div class="col-8">
+            <div class="col-7">
                 <p class="d-flex justify-content-center">
-                    <a data-bs-toggle="collapse" href="#ThongTinSanPhamExample" role="button" aria-expanded="false"
-                        aria-controls="ThongTinSanPhamExample" class="no-underline text-black">
+                    <span class="no-underline text-black fw-bold">
                         Thông Tin Sản Phẩm
-                    </a>
+                    </span>
                 </p>
-                <div class="collapse" id="ThongTinSanPhamExample">
-                    <div class="card card-body">
-                        {{sanPham.mota}}
-                    </div>
+                <div class="card card-body">
+                    {{sanPham.mota}}
                 </div>
             </div>
-            <div class="col-4">
+            <div class="col-5">
                 <p class="d-flex justify-content-center">
-                    <a data-bs-toggle="collapse" href="#DanhGiaExample" role="button" aria-expanded="false"
-                        aria-controls="DanhGiaExample" class="no-underline text-black">
+                    <span class="no-underline text-black fw-bold">
                         Đánh Giá
-                    </a>
+                    </span>
                 </p>
-                <div class="collapse" id="DanhGiaExample">
-                    <div class="card card-body">
-                        <div ng-if="danhGias.length === null">
-                            <p>Không có đánh giá nào cho sản phẩm này.</p>
-                        </div>
-
-                        <!-- Hiển thị danh sách đánh giá -->
-                        <div ng-if="danhGias.length > 0">
-                            <div class="danh-gia-item" ng-repeat="danhGia in danhGias">
-                                <div class="header">
-                                    <strong>Khách hàng:</strong> {{ danhGia.tenKhachHang  || "Ẩn danh" }}
-                                    
-                                   
-                                </div>
-                                <div class="content">
-                                    <strong>Ngày đánh giá: </strong><span class="date">{{ danhGia.ngaydanhgia | date:'dd/MM/yyyy' }}</span>
-                                    <p><strong>Nội dung:</strong> {{ danhGia.noidungdanhgia }}</p>
-                                </div>
-                                <div class="footer">
-                                    <div ng-if="danhGia.urlHinhanh" >
-                                        <img ng-src="{{ danhGia.urlHinhanh }}" alt="Hình ảnh đánh giá" style="width: 200px;"/>
-                                    </div>
-                                </div>
-                                <hr />
-                            </div>
-
-                        </div>
-
-                        <!-- Hiển thị lỗi -->
-                        <div ng-if="errorMessage" class="error">
-                            <p>{{ errorMessage }}</p>
-                        </div>
+                <div class="card card-body">
+                    <div ng-if="danhGias.length === 0">
+                        <p>Không có đánh giá nào cho sản phẩm này.</p>
                     </div>
+                    
+                    <!-- Hiển thị danh sách đánh giá -->
+                    <div class="danh-gia-item" ng-repeat="danhGia in danhGias">
+                        <div class="header">
+                            <strong>Khách hàng:</strong> {{ danhGia.tenKhachHang  || "Ẩn danh" }}
+                        </div>
+                        <div class="content">
+                            <strong>Ngày đánh giá: </strong><span class="date">{{ danhGia.ngaydanhgia | date:'dd/MM/yyyy' }}</span>
+                            <p><strong>Nội dung:</strong> {{ danhGia.noidungdanhgia }}</p>
+                        </div>
+                        <div class="footer">
+                            <div ng-if="danhGia.urlHinhanh">
+                                <img ng-src="{{ danhGia.urlHinhanh }}" alt="Hình ảnh đánh giá" style="width: 200px;" />
+                            </div>
+                        </div>
+                        <hr />
+                    </div>
+                    <nav aria-label="Page navigation" class="mt-4">
+                        <ul class="pagination justify-content-center">
+                            <!-- Nút Trang trước -->
+                            <li class="page-item" ng-class="{disabled: currentPage === 1}">
+                                <a class="page-link" href="" ng-click="goToPage(currentPage - 1)">Trước</a>
+                            </li>
+                    
+                            <!-- Hiển thị các trang -->
+                            <li class="page-item" ng-repeat="page in [].constructor(totalPages()) track by $index"
+                                ng-class="{active: $index + 1 === currentPage}">
+                                <a class="page-link" href="" ng-click="goToPage($index + 1)">{{$index + 1}}</a>
+                            </li>
+                    
+                            <!-- Nút Trang sau -->
+                            <li class="page-item" ng-class="{disabled: currentPage === totalPages()}">
+                                <a class="page-link" href="" ng-click="goToPage(currentPage + 1)">Tiếp</a>
+                            </li>
+                        </ul>
+                    </nav>
+                    
                 </div>
             </div>
+            
         </div>
     </div>
     <div class="mt-3">

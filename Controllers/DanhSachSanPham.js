@@ -151,22 +151,47 @@ app.controller("DanhSachSanPhamCtrl", function ($scope, $document, SanPhamServic
         });
         console.log("Danh sách sản phẩm đã được sắp xếp:", $scope.filteredProduct);
     };
-
+    $scope.errorMessage1 = null;
     function searchSanPhams() {
+        // Reset thông báo lỗi
+       
+    
+        const giaMin = $scope.searchParams.giaMin;
+        const giaMax = $scope.searchParams.giaMax;
+    
+        // Validate giá trị nhập liệu
+        if (giaMin != null && giaMin < 0) {
+            $scope.errorMessage1 = "Giá thấp nhất không được nhỏ hơn 0.";
+            return;
+        }
+        if (giaMax != null && giaMax < 0) {
+            $scope.errorMessage1 = "Giá cao nhất không được nhỏ hơn 0.";
+            return;
+        }
+        if (giaMin != null && giaMax != null && giaMin > giaMax) {
+            $scope.errorMessage1 = "Giá thấp nhất không được lớn hơn giá cao nhất.";
+            return;
+        }
+    
+        // Chuẩn bị tham số tìm kiếm
         const params = {
             idThuongHieu: $scope.searchParams.idThuongHieu,
-            giaMin: $scope.searchParams.giaMin,
-            giaMax: $scope.searchParams.giaMax,
+            giaMin: giaMin,
+            giaMax: giaMax,
             tenThuocTinhs: $scope.searchParams.tenThuocTinhs
-        };SanPhamService.searchSanPham(params)
+        };
+    
+        // Gọi API tìm kiếm sản phẩm
+        SanPhamService.searchSanPham(params)
             .then(function (data) {
                 $scope.sanPhams = data;
                 $scope.filteredProduct = data;
                 $scope.paginateOrders();
+    
                 if (data.length === 0) {
                     $scope.errorMessage = "Không tìm thấy sản phẩm phù hợp.";
                 } else {
-                    $scope.errorMessage = null; // Xóa thông báo lỗi nếu có dữ liệu
+                    $scope.errorMessage1 = null; // Xóa thông báo lỗi nếu có dữ liệu
                 }
     
                 console.log("Danh sách sản phẩm đã được cập nhật sau khi tìm kiếm.");
@@ -176,9 +201,11 @@ app.controller("DanhSachSanPhamCtrl", function ($scope, $document, SanPhamServic
                 console.error("Lỗi khi tìm kiếm sản phẩm:", error);
             });
     }
-    $scope.applyFilters = function() {
+    
+    $scope.applyFilters = function () {
         searchSanPhams();
     };
+    
 
     // Hàm phân trang
     $scope.paginateOrders = function () {
