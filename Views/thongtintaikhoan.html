@@ -98,7 +98,7 @@
                     <div class="mb-3">
                         <label for="editHoTen" class="form-label">Họ và Tên</label>
                         <input type="text" id="editHoTen" name="hoTen" class="form-control" required>
-                        <div class="invalid-feedback">Tên phải chứa ít nhất 5 ký tự và chỉ bao gồm chữ cái.</div>
+                        <div class="invalid-feedback">Tên phải chứa ít nhất 5 ký tự và chỉ bao gồm chữ cái không chứa ký tự đặc biệt @@.</div>
                     </div>
 
                     <div class="mb-3">
@@ -116,12 +116,14 @@
                     <div class="mb-3">
                         <label for="editNgaysinh" class="form-label">Ngày sinh</label>
                         <input type="date" id="editNgaysinh" name="ngaysinh" class="form-control" required>
-                        <div class="invalid-feedback">Tuổi phải từ 10 đến 100.</div>
+                        <div class="invalid-feedback">Tuổi của bạn phải từ 10 tuổi - 130 tuổi</div>
+                       
                     </div>
 
                     <div class="mb-3">
                         <label for="editDiaChi" class="form-label">Địa chỉ</label>
                         <input id="editDiaChi" name="diaChi" class="form-control">
+                        <div class="invalid-feedback">Địa chỉ, chỉ được chứa chữ và số</div>
                     </div>
                 </form>
             </div>

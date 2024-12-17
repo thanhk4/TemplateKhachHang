@@ -267,6 +267,7 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
         } else {
             document.getElementById('editNgaysinh').classList.remove('is-invalid');
         }
+        
         if (isValid) {
 
         // Cập nhật dữ liệu mới từ form
@@ -357,7 +358,7 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
         if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
             age--;
         }
-        return age >= 10 && age <= 100;
+        return age >= 10 && age <= 130;
     }
 
     // Gọi API khi controller khởi tạo
