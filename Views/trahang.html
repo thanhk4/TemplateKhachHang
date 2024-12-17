@@ -39,7 +39,7 @@
                     <li class="breadcrumb-item active" aria-current="page">Trả hàng</li>
                 </ol>
             </nav>
-            <form name="form" novalidate ng-submit="submit()">
+            <form name="form" novalidate>
                 <!-- Invoice Information Section -->
             <ul class="list-group mb-5 shadow-sm">
                 <li class="list-group-item active" aria-current="true">Thông tin hóa đơn</li>
@@ -95,6 +95,7 @@
                                 </div>
                             </div>
                         </li>
+                        <span class="text-danger" ng-show="selectedProducts.length==0">Vui lòng chọn sản phẩm</span>
                     </ul>
                 </li>
             </ul>        
@@ -105,28 +106,30 @@
                 <li class="list-group-item">
                     <div class="mb-3">
                         <label for="reason" class="form-label">Lý do trả hàng</label>
-                        <select class="form-select" id="reason" aria-label="Lý do trả hàng" ng-model="lydotrahang" required>
+                        <select class="form-select" id="reason" aria-label="Lý do trả hàng" name="lydotrahang" ng-model="lydotrahang" required>
                             <option value="" selected disabled>Chọn lý do trả hàng</option>
                             <option value="Hàng hóa không đúng mô tả">Hàng hóa không đúng mô tả</option>
                             <option value="Sản phẩm bị hư hỏng hoặc lỗi">Sản phẩm bị hư hỏng hoặc lỗi</option>
                             <option value="Giao sai sản phẩm">Giao sai sản phẩm</option>
                             <option value="Chưa nhận được sản phẩm">Chưa nhận được sản phẩm</option>
                         </select>
+                        <span class="text-danger" ng-show="form.lydotrahang.$error.required">Vui lòng chọn lý do trả hàng</span>
                     </div>
                     <div class="mb-3">
                         <label for="refundMethod" class="form-label">Phương thức hoàn tiền</label>
-                        <select class="form-select" id="refundMethod" aria-label="Phương thức hoàn tiền" ng-model="phuongthuchoantien" required>
+                        <select class="form-select" id="refundMethod" aria-label="Phương thức hoàn tiền" name="phuongthuchoantien" ng-model="phuongthuchoantien" required>
                             <option value="" selected disabled>Chọn phương thức hoàn tiền</option>
                             <option value="Ngân hàng">Hoàn tiền vào tài khoản ngân hàng</option>
                             <option value="Thẻ thanh toán">Hoàn tiền qua thẻ thanh toán</option>
                             <option value="Điểm sử dụng">Hoàn tiền bằng điểm sử dụng</option>
                         </select>
+                        <span class="text-danger" ng-show="form.phuongthuchoantien.$error.required">Vui lòng chọn phương thức hoàn tiền</span>
                     </div>    
                     <div ng-show="phuongthuchoantien === 'Thẻ thanh toán' || phuongthuchoantien === 'Ngân hàng'" class="collapse show" id="collapseExample">
                         <div class="row mb-3">
                             <div class="col">
                                 <label for="bank" class="form-label">Ngân hàng</label>
-                                <select class="form-control" aria-label="Ngân hàng" ng-model="nganhang" required>
+                                <select class="form-control" aria-label="Ngân hàng" ng-model="nganhang">
                                     <option value="" selected disabled>Chọn ngân hàng</option>
                                     <option ng-repeat="bank in banks.data | orderBy:'shortName'" value="{{bank.shortName}}">
                                         {{bank.name}} ({{bank.shortName}})
@@ -135,11 +138,11 @@
                             </div>
                             <div class="col">
                                 <label for="accountNumber" class="form-label">Số tài khoản/Số thẻ visa</label>
-                                <input type="text" class="form-control" ng-model="stk" id="accountNumber" required maxlength="16" minlength="9">
+                                <input type="text" class="form-control" ng-model="stk" id="accountNumber">
                             </div>
                             <div class="col">
                                 <label for="beneficiaryName" class="form-label">Tên người hưởng thụ</label>
-                                <input type="text" class="form-control" ng-model="tennguoihuongthu" id="beneficiaryName" maxlength="100" required>
+                                <input type="text" class="form-control" ng-model="tennguoihuongthu" name="tennguoihuongthu" id="beneficiaryName">
                             </div>
                         </div>                        
                     </div>     
@@ -150,28 +153,32 @@
                           <option value="Hoàn tiền và có trả hàng">Hoàn tiền và có trả hàng</option>
                           <option value="Hoàn tiền và không trả hàng">Hoàn tiền và không trả hàng</option>
                         </select>
+                        <span class="text-danger" ng-show="form.kieutrahangStatus.$error.required">Vui lòng chọn kiểu trả hàng</span>
                     </div>
                     <!-- Điều khiển Collapse với ng-show -->
                                        
                     <div class="mb-3">
-                        <label for="additionalNote" class="form-label">Tình trạng</label>
-                        <select id="returnStatus" class="form-select" name="returnStatus" ng-model="tinhtrang" name="tinhtrang" required>
-                          <option value="" selected disabled>Chọn phương tình trạng</option>
-                          <option value="Sản phẩm thiếu hàng">Sản phẩm thiếu hàng</option>
-                          <option value="Sản phẩm bị hư hỏng trong quá trình vận chuyển">Sản phẩm bị hư hỏng trong quá trình vận chuyển</option>
-                          <option value="Sản phẩm bị thiếu hoặc giao sai đơn hàng">Sản phẩm bị thiếu hoặc giao sai đơn hàng</option>
+                        <label for="returnStatus" class="form-label">Tình trạng</label>
+                        <select id="returnStatus" class="form-select" name="tinhtrang" ng-model="tinhtrang" required>
+                            <option value="" selected disabled>Chọn tình trạng</option>
+                            <option value="Sản phẩm thiếu hàng">Sản phẩm thiếu hàng</option>
+                            <option value="Sản phẩm bị hư hỏng trong quá trình vận chuyển">Sản phẩm bị hư hỏng trong quá trình vận chuyển</option>
+                            <option value="Sản phẩm bị thiếu hoặc giao sai đơn hàng">Sản phẩm bị thiếu hoặc giao sai đơn hàng</option>
                         </select>
+                        <span class="text-danger" ng-show="form.tinhtrang.$error.required">Vui lòng chọn tình trạng</span>
                     </div>
+                    
                     <div class="mb-3 row">
                         <div class="col">
                             <label for="fileUpload" class="form-label">Tải lên hình ảnh</label>
                             <input id="fileUpload" type="file" accept="image/*" multiple class="form-control" ng-model="hinhanh" name="hinhanh" readonly>
+                            
                         </div>
                         
                         <!-- Container để hiển thị hình ảnh -->
                         <div id="imageContainer" class="mt-3">
                             <!-- Hình ảnh sẽ được hiển thị ở đây -->
-                        </div>                        
+                        </div>                     
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Ghi chú</label>
@@ -188,7 +195,7 @@
                 <li class="list-group-item">
                     <div class="d-flex justify-content-between">
                         <a class="btn btn-danger w-50 me-2" href="#!donhangcuaban">Hủy</a>
-                        <button type="submit" class="btn btn-danger w-50" id="submit">Gửi xác nhận</button>
+                        <button ng-click="submit()" class="btn btn-danger w-50">Gửi xác nhận</button>
                     </div>
                 </li>
                 
