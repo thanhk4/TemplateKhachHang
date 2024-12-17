@@ -274,6 +274,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
     }
     // Biến toàn cục lưu trữ danh sách sản phẩm
     let danhSachSanPham = [];
+    let sale = [];
 
     // Hàm render sản phẩm
     async function renderSanPham() {
@@ -317,6 +318,9 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 if (saleChiTiet) {
                     const { giatrigiam, donvi } = saleChiTiet;
                     giaGiam = calculateDiscountPrice(giathoidiemhientai, giatrigiam, donvi);
+                    sale.push({
+                        id : saleChiTiet.id, 
+                    })
                 }
 
                 // Lấy danh sách thuộc tính sản phẩm chi tiết
@@ -593,7 +597,10 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
                     const addPaymentHistoryResult = await addPaymentHistory(idhd);
                     if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
-
+                    if (sale != null)
+                        {
+                            await updatesale(sale)
+                        }
                     sessionStorage.clear();
                     await deleteProduct();
                     const thanhToanCocResult = await taoLinkThanhToanCoc(idhd);
@@ -608,7 +615,10 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
                 const addPaymentHistoryResult = await addPaymentHistory(idhd);
                 if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
-
+                if (sale != null)
+                    {
+                        await updatesale(sale)
+                    }
                 sessionStorage.clear();
                 await deleteProduct();
                 if (bankTransferRadio.checked) {
@@ -625,6 +635,34 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             // Không cần thông báo lỗi, chỉ dừng ở đây
         }
     });
+        
+    async function updatesale(sale) {
+        const Listsale = sale; // Danh sách sản phẩm từ giỏ hàng
+    
+        for (const item of Listsale) {
+            try {
+                const response = await fetch(`https://localhost:7297/api/HoaDonChiTiet/salespct/${item.id}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+    
+                // Kiểm tra nếu API trả về lỗi
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error("Lỗi API:", errorData.message);
+                    Swal.fire("Lỗi", `Cập nhật sale thất bại cho ID ${item.id}: ${errorData.message}`, "error");
+                } else {
+                    const result = await response.json();
+                    console.log(`Cập nhật sale thành công cho ID ${item.id}`, result);
+                }
+            } catch (error) {
+                console.error(`Lỗi kết nối API khi cập nhật sale ID ${item.id}:`, error);
+                Swal.fire("Lỗi", `Kết nối cập nhật sale thất bại cho ID ${item.id}.`, "error");
+            }
+        }
+    } 
 
     // Hàm tạo hóa đơn
     async function taoHoaDon(hoadonData) {
