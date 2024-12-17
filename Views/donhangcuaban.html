@@ -234,6 +234,8 @@
                             <!-- Lặp qua từng sản phẩm trong hóa đơn -->
                             <div class="col-md-6 p-3 mb-3 p-3" ng-repeat="item in trahangct">
                                 <div class="row">
+                                    <p class="text-end" style="color: orangered; font-weight: bold;">{{item.hinhthucxuly}}</p>
+                                    <hr>
                                     <!-- Hình ảnh sản phẩmaa -->
                                     <div class="col-md-3 text-center">
                                         <img ng-src="{{item.urlHinhanh}}" alt="{{item.tensp}}" class="img-fluid rounded shadow-sm">
