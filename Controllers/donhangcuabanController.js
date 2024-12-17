@@ -282,6 +282,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     $http.get('https://localhost:7297/api/Hoadon/hoa-don-theo-ma-kh-' + $scope.userInfo.id)
         .then(function (response) {
             $scope.DataHoaDonMua = response.data;
+            console.log($scope.DataHoaDonMua)
             $scope.filterOrders(-1); // Hiển thị tất cả đơn hàng mặc định
         })
         .catch(function (error) {
@@ -583,17 +584,16 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         }
     };
     
-    $scope.quahantra = function(today) {
-        if (today != null) {
-            // Đảm bảo `today` là đối tượng Date hợp lệ. Nếu không, chuyển đổi nó.
-            let todayDate = new Date(today).getTime(); // Chuyển `today` sang timestamp
-            let currentDate = Date.now(); // Lấy timestamp hiện tại
-            let differenceInDays = (todayDate - currentDate) / (1000 * 60 * 60 * 24); // Chuyển đổi từ mili giây sang ngày
-    
-            // Kiểm tra nếu số ngày chênh lệch nhỏ hơn hoặc bằng 15
-            return differenceInDays <= 15 && differenceInDays >= 0; // Bao gồm kiểm tra ngày trong tương lai
+    $scope.quahantra = function(ngaygiao) {
+        if (ngaygiao != null) { 
+            const d1 = new Date();
+            const d2 = new Date(ngaygiao);
+            const diffTime = d1 - d2;
+            const diffDays = diffTime / (1000 * 60 * 60 * 24);
+            return diffDays;
         } else {
-            return true; // Nếu không có ngày được truyền vào, mặc định trả về `true`
+            return 15;
         }
     };
+    
 });

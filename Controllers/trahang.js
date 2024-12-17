@@ -122,12 +122,12 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             console.log('Error fetching bank data:', error);
         });
 
-    let datahinhanhbase64 = []; // Biến toàn cục để lưu trữ nhiều ảnh Base64
+    $scope.datahinhanhbase64 = []; // Biến toàn cục để lưu trữ nhiều ảnh Base64
 
     // Hàm chuyển đổi hình ảnh sang Base64
     function convertImageToBase64(inputElement, callback) {
         if (inputElement.files && inputElement.files.length > 0) {
-            if (datahinhanhbase64.length + inputElement.files.length > 5) {
+            if ($scope.datahinhanhbase64.length + inputElement.files.length > 5) {
                 Swal.fire({
                     icon: 'error',
                     title: 'Lỗi!',
@@ -157,8 +157,8 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
 
     // Hàm xử lý Base64 và gán vào biến toàn cục
     function handleBase64Data(base64Data) {
-        datahinhanhbase64.push(base64Data); // Thêm Base64 vào mảng
-        console.log(datahinhanhbase64)
+        $scope.datahinhanhbase64.push(base64Data); // Thêm Base64 vào mảng
+        console.log($scope.datahinhanhbase64)
         displayImages(); // Hiển thị lại các hình ảnh đã tải lên
         Swal.fire({
             icon: 'success',
@@ -173,7 +173,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
         const imageContainer = document.getElementById('imageContainer');
         imageContainer.innerHTML = ''; // Xóa danh sách hình ảnh hiện tại
 
-        datahinhanhbase64.forEach((base64Data, index) => {
+        $scope.datahinhanhbase64.forEach((base64Data, index) => {
             // Tạo phần tử img và nút x
             const imageDiv = document.createElement('div');
             imageDiv.classList.add('image-item');
@@ -197,7 +197,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
 
     // Hàm xóa hình ảnh khỏi mảng và hiển thị lại
     function removeImage(index) {
-        datahinhanhbase64.splice(index, 1); // Xóa hình ảnh khỏi mảng
+        $scope.datahinhanhbase64.splice(index, 1); // Xóa hình ảnh khỏi mảng
         displayImages(); // Hiển thị lại các hình ảnh sau khi xóa
         Swal.fire({
             icon: 'success',
@@ -212,57 +212,11 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
     });
 
 
-
+    $scope.submitted = false;
     $scope.submit= function () {
-        const dataanh = datahinhanhbase64;
+        const dataanh = $scope.datahinhanhbase64;
         const sotienhoan = parseInt(document.getElementById("tongsotienhoan").textContent.replace(" VND", "").replace(/\,/g, "")) || 0;
-        // if($scope.selectedProducts.length==0&&$scope.lydotrahang.length==0&&$scope.phuongthuchoantien.length==0&&$scope.kieutrahang.length==0&&$scope.tinhtrang.length==0&&datahinhanhbase64.length==0){
-        //     Swal.fire('Lỗi!', 'Vui lòng nhập thông tin.', 'error');
-        //     return;
-        // }
-        // if($scope.selectedProducts.length==0){
-        //     Swal.fire('Lỗi!', 'Vui lòng chọn sản phẩm.', 'error');
-        //     return;
-        // }
-        // if($scope.lydotrahang.length==0){
-        //     Swal.fire('Lỗi!', 'Vui lòng chọn lý do trả hàng.', 'error');
-        //     return;
-        // }
-        // if($scope.phuongthuchoantien.length==0){
-        //     Swal.fire('Lỗi!', 'Vui lòng chọn phương thức hoàn tiền.', 'error');
-        //     return;
-        // }
-        // if($scope.phuongthuchoantien=='Ngân hàng'||$scope.phuongthuchoantien=='Thẻ thanh toán'){
-        //     if($scope.nganhang==null){
-        //         Swal.fire('Lỗi!', 'Vui lòng chọn ngân hàng.', 'error');
-        //         return;
-        //     }
-        //     if($scope.stk.length==0){
-        //         Swal.fire('Lỗi!', 'Vui lòng nhập số tài khoản.', 'error');
-        //         return;
-        //     }
-        //     if($scope.stk.length<9||$scope.stk.length>16){
-        //         Swal.fire('Lỗi!', 'Vui lòng nhập số tài khoản từ 9 đến 16 ký tự.', 'error');
-        //         return;
-        //     }
-        //     if($scope.tennguoihuongthu.length==0){
-        //         Swal.fire('Lỗi!', 'Vui lòng nhập tên người hưởng thụ.', 'error');
-        //         return;
-        //     }
-        // }
-        
-        // if($scope.kieutrahang.length==0){
-        //     Swal.fire('Lỗi!', 'Vui lòng chọn kiểu trả hàng.', 'error');
-        //     return;
-        // }
-        // if($scope.tinhtrang.length==0){
-        //     Swal.fire('Lỗi!', 'Vui lòng chọn tình trạng.', 'error');
-        //     return;
-        // }
-        // if(datahinhanhbase64.length==0){
-        //     Swal.fire('Lỗi!', 'Vui lòng chọn hình ảnh.', 'error');
-        //     return;
-        // }
+        $scope.submitted = true;
         if ($scope.form.$valid) {
              if($scope.phuongthuchoantien=='Ngân hàng'||$scope.phuongthuchoantien=='Thẻ thanh toán'){
                 if($scope.nganhang==null||$scope.tennguoihuongthu.length==0||$scope.stk.length==0){
@@ -274,10 +228,10 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                     return;
                 }
             }
-            if(datahinhanhbase64.length==0){
-               Swal.fire('Lỗi!', 'Vui lòng chọn hình ảnh.', 'error');
-               return;
-            }
+            // if(datahinhanhbase64.length==0){
+            //    Swal.fire('Lỗi!', 'Vui lòng chọn hình ảnh.', 'error');
+            //    return;
+            // }
             Swal.fire({
                 title: 'Bạn có chắc chắn?',
                 text: "Hóa đơn của bạn chỉ được phép trả hàng 1 lần duy nhất! Bạn muốn gửi thông tin này!",
@@ -290,6 +244,10 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             }).then(async (result) => {
                 if (result.isConfirmed) {
                     // Gửi thông tin nếu tất cả điều kiện hợp lệ
+                    const chuthich = "";
+                    if($scope.phuongthuchoantien=='Ngân hàng'||$scope.phuongthuchoantien=='Thẻ thanh toán'){
+                        chuthich= `Ngân hàng: ${$scope.nganhang} - STK: ${$scope.stk} - Tên người hưởng thụ: ${$scope.tennguoihuongthu}`
+                    }
                     const datatrahang = {
                         tenkhachhang: $scope.userInfo.ten,
                         idnv: null,
@@ -300,8 +258,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                         phuongthuchoantien: $scope.phuongthuchoantien,
                         ngaytrahangdukien: new Date(),
                         ngaytrahangthucte: null,
-                        chuthich: `Ngân hàng: ${$scope.nganhang} - STK: ${$scope.stk} - Tên người hưởng thụ: ${$scope.tennguoihuongthu}`
-                        ?? ""
+                        chuthich: chuthich
                     };
     
                     try {
@@ -327,6 +284,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                         Swal.fire("Thành Công", "Tạo Đơn Trả Hàng Thành Công.", "success");
                         $scope.$apply(() => {
                             $location.path(`/donhangcuaban`);
+                            console.log('Form hợp lệ, đang gửi...', $scope);
                         });
                     } catch (error) {
                         console.error('Error submitting return order:', error);
@@ -336,7 +294,6 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
                     Swal.fire('Đã hủy!', 'Bạn đã hủy gửi thông tin.', 'error');
                 }
             });
-            console.log('Form hợp lệ, đang gửi...', $scope);
         } else {
             Swal.fire('Lỗi!', 'Vui lòng nhập đầy đủ thông tin.', 'error');
             console.log('Form không hợp lệ');
