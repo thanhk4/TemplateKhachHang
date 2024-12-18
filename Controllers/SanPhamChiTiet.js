@@ -36,8 +36,8 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
                     $scope.giaMin = Math.min(...giaSanPham);
                     $scope.giaMax = Math.max(...giaSanPham);
                 } else {
-                    $scope.giaMin = 0;
-                    $scope.giaMax = 0;
+                    $scope.giaMin = -1;
+                    $scope.giaMax = -1;
                 }
 
 
