@@ -34,7 +34,14 @@ app.controller('doimatkhau2Controller', function ($scope, $http, $rootScope) {
         if (!$scope.passwordData.confirmPassword) {
             $scope.errorMessages.confirmPassword = 'Vui lòng xác nhận mật khẩu mới.';
         }
-
+        if ($scope.passwordData.newPassword.length < 6) {
+            $scope.errorMessages.newPassword = 'Mật khẩu mới phải có ít nhất 6 ký tự.';
+            return;
+        }
+        if ($scope.passwordData.confirmPassword.length < 6) {
+            $scope.errorMessages.confirmPassword = 'Xác nhận mật khẩu mới phải có ít nhất 6 ký tự.';
+            return;
+        }
         if (Object.keys($scope.errorMessages).length > 0) {
             return;
         }
