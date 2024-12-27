@@ -7,13 +7,13 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
 
     // API URLs
     const apiUrls = {
-        gioHang: "https://localhost:7297/api/Giohang/giohangkhachhang",
-        gioHangChiTiet: "https://localhost:7297/api/Giohangchitiet/giohangchitietbygiohang",
+        gioHang: "https://localhost:7297/api/Giohang/_KhachHang/giohangkhachhang",
+        gioHangChiTiet: "https://localhost:7297/api/Giohangchitiet/_KhachHang/giohangchitietbygiohang",
         sanPhamChiTiet: "https://localhost:7297/api/Sanphamchitiet",
         sanPham: "https://localhost:7297/api/Sanpham",
-        thuocTinh: "https://localhost:7297/api/Sanphamchitiet/thuoctinh",
-        saleChiTiet: "https://localhost:7297/api/Salechitiet/SanPhamCT",
-        giohangchitietbyspctandgh: "https://localhost:7297/api/Giohangchitiet/idghctbygiohangangspct"
+        thuocTinh: "https://localhost:7297/api/Sanphamchitiet/_KhachHang/thuoctinh",
+        saleChiTiet: "https://localhost:7297/api/Salechitiet/_KhachHang/SanPhamCT",
+        giohangchitietbyspctandgh: "https://localhost:7297/api/Giohangchitiet/_KhachHang/idghctbygiohangangspct"
     };
 
     // Hàm lấy thông tin khách hàng từ localStorage
@@ -44,7 +44,7 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
                 return null;
             }
 
-            const response = await fetch(`${apiUrls.sanPhamChiTiet}/${sanPhamCTId}`);
+            const response = await fetch(`${apiUrls.sanPhamChiTiet}/_KhachHang/${sanPhamCTId}`);
             if (!response.ok) {
                 throw new Error(`Lỗi API: ${response.status}`);
             }
@@ -87,7 +87,7 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
             }
 
             // Gọi API với idspct
-            const response = await fetch(`${apiUrls.sanPhamChiTiet}/${sanPhamCTId}`);
+            const response = await fetch(`${apiUrls.sanPhamChiTiet}/_KhachHang/${sanPhamCTId}`);
 
             if (!response.ok) {
                 throw new Error(`Lỗi API: ${response.status}`);
@@ -111,7 +111,7 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
                 return null;
             }
 
-            const response = await fetch(`${apiUrls.sanPhamChiTiet}/${sanPhamCTId}`);
+            const response = await fetch(`${apiUrls.sanPhamChiTiet}/_KhachHang/${sanPhamCTId}`);
             if (!response.ok) {
                 throw new Error(`Lỗi API: ${response.status}`);
             }
@@ -125,7 +125,7 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
     // Hàm gọi API để lấy thông tin sản phẩm (tensp, urlhinhanh) theo idsp
     async function fetchSanPhamById(idsp) {
         try {
-            const response = await fetch(`${apiUrls.sanPham}/${idsp}`);
+            const response = await fetch(`${apiUrls.sanPham}/_KhachHang/${idsp}`);
             if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
             return await response.json();
         } catch (error) {
@@ -289,7 +289,7 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
     
     async function fetchSanPhamChiTietByIdSP(idsp) {
         try {
-            const response = await fetch(`${apiUrls.sanPhamChiTiet}/sanpham/${idsp}`);
+            const response = await fetch(`${apiUrls.sanPhamChiTiet}/_KhachHang/sanpham/${idsp}`);
             if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
             return await response.json();
         } catch (error) {

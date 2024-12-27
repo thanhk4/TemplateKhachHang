@@ -377,7 +377,7 @@ if (document.querySelector("#province")) {
     const idkh = GetByidKH();
 
     // Lấy danh sách địa chỉ từ API
-    fetch(`${apiAddressList}/khachhang/${idkh}`)
+    fetch(`${apiAddressList}/khachhang/_KhachHang/${idkh}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Không thể lấy dữ liệu từ API.");
@@ -409,7 +409,7 @@ if (document.querySelector("#province")) {
     }
 
     window.loadUpdateForm = function (id) {
-        fetch(`${apiAddressList}/${id}`)
+        fetch(`${apiAddressList}/_KhachHang/${id}`)
             .then(response => response.json())
             .then(address => {
                 document.getElementById("updateAddressId").value = id;
@@ -549,7 +549,7 @@ if (document.querySelector("#province")) {
         };
     
         // Gửi yêu cầu cập nhật
-        fetch(`${apiAddressList}/${id}`, {
+        fetch(`${apiAddressList}/_KhachHang/${id}`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json"
@@ -579,7 +579,7 @@ if (document.querySelector("#province")) {
     // Hàm xóa địa chỉ
     window.deleteAddress = function (id) {
         if (confirm("Bạn có chắc muốn xóa địa chỉ này không?")) {
-            fetch(`${apiAddressList}/${id}`, {
+            fetch(`${apiAddressList}/_KhachHang/${id}`, {
                 method: "DELETE"
             })
                 .then(response => {
@@ -660,7 +660,7 @@ if (document.querySelector("#province")) {
         }
 
         try {
-            const response = await fetch(`${apiAddressList}/khachhang/${idkh}`);
+            const response = await fetch(`${apiAddressList}/_KhachHang/khachhang/${idkh}`);
             if (!response.ok) {
                 Swal.fire("Lỗi", "Không thể kiểm tra danh sách địa chỉ. Vui lòng thử lại sau!", "error");
                 return;

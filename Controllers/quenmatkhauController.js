@@ -15,11 +15,11 @@ app.controller('quenmatkhauController', ['$scope', '$http', '$window', '$interva
         }
     
         // Gửi yêu cầu GET thay vì POST
-        $http.get(`https://localhost:7297/api/Khachhang/find-khachhang?email=${encodeURIComponent($scope.user.email)}`)
+        $http.get(`https://localhost:7297/api/Khachhang/_KhachHang/find-khachhang?email=${encodeURIComponent($scope.user.email)}`)
             .then(function (response) {
                 $scope.user.password = response.data.password; // Nếu cần
                 // Gửi yêu cầu gửi OTP sau khi tìm thấy email
-                return $http.post('https://localhost:7297/api/Khachhang/send-otp', { email: $scope.user.email });
+                return $http.post('https://localhost:7297/api/Khachhang/_KhachHang/send-otp', { email: $scope.user.email });
             })
             .then(function (response) {
                 $scope.successMessage = 'Mã OTP đã được gửi đến email của bạn!';

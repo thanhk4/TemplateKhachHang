@@ -3,7 +3,7 @@ app.controller('LoginController', function ($scope, $http, $rootScope, $location
         $scope.isLoading = true;
         $scope.errorMessage = '';
     
-        $http.post('https://localhost:7297/api/Login/login', {
+        $http.post('https://localhost:7297/api/Login/_KhachHang/login', {
             Email: $scope.user.email,
             Password: $scope.user.password
         }).then(function (response) {
@@ -52,7 +52,7 @@ app.controller('LoginController', function ($scope, $http, $rootScope, $location
     
         // Kiểm tra trạng thái tài khoản
         if (userInfo) {
-            $http.get(`https://localhost:7297/api/Khachhang/${userInfo.id}`)
+            $http.get(`https://localhost:7297/api/Khachhang/_KhachHang/${userInfo.id}`)
                 .then(function (response) {
                     if (response.data.Trangthai === 1) {
                         alert("Tài khoản này đã bị khóa. Vui lòng liên hệ quản trị viên.");

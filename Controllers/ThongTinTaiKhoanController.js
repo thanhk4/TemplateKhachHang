@@ -32,13 +32,13 @@ app.controller('ThongTinTaiKhoanController', function ($scope, $rootScope, $loca
         }
 
         try {
-            const response = await fetch(`${apiKHUrl}/${idkh}`);
+            const response = await fetch(`${apiKHUrl}/_KhachHang/${idkh}`);
             if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
 
             const khachHangData = await response.json();
             if (!khachHangData) throw new Error("Dữ liệu khách hàng không hợp lệ.");
             if (khachHangData.idrank) {
-                const rankResponse = await fetch(`https://localhost:7297/api/Rank/${khachHangData.idrank}`);
+                const rankResponse = await fetch(`https://localhost:7297/api/Rank/_KhachHang/${khachHangData.idrank}`);
                 if (rankResponse.ok) {
                     const rankData = await rankResponse.json();
                     khachHangData.rank = rankData;
@@ -129,7 +129,7 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
             }
 
             // Gọi API với idspct
-            const response = await fetch(`https://localhost:7297/api/Rank/${idrank}`);
+            const response = await fetch(`https://localhost:7297/api/Rank/_KhachHang/${idrank}`);
 
             if (!response.ok) {
                 throw new Error(`Lỗi API: ${response.status}`);
@@ -286,7 +286,7 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
 
         try {
             // Gửi yêu cầu PUT đến API để cập nhật thông tin khách hàng
-            const response = await fetch(`${apiKHUrl}/UpdateThongTinKhachhangAsync/${idkh}`, {
+            const response = await fetch(`${apiKHUrl}/_KhachHang/UpdateThongTinKhachhangAsync/${idkh}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
