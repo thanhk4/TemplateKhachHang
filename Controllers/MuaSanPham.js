@@ -18,7 +18,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
     // API URLs
     const apiSPCTUrl = "https://localhost:7297/api/Sanphamchitiet";
     const apiSPUrl = "https://localhost:7297/api/Sanpham";
-    const apiTTSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/thuoctinh";
+    const apiTTSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/_KhachHang/thuoctinh";
     const discountApiUrl = "https://localhost:7297/api/Giamgia";
     const apiKHUrl = "https://localhost:7297/api/Khachhang";
 
@@ -33,7 +33,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
             }
 
             // Gọi API với idspct
-            const response = await fetch(`${apiSPCTUrl}/${sanPhamCTId}`);
+            const response = await fetch(`${apiSPCTUrl}/_KhachHang/${sanPhamCTId}`);
 
             if (!response.ok) {
                 throw new Error(`Lỗi API: ${response.status}`);
@@ -53,7 +53,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
     // Hàm gọi API để lấy thông tin sản phẩm (tensp, urlhinhanh) theo idsp
     async function fetchSanPhamById(idsp) {
         try {
-            const response = await fetch(`${apiSPUrl}/${idsp}`);
+            const response = await fetch(`${apiSPUrl}/_KhachHang/${idsp}`);
             if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
             return await response.json();
         } catch (error) {
@@ -97,7 +97,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
 
         try {
             // Gửi yêu cầu đến API với idkh
-            const response = await fetch(`${apiKHUrl}/${idkh}`);
+            const response = await fetch(`${apiKHUrl}/_KhachHang/${idkh}`);
 
             // Kiểm tra nếu response không ok, vứt lỗi
             if (!response.ok) {
@@ -197,7 +197,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
             }
 
             // Gọi API giảm giá chi tiết
-            const response = await fetch(`https://localhost:7297/api/Salechitiet/SanPhamCT/${spctId}`);
+            const response = await fetch(`https://localhost:7297/api/Salechitiet/_KhachHang/SanPhamCT/${spctId}`);
             if (!response.ok) {
                 if (response.status === 404) {
                     return null; // Không tìm thấy, trả về null
@@ -326,7 +326,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
             const capnhatdiem = datakhachang.diemsudung - diemtru
     
             // Gửi PUT request để cập nhật điểm cho khách hàng
-            const response = await fetch(`${apiKHUrl}/diem/${userId}?diemsudung=${capnhatdiem}`, {
+            const response = await fetch(`${apiKHUrl}/_KhachHang/diem/${userId}?diemsudung=${capnhatdiem}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" }
             });
@@ -674,7 +674,7 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
     
         for (const item of Listsale) {
             try {
-                const response = await fetch(`https://localhost:7297/api/HoaDonChiTiet/salespct/${item.id}`, {
+                const response = await fetch(`https://localhost:7297/api/HoaDonChiTiet/_KhachHang/salespct/${item.id}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1008,7 +1008,7 @@ async function taoLinkThanhToan(idhd) {
 
         // Lấy thông tin địa chỉ chi tiết từ API hoặc mảng địa chỉ
         try {
-            const response = await axios.get(`${apiAddressList}/${selectedAddressId}`);
+            const response = await axios.get(`${apiAddressList}/_KhachHang/${selectedAddressId}`);
 
             if (response && response.data) {
                 // Tạo địa chỉ mới từ thông tin chi tiết của địa chỉ
@@ -1152,7 +1152,7 @@ async function taoLinkThanhToan(idhd) {
         }
 
         // Gọi API lấy danh sách địa chỉ
-        const response = await fetch(`${apiAddressList}/khachhang/${idKH}`);
+        const response = await fetch(`${apiAddressList}/_KhachHang/khachhang/${idKH}`);
 
         // Kiểm tra xem API có trả về dữ liệu không
         if (!response.ok) {
@@ -1200,7 +1200,7 @@ async function taoLinkThanhToan(idhd) {
         const idkh = GetByidKH();
         try {
             // Bước 1: Lấy idRank từ API khách hàng
-            const responseRank = await fetch(`https://localhost:7297/api/khachhang/${idkh}`);
+            const responseRank = await fetch(`https://localhost:7297/api/khachhang/_KhachHang/${idkh}`);
             if (!responseRank.ok) {
                 throw new Error(`Lỗi khi lấy idRank: ${responseRank.status}`);
             }
@@ -1208,7 +1208,7 @@ async function taoLinkThanhToan(idhd) {
             const idRank = data.idrank; // Giả định idRank nằm trong phản hồi
     
             // Bước 2: Lấy danh sách id giảm giá từ API giamgia_rank
-            const responseDiscountIds = await fetch(`https://localhost:7297/api/giamgia_rank/rank/${idRank}`);
+            const responseDiscountIds = await fetch(`https://localhost:7297/api/giamgia_rank/_KhachHang/rank/${idRank}`);
             if (!responseDiscountIds.ok) {
                 document.getElementById('voucher-list').innerHTML = '<p>Rank chưa có voucher.</p>';
                 return; // Thoát sớm nếu không có dữ liệu
@@ -1216,7 +1216,7 @@ async function taoLinkThanhToan(idhd) {
             const discountIds = await responseDiscountIds.json(); // Giả định trả về [1, 2, 3, ...]
     
             // Bước 3: Lấy danh sách các mã giảm giá mà khách hàng đã sử dụng (nếu có)
-            const responseUsedVouchers = await fetch(`https://localhost:7297/api/Hoadon/voucher/${idkh}`);
+            const responseUsedVouchers = await fetch(`https://localhost:7297/api/Hoadon/_KhachHang/voucher/${idkh}`);
             
             // Kiểm tra nếu phản hồi từ API không có dữ liệu (empty response or 204 No Content)
             if (responseUsedVouchers.status === 204) {
@@ -1245,7 +1245,7 @@ async function taoLinkThanhToan(idhd) {
                 }
     
                 try {
-                    const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/${id.iDgiamgia}`);
+                    const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/_KhachHang/${id.iDgiamgia}`);
                     const data = await responseVoucher.json();
                     const currentDate = new Date();
                     // Format currentDate để giữ đối tượng Date thay vì chuỗi
@@ -1401,7 +1401,7 @@ async function taoLinkThanhToan(idhd) {
         }).then((result) => {
             if (result.isConfirmed) {
                 // Gọi API để lấy thông tin voucher dựa trên ID
-                fetch(`${discountApiUrl}/${selectedVoucherId}`)
+                fetch(`${discountApiUrl}/_KhachHang/${selectedVoucherId}`)
                     .then(response => response.json())
                     .then(voucher => {
                         if (voucher && voucher.giatri) {

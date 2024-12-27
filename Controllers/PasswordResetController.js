@@ -67,7 +67,7 @@ app.controller('PasswordResetController', function ($scope, $http, $rootScope, $
         console.log('Sending DTO:', changePasswordDto); // Log để kiểm tra dữ liệu
 
         // Gửi yêu cầu đổi mật khẩu tới backend
-        $http.post('https://localhost:7297/api/Khachhang/doimatkhau', changePasswordDto)
+        $http.post('https://localhost:7297/api/Khachhang/_KhachHang/doimatkhau', changePasswordDto)
             .then(function (response) {
                 Swal.fire("Đổi mật khẩu thành công", "Tài khoản sẽ được đăng xuất, vui lòng đăng nhật lại với mật khẩu mới.", "success"); 
                 $rootScope.dangxuat();

@@ -58,7 +58,7 @@ app.controller('doimatkhau2Controller', function ($scope, $http, $rootScope) {
         // Gửi yêu cầu đổi mật khẩu tới backend
         $http({
             method: 'POST',
-            url: 'https://localhost:7297/api/Khachhang/quenmatkhau',
+            url: 'https://localhost:7297/api/Khachhang/_KhachHang/quenmatkhau',
             headers: { 'Content-Type': 'application/json' },
             data: JSON.stringify(changePasswordDto)
         })

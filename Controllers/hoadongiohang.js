@@ -19,13 +19,13 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
     });
 
     // API URLs
-    const giohangchitietbyspctandgh = "https://localhost:7297/api/Giohangchitiet/idghctbygiohangangspct"
+    const giohangchitietbyspctandgh = "https://localhost:7297/api/Giohangchitiet/_KhachHang/idghctbygiohangangspct"
     const apiSPCTUrl = "https://localhost:7297/api/Sanphamchitiet";
     const apiSPUrl = "https://localhost:7297/api/Sanpham";
-    const apiTTSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/thuoctinh";
+    const apiTTSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/_KhachHang/thuoctinh";
     const discountApiUrl = "https://localhost:7297/api/Giamgia";
     const apiKHUrl = "https://localhost:7297/api/Khachhang";
-    const gioHang = "https://localhost:7297/api/Giohang/giohangkhachhang";
+    const gioHang = "https://localhost:7297/api/Giohang/_KhachHang/giohangkhachhang";
 
     // Hàm gọi API để lấy sản phẩm chi tiết theo idspct
     async function fetchGioHangByIdKh(idkh) {
@@ -70,7 +70,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             }
 
             // Gọi API với idspct
-            const response = await fetch(`${apiSPCTUrl}/${sanPhamCTId}`);
+            const response = await fetch(`${apiSPCTUrl}/_KhachHang/${sanPhamCTId}`);
 
             if (!response.ok) {
                 throw new Error(`Lỗi API: ${response.status}`);
@@ -90,7 +90,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
     // Hàm gọi API để lấy thông tin sản phẩm (tensp, urlhinhanh) theo idsp
     async function fetchSanPhamById(idsp) {
         try {
-            const response = await fetch(`${apiSPUrl}/${idsp}`);
+            const response = await fetch(`${apiSPUrl}/_KhachHang/${idsp}`);
             if (!response.ok) throw new Error(`Lỗi API: ${response.status}`);
             return await response.json();
         } catch (error) {
@@ -138,7 +138,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
         try {
             // Gửi yêu cầu đến API với idkh
-            const response = await fetch(`${apiKHUrl}/${idkh}`);
+            const response = await fetch(`${apiKHUrl}/_KhachHang/${idkh}`);
 
             // Kiểm tra nếu response không ok, vứt lỗi
             if (!response.ok) {
@@ -641,7 +641,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
     
         for (const item of Listsale) {
             try {
-                const response = await fetch(`https://localhost:7297/api/HoaDonChiTiet/salespct/${item.id}`, {
+                const response = await fetch(`https://localhost:7297/api/HoaDonChiTiet/salespct/_KhachHang/${item.id}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -1449,7 +1449,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         }).then((result) => {
             if (result.isConfirmed) {
                 // Gọi API để lấy thông tin voucher dựa trên ID
-                fetch(`${discountApiUrl}/${selectedVoucherId}`)
+                fetch(`${discountApiUrl}/_KhachHang/${selectedVoucherId}`)
                     .then(response => response.json())
                     .then(voucher => {
                         if (voucher && voucher.giatri) {

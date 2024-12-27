@@ -255,15 +255,11 @@ app.controller("SanPhamChiTietCtrl", function ($scope, $document, $rootScope, $r
         }
     };
 
-    const apIDSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/GetSanPhamChiTietByThuocTinh";
-    const apiIDSPtoIDSPCT = "https://localhost:7297/api/Sanphamchitiet/sanpham/"; ``
-    const gioHang = "https://localhost:7297/api/Giohang/giohangkhachhang";
+    const apIDSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/_KhachHang/GetSanPhamChiTietByThuocTinh";
+    const apiIDSPtoIDSPCT = "https://localhost:7297/api/Sanphamchitiet/_KhachHang/sanpham/"; ``
+    const gioHang = "https://localhost:7297/api/Giohang/_KhachHang/giohangkhachhang";
     const gioHangChiTiet = "https://localhost:7297/api/Giohangchitiet";
-
-    $scope.timkhachHang = function (idkhachHang) {
-
-    }
-
+    
     $scope.GioHang = async function () {
         // Lấy danh sách các thuộc tính đã chọn
         const tenthuoctinhList = Object.keys($scope.selectedValues).filter(key => $scope.selectedValues[key]);

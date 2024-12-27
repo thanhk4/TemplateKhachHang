@@ -6,7 +6,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
     $scope.datatrahang = {};
     $scope.datatrahangct = {};
     $scope.quantity = 0;
-    $http.get(`https://localhost:7297/api/Hoadon/${idhd}`)
+    $http.get(`https://localhost:7297/api/Hoadon/_KhachHang/${idhd}`)
         .then(function (response) {
             // Lưu thông tin hóa đơn vào scope
             $scope.datahd = {
@@ -27,7 +27,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
             $scope.errorMessage = "Không thể tải thông tin hóa đơn. Vui lòng thử lại sau.";
         });
 
-    $http.get(`https://localhost:7297/api/HoaDonChiTiet/Check-so-luong:${idhd}`)
+    $http.get(`https://localhost:7297/api/HoaDonChiTiet/_KhachHang/Check-so-luong:${idhd}`)
         .then(function (response) {
             // Lưu thông tin hóa đơn vào scope
             $scope.datahdct = response.data;
@@ -305,7 +305,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
     // Hàm lấy thông tin khách hàng từ API và cập nhật vào HTML
     async function CheckHoaDon() {
         try {
-            const response = await fetch(`https://localhost:7297/api/Hoadon/${idhd}`);
+            const response = await fetch(`https://localhost:7297/api/Hoadon/_KhachHang/${idhd}`);
 
             if (!response.ok) {
                 throw new Error(`Lỗi API: ${response.status}`);
@@ -326,7 +326,7 @@ app.controller('trahangController', function ($scope, $http, $location, $routePa
 
     // Hàm cập nhật thông tin hóa đơn thông qua API
     async function UpdateHoaDon() {
-        const response = await $http.put(`https://localhost:7297/api/HoaDon/trangthaitrahang/${idhd}?trangthai=${5}`);
+        const response = await $http.put(`https://localhost:7297/api/HoaDon/_KhachHang/trangthaitrahang/${idhd}?trangthai=${5}`);
         return null;
     }
 

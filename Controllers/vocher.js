@@ -41,7 +41,7 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
         const voucherhoadon = [];
         try {
             // Bước 1: Lấy idRank từ API khách hàng
-            const responseRank = await fetch(`https://localhost:7297/api/khachhang/${idkh}`);
+            const responseRank = await fetch(`https://localhost:7297/api/khachhang/_KhachHang/${idkh}`);
             if (!responseRank.ok) {
                 throw new Error(`Lỗi khi lấy idRank: ${responseRank.status}`);
             }
@@ -49,7 +49,7 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
             const idRank = data.idrank;
     
             // Bước 2: Lấy danh sách id giảm giá từ API giamgia_rank
-            const responseDiscountIds = await fetch(`https://localhost:7297/api/giamgia_rank/rank/${idRank}`);
+            const responseDiscountIds = await fetch(`https://localhost:7297/api/giamgia_rank/_KhachHang/rank/${idRank}`);
             if (!responseDiscountIds.ok) {
                 document.getElementById('active-voucher-list').innerHTML = '<p>Rank chưa có voucher.</p>';
                 return; // Thoát sớm nếu không có dữ liệu
@@ -57,7 +57,7 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
             const discountIds = await responseDiscountIds.json();
     
             // Bước 3: Lấy danh sách các mã giảm giá mà khách hàng đã sử dụng
-            const responseUsedVouchers = await fetch(`https://localhost:7297/api/Hoadon/voucher/${idkh}`);
+            const responseUsedVouchers = await fetch(`https://localhost:7297/api/Hoadon/_KhachHang/voucher/${idkh}`);
             let usedVouchers = [];
             if (responseUsedVouchers.status === 204) {
                 console.log("Không có dữ liệu voucher từ hóa đơn.");
@@ -83,7 +83,7 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
                 if (isUsed) continue;
     
                 try {
-                    const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/${id.iDgiamgia}`);
+                    const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/_KhachHang/${id.iDgiamgia}`);
                     const data = await responseVoucher.json();
                     console.log(data);
                     const currentDate = new Date();
@@ -139,7 +139,7 @@ app.controller("vocherController", function ($scope, $document, $rootScope, SanP
     
     async function updateVoucherStatus(voucherId, newStatus) {
         try {
-            const response = await fetch(`https://localhost:7297/api/giamgia/${voucherId}`, {
+            const response = await fetch(`https://localhost:7297/api/giamgia/_KhachHang/${voucherId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'

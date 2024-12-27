@@ -3,7 +3,7 @@ app.service("SanPhamService", function ($http) {
     const baseUrl = "https://localhost:7297/api/";
 
 this.getAllSanPham = function () {
-    return $http.get(baseUrl + "Sanpham/GetALLSanPham")
+    return $http.get(baseUrl + "Sanpham/_KhachHang/GetALLSanPham")
         .then(response => response.data)
         .catch(error => {
             console.error("Lỗi khi gọi API:", error);
@@ -11,7 +11,7 @@ this.getAllSanPham = function () {
         });
 };
 this.getSanPhamGiamGia = function () {
-    return $http.get(baseUrl + "Sanpham/GetALLSanPhamGiamGia")
+    return $http.get(baseUrl + "Sanpham/_KhachHang/GetALLSanPhamGiamGia")
         .then(response => response.data)
         .catch(error => {
             console.error("Lỗi khi gọi API:", error);
@@ -19,7 +19,7 @@ this.getSanPhamGiamGia = function () {
         });
 }
 this.getSanPhamById = function (id) {
-    return $http.get(baseUrl + "Sanpham/GetALLSanPham/" + id)
+    return $http.get(baseUrl + "Sanpham/_KhachHang/GetALLSanPham/" + id)
         .then(response => response.data)
         .catch(error => {
             console.error("Lỗi khi gọi API:", error);
@@ -28,7 +28,7 @@ this.getSanPhamById = function (id) {
 };
 
 this.getDanhGiaByIdSPCT = function (id) {
-    return $http.get(baseUrl + "Danhgias/GetByIdSPCT/" + id)
+    return $http.get(baseUrl + "Danhgias/_KhachHang/GetByIdSPCT/" + id)
         .then(response => response.data)
         .catch(error => {
             console.error("Lỗi khi gọi API:", error);
@@ -36,7 +36,7 @@ this.getDanhGiaByIdSPCT = function (id) {
         });
 };
 this.getSanPhamByThuongHieu = function (id) {
-    return $http.get(baseUrl + "Sanpham/GetALLSanPhamByThuongHieu/" + id)
+    return $http.get(baseUrl + "Sanpham/_KhachHang/GetALLSanPhamByThuongHieu/" + id)
         .then(response => response.data)
         .catch(error => {
             console.error("Lỗi khi gọi API:", error);
@@ -44,7 +44,7 @@ this.getSanPhamByThuongHieu = function (id) {
         });
     }
 this.getThuocTinhAll = function () {
-        return $http.get(baseUrl + "Thuoctinh/GetThuocTinh/thuocTinhChiTiet")
+        return $http.get(baseUrl + "Thuoctinh/_KhachHang/GetThuocTinh/thuocTinhChiTiet")
             .then(response => response.data)
             .catch(error => {
                 console.error("Lỗi khi gọi API:", error);
@@ -62,7 +62,7 @@ this.getThuongHieu = function () {
 };
 
 this.searchSanPham = function (filterParams) {
-    return $http.get(baseUrl + "Sanpham/SanPhamChiTiet/search", { params: filterParams })
+    return $http.get(baseUrl + "Sanpham/_KhachHang/SanPhamChiTiet/search", { params: filterParams })
         .then(response => response.data)
         .catch(error => {
             console.error("Lỗi khi gọi API:", error);
@@ -71,7 +71,7 @@ this.searchSanPham = function (filterParams) {
 };
 
 this.getKhachHangById = function (id) {
-    return $http.get(baseUrl + "Khachhang/" + id)
+    return $http.get(baseUrl + "Khachhang/_KhachHang/" + id)
     .then(response => response.data)
     .catch(error => {
         console.error("Lỗi khi gọi API:", error);

@@ -111,7 +111,7 @@ app.run(function ($rootScope, $location, $http) {
       const idkh = GetByidKH();
       if ($rootScope.isLoggedIn) {
           // Gọi API để kiểm tra trạng thái của khách hàng
-          $http.get(`https://localhost:7297/api/Khachhang/${idkh}`)  
+          $http.get(`https://localhost:7297/api/Khachhang/_KhachHang/${idkh}`)  
               .then(function(response) {
                   if (response.data.trangthai === "Tài khoản bị khoá") {
                       // Nếu trạng thái là 1, gọi hàm đăng xuất
@@ -288,7 +288,7 @@ if (!userInfo || !userInfo.id) {
         },
     };
 
-    fetch('https://localhost:7297/api/Giohangchitiet/giohangchitietbygiohang/' + id, requestAPIGH)
+    fetch('https://localhost:7297/api/Giohangchitiet/_KhachHang/giohangchitietbygiohang/' + id, requestAPIGH)
         .then(response => {
             if (!response.ok) {
                 throw new Error(`Lỗi HTTP! Trạng thái: ${response.status}`);

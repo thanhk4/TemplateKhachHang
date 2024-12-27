@@ -17,7 +17,7 @@ app.directive('fileModel', ['$parse', function ($parse) {
 app.service('OrderHistoryService', function ($http) {
     // Tìm đánh giá theo idhdct (id chi tiết hóa đơn)
     this.getRatingByOrderDetailId = function (orderDetailId) {
-        return $http.get('https://localhost:7297/api/Danhgias/byIDhdct/' + orderDetailId);
+        return $http.get('https://localhost:7297/api/Danhgias/_KhachHang/byIDhdct/' + orderDetailId);
     };
 // Tạo đánh giá mới
 this.createRating = function (reviewText, customerId, orderDetailId, imageBase64) {
@@ -50,14 +50,14 @@ this.updateRating = function (ratingId, reviewText, customerId, orderDetailId, i
         idhdct: orderDetailId,
         urlHinhanh: imageBase64
     };
-    return $http.put('https://localhost:7297/api/Danhgias/' + ratingId, data);
+    return $http.put('https://localhost:7297/api/Danhgias/_KhachHang/' + ratingId, data);
 };
 
 
    
     // Xóa đánh giá
     this.deleteRating = function (ratingId) {
-        return $http.delete('https://localhost:7297/api/Danhgias/' + ratingId);
+        return $http.delete('https://localhost:7297/api/Danhgias/_KhachHang/' + ratingId);
     };
 });
 
@@ -156,7 +156,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     
             if (result.isConfirmed) {
                 // Send PUT request to the backend API
-                $http.put('https://localhost:7297/api/Hoadon/da-nhan-don-hang-' + id)
+                $http.put('https://localhost:7297/api/Hoadon/_KhachHang/da-nhan-don-hang-' + id)
                     .then(async function (response) {
                         // Show success message if the request is successful
                         await Swal.fire(
@@ -204,14 +204,14 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
 
     // Hàm kiểm tra trạng thái hóa đơn
     async function CheckHoaDon(id) {
-        const response = await $http.get('https://localhost:7297/api/HoaDon/' + id);
+        const response = await $http.get('https://localhost:7297/api/HoaDon/_KhachHang/' + id);
         return response.data;
     }
 
     // Hàm cập nhật hóa đơn
     async function HuyUpdateHoaDon(hoaDonData) {
         try {
-            const response = await $http.put(`https://localhost:7297/api/HoaDon/trangthai/${hoaDonData.id}?trangthai=${hoaDonData.trangthai}`);
+            const response = await $http.put(`https://localhost:7297/api/HoaDon/_KhachHang/trangthai/${hoaDonData.id}?trangthai=${hoaDonData.trangthai}`);
             Swal.fire('Thành công', 'Hóa đơn đã được cập nhật!', 'success');
             return response.data;
         } catch (error) {
@@ -251,7 +251,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             trangthai: 4
         };
         try {
-            const response = await fetch(`https://localhost:7297/api/Hoadon/${idhd}`, {
+            const response = await fetch(`https://localhost:7297/api/Hoadon/_KhachHang/${idhd}`, {
                 method: 'PUT', // Hoặc PATCH nếu bạn chỉ cập nhật một phần dữ liệu
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(updatedData)
@@ -273,7 +273,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     }
 
     // Lấy danh sách hóa đơn từ API
-    $http.get('https://localhost:7297/api/Hoadon/hoa-don-theo-ma-kh-' + $scope.userInfo.id)
+    $http.get('https://localhost:7297/api/Hoadon/_KhachHang/hoa-don-theo-ma-kh-' + $scope.userInfo.id)
         .then(function (response) {
             $scope.DataHoaDonMua = response.data;
             console.log($scope.DataHoaDonMua)
@@ -302,7 +302,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         }
         else if(status==5){
             $scope.thediv= status
-            $http.get('https://localhost:7297/api/Trahang/View-Hoa-Don-Tra-By-Idkh-'+$scope.userInfo.id)
+            $http.get('https://localhost:7297/api/Trahang/_KhachHang/View-Hoa-Don-Tra-By-Idkh-'+$scope.userInfo.id)
             .then(function(response){
                 $scope.filteredOrders = response.data
                 console.log($scope.filteredOrders)
@@ -330,7 +330,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         }//<!--gaaaa-->//<!--gaaaa-->//<!--gaaaa-->
     };
     $scope.chitiethd = function (id) {
-        $http.get('https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
+        $http.get('https://localhost:7297/api/HoaDonChiTiet/_KhachHang/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
         .then(function (response) {
             $scope.DataChitiet = response.data;
         })
@@ -379,7 +379,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             console.error("ID không hợp lệ:", id);
             return;
         }
-        $http.get('https://localhost:7297/api/Hoadon/' + id)
+        $http.get('https://localhost:7297/api/Hoadon/_KhachHang/' + id)
             .then(async function (response) {
                 $scope.hoadonbyid = response.data;
                 console.log($scope.hoadonbyid);
@@ -387,7 +387,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             .catch(function (error) {
                 console.error("Lỗi khi tải dữ liệu hóa đơn:", error);
             });
-        $http.get('https://localhost:7297/api/HoaDonChiTiet/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
+        $http.get('https://localhost:7297/api/HoaDonChiTiet/_KhachHang/Hoa-don-chi-tiet-Theo-Ma-HD-' + id)
             .then(async function (response) {
                 $scope.DataChitiet = response.data;
     
@@ -417,7 +417,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             });
     };
     
-    const apiTTSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/thuoctinh";
+    const apiTTSPCTUrl = "https://localhost:7297/api/Sanphamchitiet/_KhachHang/thuoctinh";
     
     async function fetchThuocTinhSPCT(id) {
         if (!id) {
@@ -550,7 +550,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     $scope.hdtrahang = async function (id) {
         try {
             // First API call
-            const response1 = await $http.get('https://localhost:7297/api/Trahang/' + id);
+            const response1 = await $http.get('https://localhost:7297/api/Trahang/_KhachHang/' + id);
             $scope.datatrahang = response1.data;
             console.log($scope.datatrahang);
         } catch (error) {
@@ -559,7 +559,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     
         try {
             // Second API call
-            const response2 = await $http.get('https://localhost:7297/api/Trahangchitiet/View-Hoadonct-Theo-Idth-' + id);
+            const response2 = await $http.get('https://localhost:7297/api/Trahangchitiet/_KhachHang/View-Hoadonct-Theo-Idth-' + id);
             $scope.trahangct = response2.data;
             console.log($scope.trahangct);
     

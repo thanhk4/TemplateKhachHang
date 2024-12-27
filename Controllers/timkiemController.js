@@ -16,7 +16,7 @@ app.controller('timkiemController', function ($scope, $routeParams, $http) {
     });
 
   // Fetch search results from API
-  $http.get(`https://localhost:7297/api/Sanpham/search?name=${encodeURIComponent($scope.searchKey)}`)
+  $http.get(`https://localhost:7297/api/Sanpham/_KhachHang/search?name=${encodeURIComponent($scope.searchKey)}`)
     .then(function (response) {
       $scope.filteredResults = response.data;
       $scope.displayResults = [...$scope.filteredResults];
