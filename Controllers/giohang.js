@@ -168,7 +168,7 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
 
     async function fetchgiohangchitietbyspctandgh(idgh, idspct) {
         try {
-            const response = await fetch(`https://localhost:7297/api/Giohangchitiet/idghctbygiohangangspct/${idgh}/${idspct}`);
+            const response = await fetch(`https://localhost:7297/api/Giohangchitiet/_KhachHang/idghctbygiohangangspct/${idgh}/${idspct}`);
             if (!response.ok) {
                 if (response.status === 404) {
                     console.warn("Không tìm thấy dữ liệu giỏ hàng chi tiết");
@@ -230,11 +230,11 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
     // Hàm cập nhật giỏ hàng và thay đổi option
     async function updateCartDetail(productId, idgh) {
         try {
-            const datagiohanglist = await fetch(`https://localhost:7297/api/Giohangchitiet/${idgh}`);
+            const datagiohanglist = await fetch(`https://localhost:7297/api/Giohangchitiet/_KhachHang/${idgh}`);
             const datagiohang = await datagiohanglist.json();
 
             // Gửi yêu cầu PUT để cập nhật số lượng sản phẩm
-            const response = await fetch(`https://localhost:7297/api/Giohangchitiet/sanpham/${idgh}`, {
+            const response = await fetch(`https://localhost:7297/api/Giohangchitiet/_KhachHang/sanpham/${idgh}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -454,7 +454,7 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
         // Hàm xóa chi tiết giỏ hàng
     async function deleteGioHangChiTiet(idghct) {
         try {
-            const response = await fetch(`https://localhost:7297/api/Giohangchitiet/${idghct}`, {
+            const response = await fetch(`https://localhost:7297/api/Giohangchitiet/_KhachHang/${idghct}`, {
                 method: 'DELETE'
             });
 
@@ -567,7 +567,7 @@ app.controller("GiohangCtrl", function ($document, $rootScope, $scope, $compile,
             }
     
             // Gửi yêu cầu PUT để cập nhật số lượng sản phẩm
-            const response = await fetch(`https://localhost:7297/api/Giohangchitiet/${idgiohangct.id}`, {
+            const response = await fetch(`https://localhost:7297/api/Giohangchitiet/_KhachHang/${idgiohangct.id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

@@ -95,7 +95,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
     $scope.huydonhang = async function (id) {
         try {
             // Lấy dữ liệu lịch sử thanh toán
-            const lichSuThanhToanResponse = await $http.get('https://localhost:7297/api/Lichsuthanhtoan/list/' + id);
+            const lichSuThanhToanResponse = await $http.get('https://localhost:7297/api/Lichsuthanhtoan/_KhachHang/list/' + id);
             const lichSuThanhToanData = lichSuThanhToanResponse.data[0];
             const hoaDonData = await CheckHoaDon(id);
 
@@ -143,8 +143,9 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         }
     };
     $scope.danhandonhang = async function (id) {
+        const hoaDonData = await CheckHoaDon(id);
         try {
-            // Show confirmation dialog
+            // Hiển thị hộp thoại xác nhận
             const result = await Swal.fire({
                 title: 'Xác Nhận?',
                 text: 'Bạn chắc chắn đã nhận đơn hàng rồi?',
@@ -155,28 +156,33 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             });
     
             if (result.isConfirmed) {
-                // Send PUT request to the backend API
-                $http.put('https://localhost:7297/api/Hoadon/_KhachHang/da-nhan-don-hang-' + id)
-                    .then(async function (response) {
-                        // Show success message if the request is successful
-                        await Swal.fire(
-                            'Thành công',
-                            'Xác nhận hoá đơn đã nhận đơn hàng!',
-                            'success'
-                        );
+                // Kiểm tra nếu hoaDonData đã được khởi tạo
+                if (!hoaDonData) {
+                    console.error('hoaDonData không tồn tại.');
+                    return Swal.fire('Lỗi', 'Dữ liệu hoá đơn không hợp lệ!', 'error');
+                }
     
-                        // Reload the page if the user confirms the success message
-                        $location.reload();
-                    })
+                // Cập nhật trạng thái hoá đơn
+                hoaDonData.trangthai = 3; // Đã nhận đơn hàng
+                await HuyUpdateHoaDon(hoaDonData);
+    
+                // Thông báo thành công
+                const successResult = await Swal.fire(
+                    'Thành công',
+                    'Xác nhận hoá đơn đã nhận đơn hàng!',
+                    'success'
+                );
+    
+                // Reload trang nếu người dùng nhấn OK
+                if (successResult.isConfirmed) {
+                    location.reload();
+                }
             }
         } catch (error) {
             console.error('Có lỗi xảy ra:', error);
-            // Show error message for any unexpected errors
             Swal.fire('Lỗi', 'Đã xảy ra lỗi trong quá trình xử lý!', 'error');
         }
-    };
-    
-        
+    }; 
 
     // Xử lý xác nhận hủy trong modal
     $scope.xacNhanHuy = async function () {

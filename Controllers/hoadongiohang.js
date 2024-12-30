@@ -238,7 +238,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             }
 
             // Gọi API giảm giá chi tiết
-            const response = await fetch(`https://localhost:7297/api/Salechitiet/SanPhamCT/${spctId}`);
+            const response = await fetch(`https://localhost:7297/api/Salechitiet/_KhachHang/SanPhamCT/${spctId}`);
             if (!response.ok) {
                 if (response.status === 404) {
                     console.warn("Sản Phẩm chi tiết không có dữ liệu giảm giá");
@@ -479,7 +479,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
     async function deleteGioHangChiTiet(idghct) {
         try {
-            const response = await fetch(`https://localhost:7297/api/Giohangchitiet/${idghct}`, {
+            const response = await fetch(`https://localhost:7297/api/Giohangchitiet/_KhachHang/${idghct}`, {
                 method: 'DELETE'
             });
 
@@ -641,7 +641,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
     
         for (const item of Listsale) {
             try {
-                const response = await fetch(`https://localhost:7297/api/HoaDonChiTiet/salespct/_KhachHang/${item.id}`, {
+                const response = await fetch(`https://localhost:7297/api/HoaDonChiTiet/_KhachHang/salespct/${item.id}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -806,7 +806,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             const capnhatdiem = datakhachang.diemsudung - diemtru
 
             // Gửi PUT request để cập nhật điểm cho khách hàng
-            const response = await fetch(`${apiKHUrl}/diem/${userId}?diemsudung=${capnhatdiem}`, {
+            const response = await fetch(`${apiKHUrl}/_KhachHang/diem/${userId}?diemsudung=${capnhatdiem}`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" }
             });
@@ -1055,7 +1055,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
         // Lấy thông tin địa chỉ chi tiết từ API hoặc mảng địa chỉ
         try {
-            const response = await axios.get(`${apiAddressList}/${selectedAddressId}`);
+            const response = await axios.get(`${apiAddressList}/_KhachHang/${selectedAddressId}`);
 
             if (response && response.data) {
                 // Tạo địa chỉ mới từ thông tin chi tiết của địa chỉ
@@ -1200,7 +1200,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         }
 
         // Gọi API lấy danh sách địa chỉ
-        const response = await fetch(`${apiAddressList}/khachhang/${idKH}`);
+        const response = await fetch(`${apiAddressList}/_KhachHang/khachhang/${idKH}`);
 
         // Kiểm tra xem API có trả về dữ liệu không
         if (!response.ok) {
@@ -1249,7 +1249,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
         const idkh = GetByidKH();
         try {
             // Bước 1: Lấy idRank từ API khách hàng
-            const responseRank = await fetch(`https://localhost:7297/api/khachhang/${idkh}`);
+            const responseRank = await fetch(`https://localhost:7297/api/khachhang/_KhachHang/${idkh}`);
             if (!responseRank.ok) {
                 throw new Error(`Lỗi khi lấy idRank: ${responseRank.status}`);
             }
@@ -1257,7 +1257,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             const idRank = data.idrank; // Giả định idRank nằm trong phản hồi
 
             // Bước 2: Lấy danh sách id giảm giá từ API giamgia_rank
-            const responseDiscountIds = await fetch(`https://localhost:7297/api/giamgia_rank/rank/${idRank}`);
+            const responseDiscountIds = await fetch(`https://localhost:7297/api/giamgia_rank/_KhachHang/rank/${idRank}`);
             if (!responseDiscountIds.ok) {
                 document.getElementById('voucher-list').innerHTML = '<p>Rank chưa có voucher.</p>';
                 return; // Thoát sớm nếu không có dữ liệu
@@ -1265,7 +1265,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
             const discountIds = await responseDiscountIds.json(); // Giả định trả về [1, 2, 3, ...]
 
             // Bước 3: Lấy danh sách các mã giảm giá mà khách hàng đã sử dụng (nếu có)
-            const responseUsedVouchers = await fetch(`https://localhost:7297/api/Hoadon/voucher/${idkh}`);
+            const responseUsedVouchers = await fetch(`https://localhost:7297/api/Hoadon/_KhachHang/voucher/${idkh}`);
 
             // Kiểm tra nếu phản hồi từ API không có dữ liệu (empty response or 204 No Content)
             if (responseUsedVouchers.status === 204) {
@@ -1293,7 +1293,7 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
                 }
 
                 try {
-                    const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/${id.iDgiamgia}`);
+                    const responseVoucher = await fetch(`https://localhost:7297/api/giamgia/_KhachHang/${id.iDgiamgia}`);
                     const data = await responseVoucher.json();
                     const currentDate = new Date();
                     // Format currentDate để giữ đối tượng Date thay vì chuỗi
