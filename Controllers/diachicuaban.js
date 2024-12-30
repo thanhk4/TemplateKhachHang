@@ -377,7 +377,7 @@ if (document.querySelector("#province")) {
     const idkh = GetByidKH();
 
     // Lấy danh sách địa chỉ từ API
-    fetch(`${apiAddressList}/khachhang/_KhachHang/${idkh}`)
+    fetch(`${apiAddressList}/_KhachHang/khachhang/${idkh}`)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Không thể lấy dữ liệu từ API.");
