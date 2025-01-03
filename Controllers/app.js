@@ -84,6 +84,10 @@ app.config(($routeProvider) => {
   templateUrl: './Views/Vocher.html',
   controller: 'vocherController'
 })
+.when('/RegisterPassword', {
+  templateUrl: './Views/RegisterPassword.html',
+  controller: 'RegisterPasswordController'
+})
 .otherwise({
   redirectTo: "/"
 });
