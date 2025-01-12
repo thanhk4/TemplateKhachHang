@@ -261,7 +261,7 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
         }
     
         // Kiểm tra ngày sinh
-        if (!validateDateOfBirth(ngaysinh)) {
+        if (!ngaysinh) {
             isValid = false;
             document.getElementById('editNgaysinh').classList.add('is-invalid');
         } else {
@@ -350,16 +350,6 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
         return phoneRegex.test(phone);
     }
     
-    function validateDateOfBirth(dob) {
-        const today = new Date();
-        const birthDate = new Date(dob);
-        const age = today.getFullYear() - birthDate.getFullYear();
-        const m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age >= 10 && age <= 130;
-    }
 
     // Gọi API khi controller khởi tạo
     fetchAndUpdateData();
