@@ -69,7 +69,7 @@
                                     placeholder="••••••••" 
                                     required>
                                 <span class="input-group-text" ng-click="showPassword = !showPassword" style="cursor: pointer;">
-                                    <i ng-class="{'bi bi-eye': !showConfirmPassword, 'bi bi-eye-slash': showConfirmPassword}"></i>
+                                    <i ng-class="{'bi bi-eye': !showPassword, 'bi bi-eye-slash': showPassword}"></i>
                                 </span>
                             </div>
                         </div>
@@ -89,6 +89,7 @@
                                 </span>
                             </div>
                         </div>
+                        
                         
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="agree-terms" ng-model="user.agreeTerms" required>
