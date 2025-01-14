@@ -259,14 +259,6 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
         } else {
             document.getElementById('editSDT').classList.remove('is-invalid');
         }
-    
-        // Kiểm tra ngày sinh
-        if (!ngaysinh) {
-            isValid = false;
-            document.getElementById('editNgaysinh').classList.add('is-invalid');
-        } else {
-            document.getElementById('editNgaysinh').classList.remove('is-invalid');
-        }
         
         if (isValid) {
 
@@ -349,7 +341,6 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
         var phoneRegex = /^[0-9]{10}$/; // Kiểm tra số điện thoại từ 10
         return phoneRegex.test(phone);
     }
-    
 
     // Gọi API khi controller khởi tạo
     fetchAndUpdateData();

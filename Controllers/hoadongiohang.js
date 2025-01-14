@@ -597,10 +597,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
                     const addPaymentHistoryResult = await addPaymentHistory(idhd);
                     if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
-                    if (sale != null)
-                        {
-                            await updatesale(sale)
-                        }
                     sessionStorage.clear();
                     await deleteProduct();
                     const thanhToanCocResult = await taoLinkThanhToanCoc(idhd);
@@ -615,10 +611,6 @@ app.controller("HoadongiohangCtrl", function ($document, $rootScope, $routeParam
 
                 const addPaymentHistoryResult = await addPaymentHistory(idhd);
                 if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
-                if (sale != null)
-                    {
-                        await updatesale(sale)
-                    }
                 sessionStorage.clear();
                 await deleteProduct();
                 if (bankTransferRadio.checked) {

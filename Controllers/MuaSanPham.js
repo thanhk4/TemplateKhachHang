@@ -573,10 +573,6 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
     
                     const hoaDonChiTietResult = await themHoaDonChiTiet(idhd);
                     if (!hoaDonChiTietResult) return; // Dừng nếu thêm chi tiết hóa đơn thất bại
-                    if (sale != null)
-                        {
-                            await updatesale(sale)
-                        }
                     const thanhToanCocResult = await taoLinkThanhToanCoc(idhd);
                     if (!thanhToanCocResult) return; // Dừng nếu tạo link thanh toán cọc thất bại
                     sessionStorage.clear();
@@ -592,10 +588,6 @@ app.controller("MuaSanPhamCtrl", function ($document, $rootScope, $routeParams, 
     
                 const addPaymentHistoryResult = await addPaymentHistory(idhd);
                 if (!addPaymentHistoryResult) return; // Dừng nếu thêm lịch sử thanh toán thất bại
-                if (sale != null)
-                {
-                    await updatesale(sale)
-                }
                 sessionStorage.clear();
                 if (bankTransferRadio.checked) {
                     const taoLinkThanhToanResult = await taoLinkThanhToan(idhd);
