@@ -259,14 +259,7 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
         } else {
             document.getElementById('editSDT').classList.remove('is-invalid');
         }
-    
-        // Kiểm tra ngày sinh
-        if (!validateDateOfBirth(ngaysinh)) {
-            isValid = false;
-            document.getElementById('editNgaysinh').classList.add('is-invalid');
-        } else {
-            document.getElementById('editNgaysinh').classList.remove('is-invalid');
-        }
+
         
         if (isValid) {
 
@@ -348,17 +341,6 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
     function validatePhoneNumber(phone) {
         var phoneRegex = /^[0-9]{10}$/; // Kiểm tra số điện thoại từ 10
         return phoneRegex.test(phone);
-    }
-    
-    function validateDateOfBirth(dob) {
-        const today = new Date();
-        const birthDate = new Date(dob);
-        const age = today.getFullYear() - birthDate.getFullYear();
-        const m = today.getMonth() - birthDate.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-            age--;
-        }
-        return age >= 10 && age <= 130;
     }
 
     // Gọi API khi controller khởi tạo
