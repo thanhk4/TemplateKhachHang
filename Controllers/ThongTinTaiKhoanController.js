@@ -259,7 +259,6 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
         } else {
             document.getElementById('editSDT').classList.remove('is-invalid');
         }
-
         
         if (isValid) {
 

@@ -70,7 +70,7 @@
                     </div>
                 </div>
             </div>
-            <div class="row" ng-show="thediv<5">
+            <div class="row" ng-show="thediv!=3&&thediv<5">
                 <div class="col-md-6 mb-4" ng-repeat="x in paginatedOrders[currentPage]">
                     <div class="order-card p-4 shadow-sm rounded">
                         <p class="order-status text-end text-primary">{{ orderStatuses[x.trangthai] }}</p>

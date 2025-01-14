@@ -8,8 +8,11 @@ app.controller('RegisterPasswordController', function ($scope, $http, $location,
             $scope.errorMessage = "Mật khẩu không khớp.";
             return;
         }
-
-        $http.post('https://localhost:7297/api/Login/RegisterPassword', {
+        if ($scope.password.length < 6 ) {
+            $scope.errorMessage = "Mật khẩu mới phải có ít nhất 6 ký tự.";
+            return;
+        }
+        $http.post('https://localhost:7297/api/Login/RegisterPassword2', {
             Email: $scope.email,
             Password: $scope.password
         }).then(function (response) {
