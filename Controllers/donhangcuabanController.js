@@ -464,77 +464,79 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         myModal.show();
     };
     
-    let datahinhanhbase64 = ""; // Biến toàn cục để lưu dữ liệu Base64
+    let selectedFile = null; // Biến toàn cục để lưu file được chọn
 
-    function convertImageToBase64(inputElement, callback) {
-        if (inputElement.files && inputElement.files[0]) {
-            const file = inputElement.files[0];
-            const reader = new FileReader();
+// Sử dụng sự kiện change để lưu file vào biến toàn cục
+document.getElementById('imageUpload').addEventListener('change', function () {
+    if (this.files && this.files[0]) {
+        selectedFile = this.files[0]; // Gán file được chọn vào biến toàn cục
+    } else {
+        console.error("Không có file nào được chọn.");
+    }
+});
 
-            reader.onload = function (e) {
-                // Kết quả Base64 đầy đủ
-                const base64Data = e.target.result; 
-                callback(base64Data); // Truyền dữ liệu qua callback
-            };
-
-            reader.onerror = function (error) {
-                console.error("Có lỗi xảy ra khi đọc file: ", error);
-            };
-
-            // Đọc file dưới dạng Data URL (base64)
-            reader.readAsDataURL(file);
-        } else {
-            console.error("Không có file nào được chọn.");
-        }
+$scope.submitRating = async function () {
+    if (!selectedFile) {
+        alert("Vui lòng chọn hình ảnh trước khi gửi đánh giá.");
+        return;
     }
 
-    // Hàm xử lý Base64 và gán vào biến toàn cục
-    function handleBase64Data(base64Data) {
-        datahinhanhbase64 = base64Data; // Gán Base64 vào biến toàn cục
-    }
+    // Tạo formData để gửi file cùng với các thông tin khác
+    const formData = new FormData();
+    formData.append('file', selectedFile); // Đính kèm file vào FormData
+    formData.append('reviewText', $scope.reviewText);
+    formData.append('customerId', $scope.userInfo.id);
+    formData.append('orderDetailId', $scope.selectedProduct.id);
 
-    // Sử dụng
-    document.getElementById('imageUpload').addEventListener('change', function () {
-        convertImageToBase64(this, handleBase64Data);
-    });    
-     
-    $scope.submitRating = function () {
-        const formData = {
+    try {
+        // Gửi file lên API upload ảnh
+        const response = await axios.post(
+            'https://localhost:7297/api/Images/upload',
+            formData,
+            {
+                headers: { 'Content-Type': 'multipart/form-data' },
+            }
+        );
+
+        // URL của hình ảnh sau khi upload
+        const uploadedImageUrl = response.data.url;
+
+        // Tạo object để gửi tới API đánh giá
+        const ratingData = {
             reviewText: $scope.reviewText,
             customerId: $scope.userInfo.id,
             orderDetailId: $scope.selectedProduct.id,
-            imageBase64: datahinhanhbase64 // Sử dụng Base64 ảnh
+            imageUrl: uploadedImageUrl, // Dùng URL thay vì Base64
         };
 
         if ($scope.selectedProduct.existingReview) {
-            OrderHistoryService.updateRating(
+            await OrderHistoryService.updateRating(
                 $scope.selectedProduct.existingReview.id,
-                formData.reviewText,
-                formData.customerId,
-                formData.orderDetailId,
-                formData.imageBase64
-            ).then(response => {
-                alert("Đánh giá đã được cập nhật!");
-                const modal = bootstrap.Modal.getInstance(document.getElementById('ratingModal'));
-                modal.hide();
-            }).catch(error => {
-                console.error("Lỗi khi cập nhật đánh giá:", error);
-            });
+                ratingData.reviewText,
+                ratingData.customerId,
+                ratingData.orderDetailId,
+                ratingData.imageUrl
+            );
+            alert("Đánh giá đã được cập nhật!");
         } else {
-            OrderHistoryService.createRating(
-                formData.reviewText,
-                formData.customerId,
-                formData.orderDetailId,
-                formData.imageBase64
-            ).then(response => {
-                alert("Đánh giá đã được thêm!");
-                const modal = bootstrap.Modal.getInstance(document.getElementById('ratingModal'));
-                modal.hide();
-            }).catch(error => {
-                console.error("Lỗi khi thêm đánh giá:", error);
-            });
+            await OrderHistoryService.createRating(
+                ratingData.reviewText,
+                ratingData.customerId,
+                ratingData.orderDetailId,
+                ratingData.imageUrl
+            );
+            alert("Đánh giá đã được thêm!");
         }
-    };
+
+        // Ẩn modal sau khi xử lý xong
+        const modal = bootstrap.Modal.getInstance(document.getElementById('ratingModal'));
+        modal.hide();
+    } catch (error) {
+        console.error("Có lỗi xảy ra khi xử lý đánh giá:", error);
+        alert("Lỗi khi xử lý đánh giá. Vui lòng thử lại.");
+    }
+};
+
 
     $scope.deleteRating = function (product) {
         if (!product.existingReview) {

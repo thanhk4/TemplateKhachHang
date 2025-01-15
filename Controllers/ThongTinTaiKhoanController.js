@@ -259,7 +259,14 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
         } else {
             document.getElementById('editSDT').classList.remove('is-invalid');
         }
-        
+
+        // Kiểm tra ngày sinh
+        if (!validateDateOfBirth(ngaysinh)) {
+            isValid = false;
+            document.getElementById('editNgaysinh').classList.add('is-invalid');
+        } else {
+            document.getElementById('editNgaysinh').classList.remove('is-invalid');
+        }
         if (isValid) {
 
         // Cập nhật dữ liệu mới từ form
@@ -342,6 +349,33 @@ function createOrUpdateChart(currentPoints, totalPoints, rankName) {
         return phoneRegex.test(phone);
     }
 
+    function validateDateOfBirth(ngaysinh) {
+        if (!ngaysinh) {
+            return false; // Ngày sinh không được để trống
+        }
+    
+        const dateOfBirth = new Date(ngaysinh);
+        const today = new Date();
+    
+        // Kiểm tra ngày sinh có hợp lệ không
+        if (isNaN(dateOfBirth.getTime())) {
+            return false; // Ngày sinh không hợp lệ
+        }
+    
+        // Tính tuổi
+        const age = today.getFullYear() - dateOfBirth.getFullYear();
+        const monthDiff = today.getMonth() - dateOfBirth.getMonth();
+        const dayDiff = today.getDate() - dateOfBirth.getDate();
+    
+        // Kiểm tra nếu tuổi < 10 hoặc sinh trong tương lai
+        if (age < 10 || (age === 10 && (monthDiff < 0 || (monthDiff === 0 && dayDiff < 0)))) {
+            return false; // Tuổi nhỏ hơn 10
+        }
+    
+        return true; // Tuổi hợp lệ
+    }
+
+    
     // Gọi API khi controller khởi tạo
     fetchAndUpdateData();
 });
