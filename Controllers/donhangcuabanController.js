@@ -301,7 +301,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
             $scope.filteredOrders = $scope.DataHoaDonMua.filter(order => order.trangthai == 3||order.trangthai==5);
             $scope.thediv= status
             $scope.paginateOrders();
-        } else if(status<5) {
+        } else if(status!=3&&status<5) {
             $scope.filteredOrders = $scope.DataHoaDonMua.filter(order => order.trangthai === status);
             $scope.thediv= status
             $scope.paginateOrders();
