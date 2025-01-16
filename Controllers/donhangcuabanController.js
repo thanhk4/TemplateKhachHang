@@ -80,7 +80,7 @@ app.controller('donhangcuabanController', function ($scope, $http,$location, Ord
         "Đang giao",
         "Thành công",
         "Đã hủy",
-        "Thành công"
+        "Trả thành công"
     ];
     
     // Fetch danh sách ngân hàng
