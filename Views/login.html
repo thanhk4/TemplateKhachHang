@@ -1,4 +1,4 @@
-<title>Đăng nhập</title>
+<!-- <title>Đăng nhập</title>
 <style>
     .container{
         margin: 20px;
@@ -33,21 +33,21 @@
         border-radius: 50%;
         animation: spinner-border .75s linear infinite;
     }
-    /* Màu sắc khi hover lên biểu tượng mắt */
+  
 .input-group-text i:hover {
     color: #0056b3;
 }
 .login-form {
     max-width: 400px;
-    margin: 50px auto; /* Đặt form vào giữa trang */
+    margin: 50px auto; 
     background-color: #fff;
     padding: 30px;
-    border-radius: 12px; /* Bo góc cho form */
-    border: 2px solid #007bff; /* Đường viền màu xanh dương cho form */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Tạo bóng đổ nhẹ cho form */
+    border-radius: 12px;
+    border: 2px solid #007bff; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); 
 }
 
-/* Tiêu đề của form */
+
 h2 {
     font-size: 24px;
     color: #333;
@@ -56,34 +56,34 @@ h2 {
 
 /* Các trường input */
 .form-control {
-    border-radius: 8px; /* Bo góc cho các trường input */
+    border-radius: 8px; 
     padding: 10px;
     font-size: 16px;
-    border: 2px solid #ccc; /* Đặt đường viền mặc định màu xám nhạt */
-    transition: all 0.3s ease; /* Hiệu ứng chuyển đổi khi người dùng tương tác */
+    border: 2px solid #ccc; 
+    transition: all 0.3s ease; 
 }
 
-/* Tạo hiệu ứng focus cho các trường input */
+
 .form-control:focus {
-    border-color: #007bff; /* Đổi màu đường viền thành xanh dương khi người dùng chọn input */
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Hiệu ứng bóng nhẹ */
+    border-color: #007bff; 
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
 }
 
-/* Thông báo lỗi */
+
 .text-danger {
     font-size: 12px;
     margin-top: 5px;
 }
 
-/* Checkbox "Nhớ mật khẩu" */
+
 .form-check-label {
     font-size: 14px;
 }
 
-/* Nút Đăng nhập */
+
 .btn-primary {
     background-color: #007bff;
-    border: 2px solid #007bff; /* Đặt đường viền màu xanh dương cho nút */
+    border: 2px solid #007bff;
     padding: 12px;
     font-size: 16px;
     border-radius: 8px;
@@ -91,14 +91,14 @@ h2 {
     transition: all 0.3s ease;
 }
 
-/* Hiệu ứng hover cho nút đăng nhập */
+
 .btn-primary:hover {
     background-color: #0056b3;
-    border-color: #0056b3; /* Đổi màu đường viền khi hover */
+    border-color: #0056b3;
     
 }
 
-/* Biểu tượng mắt */
+
 
 .input-group-text i {
     font-size: 20px;
@@ -116,7 +116,7 @@ h2 {
     <div class="login-form">
         <h2 class="text-center mb-4">Đăng nhập</h2>
         <form ng-submit="step === 1 ? checkEmail() : login()" name="loginForm" novalidate>
-            <!-- Nhập email -->
+            Nhập email
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email" placeholder="example@gmail.com"
@@ -126,7 +126,7 @@ h2 {
                     <small ng-show="loginForm.email.$error.email">Email không hợp lệ</small>
                 </div>
             </div>
-            <!-- Nhập mật khẩu -->
+            Nhập mật khẩu
             <div ng-if="step === 2" class="mb-3">
                 <label for="password" class="form-label">Mật khẩu</label>
                 <div class="input-group">
@@ -148,12 +148,12 @@ h2 {
                 </div>
             </div>
         
-            <!-- Thông báo lỗi -->
+            Thông báo lỗi
             <div class="alert alert-danger" ng-if="errorMessage">
                 {{errorMessage}}
             </div>
         
-            <!-- Nút tiếp tục/đăng nhập -->
+            Nút tiếp tục/đăng nhập
             <div class="d-grid">
                 <button type="submit" class="btn btn-primary btn-login" ng-disabled="loginForm.$invalid || isLoading">
                     <span class="loading-spinner" ng-if="isLoading"></span>
@@ -169,4 +169,162 @@ h2 {
             <p>Chưa có tài khoản? <a href="#!dangky" class="text-primary">Đăng ký ngay</a></p>
         </div>
     </div>
+</div> -->
+<div class="container my-5">
+    <div class="row g-0 border rounded-3 shadow-lg">
+        <!-- Left Column - Login Form -->
+        <div class="col-md-6 p-4 p-md-5 border-end">
+            <h2 class="fw-bold mb-4">ĐĂNG NHẬP</h2>
+            <form ng-submit="step === 1 ? checkEmail() : login()" name="loginForm" novalidate>
+                <!-- Email Field -->
+                <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" 
+                           class="form-control" 
+                           id="email" 
+                           name="email" 
+                           placeholder="example@gmail.com"
+                           autocomplete="username" 
+                           ng-model="user.email" 
+                           ng-change="resetPasswordInput()" 
+                           required>
+                    <div class="text-danger" ng-show="loginForm.email.$dirty && loginForm.email.$invalid">
+                        <small ng-show="loginForm.email.$error.required">Email là bắt buộc</small>
+                        <small ng-show="loginForm.email.$error.email">Email không hợp lệ</small>
+                    </div>
+                </div>
+
+                <!-- Password Field -->
+                <div ng-if="step === 2" class="mb-3">
+                    <label for="password" class="form-label">Mật khẩu</label>
+                    <div class="input-group">
+                        <input type="{{showPassword ? 'text' : 'password'}}"
+                               class="form-control"
+                               id="password"
+                               name="password"
+                               placeholder="••••••••"
+                               autocomplete="current-password"
+                               ng-model="user.password"
+                               required>
+                        <span class="input-group-text" 
+                              ng-click="showPassword = !showPassword">
+                            <i ng-class="{'bi bi-eye': !showPassword, 'bi bi-eye-slash': showPassword}"></i>
+                        </span>
+                    </div>
+                    <div class="text-danger" ng-show="loginForm.password.$dirty && loginForm.password.$invalid">
+                        <small ng-show="loginForm.password.$error.required">Mật khẩu là bắt buộc</small>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div class="alert alert-danger" ng-if="errorMessage">
+                    {{errorMessage}}
+                </div>
+
+                <!-- Forgot Password Link -->
+                <div class="mb-3">
+                    <a href="#!quenmatkhau" class="text-decoration-underline">Bạn quên mật khẩu?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    <button type="submit" 
+                            class="btn btn-dark"
+                            ng-disabled="loginForm.$invalid || isLoading">
+                        <span class="loading-spinner" ng-if="isLoading"></span>
+                        {{step === 1 ? 'Tiếp tục' : (isLoading ? 'Đang đăng nhập...' : 'ĐĂNG NHẬP')}}
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Right Column - Registration Info -->
+        <div class="col-md-6 p-4 p-md-5 bg-light">
+            <h2 class="fw-bold mb-4">TẠO MỘT TÀI KHOẢN</h2>
+            <p class="text-muted mb-4">
+                Thật dễ dàng tạo một tài khoản. Hãy nhập địa chỉ email của bạn và điền vào 
+                mẫu trên trang tiếp theo và tận hưởng những lợi ích của việc sở hữu một tài khoản:
+            </p>
+            <ul class="list-unstyled mb-4">
+                <li class="mb-2">
+                    <i class="bi bi-check2 text-success me-2"></i>
+                    Tổng quan đơn giản về thông tin cá nhân của bạn
+                </li>
+                <li class="mb-2">
+                    <i class="bi bi-check2 text-success me-2"></i>
+                    Thanh toán nhanh hơn
+                </li>
+                <li class="mb-2">
+                    <i class="bi bi-check2 text-success me-2"></i>
+                    Ưu đãi và khuyến mãi độc quyền
+                </li>
+                <li class="mb-2">
+                    <i class="bi bi-check2 text-success me-2"></i>
+                    Các sản phẩm mới nhất
+                </li>
+                <li class="mb-2">
+                    <i class="bi bi-check2 text-success me-2"></i>
+                    Các bộ sưu tập giới hạn và bộ sưu tập theo mùa mới
+                </li>
+                <li class="mb-2">
+                    <i class="bi bi-check2 text-success me-2"></i>
+                    Các sự kiện sắp tới
+                </li>
+            </ul>
+            <div class="d-grid">
+                <a href="#!dangky" class="btn btn-dark">
+                    ĐĂNG KÍ <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
 </div>
+
+<style>
+.container {
+    max-width: 1200px;
+}
+
+.form-control {
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    border: 2px solid #dee2e6;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #000;
+    box-shadow: none;
+}
+
+.input-group-text {
+    cursor: pointer;
+    border: 2px solid #dee2e6;
+    border-left: none;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    margin-right: 0.5rem;
+    border: 0.2em solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: spinner-border .75s linear infinite;
+}
+
+@media (max-width: 767.98px) {
+    .border-end {
+        border-right: none !important;
+        border-bottom: 1px solid #dee2e6;
+    }
+}
+</style>

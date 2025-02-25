@@ -1,78 +1,34 @@
-html, body {
-    height: 100%;
+.social-links a {
+    color: #000;
+    text-decoration: none;
+    margin-right: 10px;
 }
 
-.flex-grow-1 {
-    flex-grow: 1;
+.nav-link {
+    color: #000 !important;
+    font-weight: 500;
 }
-.footer {
-    background-color: #f8f9fa; /* Thay đổi màu nền nếu cần */
-    padding: 1rem 0;
+
+.nav-link:hover {
+    color: #ff0000 !important;
+}
+
+.search-box {
+    max-width: 500px;
     width: 100%;
 }
-body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f5f5;
+
+.cart-icon {
+    position: relative;
 }
 
-.navbar {
-    background-color: #ee4d2d !important;
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background-color: #ff0000;
+    color: white;
+    border-radius: 50%;
+    padding: 2px 6px;
+    font-size: 12px;
 }
-
-.navbar-brand, .nav-link {
-    color: #fff !important;
-}
-
-.btn-primary {
-    background-color: #ee4d2d;
-    border-color: #ee4d2d;
-}
-
-.btn-primary:hover {
-    background-color: #d73211;
-    border-color: #d73211;
-}
-
-.btn-outline-primary {
-    color: #ee4d2d;
-    border-color: #ee4d2d;
-}
-
-.btn-outline-primary:hover {
-    background-color: #ee4d2d;
-    color: #fff;
-}
-
-.text-primary {
-    color: #ee4d2d !important;
-}
-
-.border-primary {
-    border-color: #ee4d2d !important;
-}
-
-/* Cố định navbar ở trên cùng */
-.navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    z-index: 1000; /* Đảm bảo navbar luôn ở trên các phần tử khác */
-    background-color: #343a40; /* Màu nền navbar, có thể thay đổi tùy ý */
-}
-
-/* Thêm padding cho body để tránh bị che khuất bởi navbar */
-body {
-    padding-top: 80px; /* Tùy chỉnh theo chiều cao của navbar */
-}
-
-/* Nếu bạn muốn có bóng đổ cho navbar */
-.navbar {
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
-/* Đảm bảo các liên kết trong navbar có đủ khoảng cách */
-.navbar-nav .nav-item {
-    margin-right: 15px; /* Khoảng cách giữa các item */
-}
-
